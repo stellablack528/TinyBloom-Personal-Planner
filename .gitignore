@@ -1,0 +1,13 @@
+/build*/
+/dist/
+/.qt/
+/.qtc_clangd/
+*.user
+*.autosave
+*.db
+*.sqlite
+*.sqlite3
+*.json
+!resources/*.json
+.DS_Store
+Thumbs.db
