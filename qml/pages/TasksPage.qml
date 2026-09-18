@@ -15,16 +15,16 @@ Item {
             Layout.fillWidth: true
             ColumnLayout {
                 spacing: 4
-                Text { text: "Tasks"; color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-                Text { text: "All your small steps, in one calm place."; color: theme.muted; font.pixelSize: 14 }
+                Text { text: qsTr("Tasks"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
+                Text { text: qsTr("All your small steps, in one calm place."); color: theme.muted; font.pixelSize: 14 }
             }
             Item { Layout.fillWidth: true }
-            AppButton { theme: page.theme; text: "+ Add Task"; onClicked: page.createRequested("") }
+            AppButton { theme: page.theme; text: qsTr("+ Add Task"); onClicked: page.createRequested("") }
         }
         RowLayout {
             Layout.fillWidth: true; spacing: 12
             AppTextField {
-                id: searchField; theme: page.theme; Layout.fillWidth: true; placeholderText: "Search tasks..."
+                id: searchField; theme: page.theme; Layout.fillWidth: true; placeholderText: qsTr("Search tasks...")
                 onTextChanged: taskManager.searchTasks(text)
             }
             Rectangle {
@@ -32,7 +32,7 @@ Item {
                 RowLayout {
                     id: filterRow; anchors.centerIn: parent; spacing: 2
                     Repeater {
-                        model: ["All", "Active", "Completed"]
+                        model: [qsTr("All"), qsTr("Active"), qsTr("Completed")]
                         delegate: Button {
                             required property string modelData; required property int index
                             text: modelData; flat: true; checked: filterGroup.checkedButton === this
@@ -49,9 +49,9 @@ Item {
         }
         RowLayout {
             Layout.fillWidth: true; spacing: 8
-            Text { text: "View"; color: theme.muted; font.pixelSize: 12; Layout.rightMargin: 4 }
+            Text { text: qsTr("View"); color: theme.muted; font.pixelSize: 12; Layout.rightMargin: 4 }
             Repeater {
-                model: ["All", "Today", "Tomorrow", "Later"]
+                model: [qsTr("All"), qsTr("Today"), qsTr("Tomorrow"), qsTr("Later")]
                 delegate: Button {
                     required property string modelData; required property int index
                     text: modelData; flat: true; checked: scopeGroup.checkedButton === this
@@ -70,8 +70,8 @@ Item {
             currentIndex: taskManager.allTasks.count === 0 ? 0 : 1
             Item {
                 EmptyState {
-                    anchors.centerIn: parent; theme: page.theme; title: searchField.text.length > 0 ? "No matching tasks." : "No tasks yet."
-                    description: searchField.text.length > 0 ? "Try a different search." : "Your first small step can start here."
+                    anchors.centerIn: parent; theme: page.theme; title: searchField.text.length > 0 ? qsTr("No matching tasks.") : qsTr("No tasks yet.")
+                    description: searchField.text.length > 0 ? qsTr("Try a different search.") : qsTr("Your first small step can start here.")
                     onActionRequested: page.createRequested("")
                 }
             }

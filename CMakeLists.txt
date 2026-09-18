@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Qml Sql QuickControls2)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Qml Sql QuickControls2 LinguistTools)
 qt_standard_project_setup(REQUIRES 6.5)
 qt_policy(SET QTP0004 NEW)
 
@@ -48,6 +48,11 @@ qt_add_qml_module(TinyBloom
         qml/pages/SettingsPage.qml
     RESOURCES
         resources/icons/leaf.svg
+)
+
+qt_add_translations(TinyBloom
+    TS_FILES translations/tinybloom_zh_CN.ts
+    RESOURCE_PREFIX "/i18n"
 )
 
 target_include_directories(TinyBloom PRIVATE src)

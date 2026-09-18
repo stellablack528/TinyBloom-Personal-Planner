@@ -9,6 +9,7 @@
 #include <QQuickStyle>
 #include <QQuickWindow>
 #include <QTimer>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
@@ -23,12 +24,31 @@ int main(int argc, char *argv[])
     const QString databaseOverride = qEnvironmentVariable("TINYBLOOM_DATABASE_PATH");
     if (!database.initializeDatabase(databaseOverride)) qCritical().noquote() << database.lastError();
     TaskManager taskManager(&database);
-    taskManager.initialize();
     SettingsManager settingsManager(&database);
     settingsManager.load();
+    const QString languageOverride = qEnvironmentVariable("TINYBLOOM_LANGUAGE_OVERRIDE");
+    if (!languageOverride.isEmpty()) settingsManager.setLanguage(languageOverride);
     DataService dataService(&database, &taskManager, &settingsManager);
 
     QQmlApplicationEngine engine;
+    QTranslator translator;
+    const auto applyLanguage = [&app, &engine, &translator, &settingsManager, &taskManager](const bool retranslate) {
+        app.removeTranslator(&translator);
+        if (settingsManager.language() == QStringLiteral("zh_CN")) {
+            if (!translator.load(QStringLiteral(":/i18n/tinybloom_zh_CN.qm")))
+                qWarning() << "Unable to load Simplified Chinese translation";
+            else
+                app.installTranslator(&translator);
+        }
+        if (retranslate) {
+            engine.retranslate();
+            taskManager.retranslate();
+        }
+    };
+    applyLanguage(false);
+    taskManager.initialize();
+    QObject::connect(&settingsManager, &SettingsManager::languageChanged, &app,
+        [&applyLanguage] { applyLanguage(true); });
     engine.rootContext()->setContextProperty(QStringLiteral("taskManager"), &taskManager);
     engine.rootContext()->setContextProperty(QStringLiteral("settingsManager"), &settingsManager);
     engine.rootContext()->setContextProperty(QStringLiteral("dataService"), &dataService);

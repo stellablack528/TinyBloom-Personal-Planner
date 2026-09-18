@@ -41,14 +41,14 @@ bool DatabaseManager::initializeDatabase(const QString &overridePath)
     if (path.isEmpty()) {
         const QString directory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         if (directory.isEmpty() || !QDir().mkpath(directory)) {
-            setError(QStringLiteral("Unable to prepare the data folder."), directory);
+            setError(tr("Unable to prepare the data folder."), directory);
             return false;
         }
         path = QDir(directory).filePath(QStringLiteral("tinybloom.sqlite3"));
     } else {
         const QFileInfo info(path);
         if (!QDir().mkpath(info.absolutePath())) {
-            setError(QStringLiteral("Unable to prepare the data folder."), info.absolutePath());
+            setError(tr("Unable to prepare the data folder."), info.absolutePath());
             return false;
         }
     }
@@ -61,13 +61,13 @@ bool DatabaseManager::openDatabase(const QString &path)
     m_database = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), m_connectionName);
     m_database.setDatabaseName(path);
     if (!m_database.open()) {
-        setError(QStringLiteral("Unable to open the local database."), m_database.lastError().text());
+        setError(tr("Unable to open the local database."), m_database.lastError().text());
         return false;
     }
     m_databasePath = path;
     QSqlQuery query(m_database);
     if (!query.exec(QStringLiteral("PRAGMA foreign_keys = ON"))) {
-        setError(QStringLiteral("Unable to enable database integrity checks."), query.lastError().text());
+        setError(tr("Unable to enable database integrity checks."), query.lastError().text());
         return false;
     }
     return true;
@@ -125,7 +125,7 @@ QVector<Task> DatabaseManager::loadTasks() const
     QVector<Task> tasks;
     QSqlQuery query(m_database);
     if (!query.exec(QStringLiteral("SELECT id,title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at FROM tasks ORDER BY completed ASC, due_date IS NULL, due_date ASC, created_at DESC"))) {
-        setError(QStringLiteral("Unable to load tasks."), query.lastError().text());
+        setError(tr("Unable to load tasks."), query.lastError().text());
         return tasks;
     }
     while (query.next()) {
@@ -148,7 +148,7 @@ QVector<Task> DatabaseManager::loadTasks() const
     for (int i = 0; i < tasks.size(); ++i) taskIndexes.insert(tasks[i].id, i);
     QSqlQuery subquery(m_database);
     if (!subquery.exec(QStringLiteral("SELECT id,task_id,title,completed,created_at FROM subtasks ORDER BY id ASC"))) {
-        setError(QStringLiteral("Unable to load subtasks."), subquery.lastError().text());
+        setError(tr("Unable to load subtasks."), subquery.lastError().text());
         return tasks;
     }
     while (subquery.next()) {
@@ -180,7 +180,7 @@ bool DatabaseManager::insertTask(Task &task)
     query.addBindValue(iso(task.updatedAt));
     query.addBindValue(task.completedAt.isValid() ? iso(task.completedAt) : QVariant{});
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to save this task."), query.lastError().text());
+        setError(tr("Unable to save this task."), query.lastError().text());
         return false;
     }
     task.id = query.lastInsertId().toLongLong();
@@ -202,7 +202,7 @@ bool DatabaseManager::updateTask(const Task &task)
     query.addBindValue(task.completedAt.isValid() ? iso(task.completedAt) : QVariant{});
     query.addBindValue(task.id);
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to update this task."), query.lastError().text());
+        setError(tr("Unable to update this task."), query.lastError().text());
         return false;
     }
     return query.numRowsAffected() == 1;
@@ -214,7 +214,7 @@ bool DatabaseManager::deleteTask(const qint64 taskId)
     query.prepare(QStringLiteral("DELETE FROM tasks WHERE id=?"));
     query.addBindValue(taskId);
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to delete this task."), query.lastError().text());
+        setError(tr("Unable to delete this task."), query.lastError().text());
         return false;
     }
     return query.numRowsAffected() == 1;
@@ -229,7 +229,7 @@ bool DatabaseManager::insertSubtask(Subtask &subtask)
     query.addBindValue(subtask.completed);
     query.addBindValue(iso(subtask.createdAt));
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to save this small step."), query.lastError().text());
+        setError(tr("Unable to save this small step."), query.lastError().text());
         return false;
     }
     subtask.id = query.lastInsertId().toLongLong();
@@ -244,7 +244,7 @@ bool DatabaseManager::updateSubtask(const Subtask &subtask)
     query.addBindValue(subtask.completed);
     query.addBindValue(subtask.id);
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to update this small step."), query.lastError().text());
+        setError(tr("Unable to update this small step."), query.lastError().text());
         return false;
     }
     return query.numRowsAffected() == 1;
@@ -256,7 +256,7 @@ bool DatabaseManager::deleteSubtask(const qint64 subtaskId)
     query.prepare(QStringLiteral("DELETE FROM subtasks WHERE id=?"));
     query.addBindValue(subtaskId);
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to delete this small step."), query.lastError().text());
+        setError(tr("Unable to delete this small step."), query.lastError().text());
         return false;
     }
     return query.numRowsAffected() == 1;
@@ -278,7 +278,7 @@ bool DatabaseManager::setSetting(const QString &key, const QString &value)
     query.addBindValue(key);
     query.addBindValue(value);
     if (!query.exec()) {
-        setError(QStringLiteral("Unable to save settings."), query.lastError().text());
+        setError(tr("Unable to save settings."), query.lastError().text());
         return false;
     }
     return true;
@@ -313,24 +313,24 @@ bool DatabaseManager::importObject(const QJsonObject &root)
 {
     if (!root.value("version").isString() || !root.value("tasks").isArray()
         || !root.value("subtasks").isArray() || !root.value("settings").isObject()) {
-        setError(QStringLiteral("This file is not a valid TinyBloom export."), QStringLiteral("Missing required JSON fields"));
+        setError(tr("This file is not a valid TinyBloom export."), QStringLiteral("Missing required JSON fields"));
         return false;
     }
     const QJsonArray tasks = root.value("tasks").toArray();
     for (const auto &value : tasks) {
         const QJsonObject item = value.toObject();
         if (!value.isObject() || item.value("title").toString().trimmed().isEmpty()) {
-            setError(QStringLiteral("This file contains an invalid task."), QStringLiteral("Task title missing"));
+            setError(tr("This file contains an invalid task."), QStringLiteral("Task title missing"));
             return false;
         }
     }
     if (!m_database.transaction()) {
-        setError(QStringLiteral("Unable to start data import."), m_database.lastError().text());
+        setError(tr("Unable to start data import."), m_database.lastError().text());
         return false;
     }
     auto rollback = [this](const QString &message) {
         m_database.rollback();
-        setError(QStringLiteral("Unable to import data. Your existing data is unchanged."), message);
+        setError(tr("Unable to import data. Your existing data is unchanged."), message);
         return false;
     };
     QSqlQuery query(m_database);
@@ -380,7 +380,7 @@ bool DatabaseManager::execute(const QString &sql) const
 {
     QSqlQuery query(m_database);
     if (query.exec(sql)) return true;
-    setError(QStringLiteral("Unable to initialize local storage."), query.lastError().text());
+    setError(tr("Unable to initialize local storage."), query.lastError().text());
     return false;
 }
 

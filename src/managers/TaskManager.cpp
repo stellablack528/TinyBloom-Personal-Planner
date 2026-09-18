@@ -17,7 +17,7 @@ TaskManager::TaskManager(DatabaseManager *database, QObject *parent)
 
 bool TaskManager::initialize()
 {
-    if (!m_database->isOpen()) return fail(QStringLiteral("Local storage is not available."));
+    if (!m_database->isOpen()) return fail(tr("Local storage is not available."));
     reload();
     return true;
 }
@@ -53,7 +53,7 @@ bool TaskManager::createTask(const QString &title, const QString &description, c
     if (!validate(title, description, estimatedMinutes)) return false;
     const QString normalizedDate = dueDate.trimmed();
     if (!normalizedDate.isEmpty() && !QDate::fromString(normalizedDate, Qt::ISODate).isValid())
-        return fail(QStringLiteral("Use a valid due date in YYYY-MM-DD format."));
+        return fail(tr("Use a valid due date in YYYY-MM-DD format."));
     Task task;
     task.title = title.trimmed();
     task.description = description.trimmed();
@@ -74,9 +74,9 @@ bool TaskManager::updateTask(const qint64 id, const QString &title, const QStrin
     if (!validate(title, description, estimatedMinutes)) return false;
     const QString normalizedDate = dueDate.trimmed();
     if (!normalizedDate.isEmpty() && !QDate::fromString(normalizedDate, Qt::ISODate).isValid())
-        return fail(QStringLiteral("Use a valid due date in YYYY-MM-DD format."));
+        return fail(tr("Use a valid due date in YYYY-MM-DD format."));
     Task *task = findTask(id);
-    if (!task) return fail(QStringLiteral("This task no longer exists."));
+    if (!task) return fail(tr("This task no longer exists."));
     Task updated = *task;
     updated.title = title.trimmed();
     updated.description = description.trimmed();
@@ -93,7 +93,7 @@ bool TaskManager::updateTask(const qint64 id, const QString &title, const QStrin
 
 bool TaskManager::deleteTask(const qint64 id)
 {
-    if (!findTask(id)) return fail(QStringLiteral("This task no longer exists."));
+    if (!findTask(id)) return fail(tr("This task no longer exists."));
     if (!m_database->deleteTask(id)) return fail(m_database->lastError());
     m_tasks.removeIf([id](const Task &task) { return task.id == id; });
     refreshModels();
@@ -103,7 +103,7 @@ bool TaskManager::deleteTask(const qint64 id)
 bool TaskManager::toggleTask(const qint64 id)
 {
     Task *task = findTask(id);
-    if (!task) return fail(QStringLiteral("This task no longer exists."));
+    if (!task) return fail(tr("This task no longer exists."));
     Task updated = *task;
     updated.completed = !updated.completed;
     updated.completedAt = updated.completed ? QDateTime::currentDateTimeUtc() : QDateTime{};
@@ -118,8 +118,8 @@ bool TaskManager::createSubtask(const qint64 taskId, const QString &title)
 {
     Task *task = findTask(taskId);
     const QString trimmed = title.trimmed();
-    if (!task) return fail(QStringLiteral("This task no longer exists."));
-    if (trimmed.isEmpty() || trimmed.size() > 160) return fail(QStringLiteral("A small step needs a title under 160 characters."));
+    if (!task) return fail(tr("This task no longer exists."));
+    if (trimmed.isEmpty() || trimmed.size() > 160) return fail(tr("A small step needs a title under 160 characters."));
     Subtask subtask{0, taskId, trimmed, false, QDateTime::currentDateTimeUtc()};
     if (!m_database->insertSubtask(subtask)) return fail(m_database->lastError());
     task->subtasks.append(subtask);
@@ -130,7 +130,7 @@ bool TaskManager::createSubtask(const qint64 taskId, const QString &title)
 bool TaskManager::deleteSubtask(const qint64 taskId, const qint64 subtaskId)
 {
     Task *task = findTask(taskId);
-    if (!task) return fail(QStringLiteral("This task no longer exists."));
+    if (!task) return fail(tr("This task no longer exists."));
     if (!m_database->deleteSubtask(subtaskId)) return fail(m_database->lastError());
     task->subtasks.removeIf([subtaskId](const Subtask &s) { return s.id == subtaskId; });
     refreshModels();
@@ -140,7 +140,7 @@ bool TaskManager::deleteSubtask(const qint64 taskId, const qint64 subtaskId)
 bool TaskManager::toggleSubtask(const qint64 taskId, const qint64 subtaskId)
 {
     Task *task = findTask(taskId);
-    if (!task) return fail(QStringLiteral("This task no longer exists."));
+    if (!task) return fail(tr("This task no longer exists."));
     for (Subtask &subtask : task->subtasks) {
         if (subtask.id != subtaskId) continue;
         Subtask updated = subtask;
@@ -150,7 +150,7 @@ bool TaskManager::toggleSubtask(const qint64 taskId, const qint64 subtaskId)
         refreshModels();
         return true;
     }
-    return fail(QStringLiteral("This small step no longer exists."));
+    return fail(tr("This small step no longer exists."));
 }
 
 QVariantMap TaskManager::getTask(const qint64 id) const
@@ -175,6 +175,7 @@ void TaskManager::setTaskScope(const int scope)
         : TaskListModel::Scope::All);
 }
 void TaskManager::reload() { m_tasks = m_database->loadTasks(); refreshModels(); }
+void TaskManager::retranslate() { refreshModels(); }
 
 Task *TaskManager::findTask(const qint64 id)
 {
@@ -189,10 +190,10 @@ const Task *TaskManager::findTask(const qint64 id) const
 
 bool TaskManager::validate(const QString &title, const QString &description, const int estimatedMinutes)
 {
-    if (title.trimmed().isEmpty()) return fail(QStringLiteral("Please give this task a name."));
-    if (title.trimmed().size() > 160) return fail(QStringLiteral("Task names can be up to 160 characters."));
-    if (description.size() > 4000) return fail(QStringLiteral("Descriptions can be up to 4,000 characters."));
-    if (estimatedMinutes < 0 || estimatedMinutes > 10080) return fail(QStringLiteral("Choose an estimate between 0 and 10,080 minutes."));
+    if (title.trimmed().isEmpty()) return fail(tr("Please give this task a name."));
+    if (title.trimmed().size() > 160) return fail(tr("Task names can be up to 160 characters."));
+    if (description.size() > 4000) return fail(tr("Descriptions can be up to 4,000 characters."));
+    if (estimatedMinutes < 0 || estimatedMinutes > 10080) return fail(tr("Choose an estimate between 0 and 10,080 minutes."));
     return true;
 }
 

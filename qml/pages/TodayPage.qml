@@ -10,7 +10,7 @@ Item {
 
     function greeting() {
         let hour = new Date().getHours()
-        return hour < 12 ? "Good morning 🌱" : hour < 18 ? "Good afternoon 🌱" : "Good evening 🌱"
+        return hour < 12 ? qsTr("Good morning 🌱") : hour < 18 ? qsTr("Good afternoon 🌱") : qsTr("Good evening 🌱")
     }
 
     ColumnLayout {
@@ -20,20 +20,20 @@ Item {
             ColumnLayout {
                 spacing: 5
                 Text { text: page.greeting(); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-                Text { text: Qt.formatDate(new Date(), "dddd, MMMM d"); color: theme.muted; font.pixelSize: 14 }
+                Text { text: Qt.locale(settingsManager.language === "zh_CN" ? "zh_CN" : "en_US").toString(new Date(), "dddd, MMMM d"); color: theme.muted; font.pixelSize: 14 }
             }
             Item { Layout.fillWidth: true }
-            AppButton { theme: page.theme; text: "+ Add Task"; onClicked: page.createRequested(Qt.formatDate(new Date(), "yyyy-MM-dd")) }
+            AppButton { theme: page.theme; text: qsTr("+ Add Task"); onClicked: page.createRequested(Qt.formatDate(new Date(), "yyyy-MM-dd")) }
         }
         ProgressCard { theme: page.theme; completed: taskManager.todayCompletedCount; total: taskManager.todayCount }
-        Text { text: "Today's Tasks"; color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
+        Text { text: qsTr("Today's Tasks"); color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
         StackLayout {
             Layout.fillWidth: true; Layout.fillHeight: true
             currentIndex: taskManager.todayCount === 0 ? 0 : 1
             Item {
                 EmptyState {
-                    anchors.centerIn: parent; theme: page.theme; title: "Your day is clear. 🌱"
-                    description: "Create a small task to get started."
+                    anchors.centerIn: parent; theme: page.theme; title: qsTr("Your day is clear. 🌱")
+                    description: qsTr("Create a small task to get started.")
                     onActionRequested: page.createRequested(Qt.formatDate(new Date(), "yyyy-MM-dd"))
                 }
             }
@@ -49,4 +49,3 @@ Item {
         }
     }
 }
-

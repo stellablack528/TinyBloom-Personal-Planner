@@ -82,12 +82,15 @@ void CoreTests::settingsPersistence()
 {
     SettingsManager settings(m_database.get());
     settings.load();
+    QCOMPARE(settings.language(), QStringLiteral("zh_CN"));
     settings.setTheme(QStringLiteral("midnight"));
+    settings.setLanguage(QStringLiteral("en"));
     settings.setReduceAnimations(true);
     settings.setDefaultTaskDuration(40);
     SettingsManager reopened(m_database.get());
     reopened.load();
     QCOMPARE(reopened.theme(), QStringLiteral("midnight"));
+    QCOMPARE(reopened.language(), QStringLiteral("en"));
     QCOMPARE(reopened.reduceAnimations(), true);
     QCOMPARE(reopened.defaultTaskDuration(), 40);
 }

@@ -6,7 +6,7 @@ import TinyBloom
 ApplicationWindow {
     id: root
     width: 1120; height: 760; minimumWidth: 780; minimumHeight: 580
-    visible: true; title: "TinyBloom — Small Steps, Real Progress."
+    visible: true; title: qsTr("TinyBloom — Small Steps, Real Progress.")
     color: theme.window
     property int currentPage: 0
 
@@ -62,5 +62,5 @@ ApplicationWindow {
         function onOperationSucceeded(message) { toast.show(message) }
         function onOperationFailed(message) { toast.show(message) }
     }
-    Component.onCompleted: if (!databaseReady) toast.show("Local storage could not be opened. Changes may not be saved.")
+    Component.onCompleted: if (!databaseReady) toast.show(qsTr("Local storage could not be opened. Changes may not be saved."))
 }

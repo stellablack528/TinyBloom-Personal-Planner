@@ -47,6 +47,7 @@ public:
     Q_INVOKABLE void filterTasks(int status);
     Q_INVOKABLE void setTaskScope(int scope);
     Q_INVOKABLE void reload();
+    Q_INVOKABLE void retranslate();
 
 signals:
     void tasksChanged();

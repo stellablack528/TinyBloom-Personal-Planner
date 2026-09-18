@@ -8,7 +8,7 @@
 
 TinyBloom 是一个基于 **C++20、Qt 6、QML、SQLite 和 CMake** 开发的桌面计划管理应用。
 
-很多时候，真正困难的不是完成任务，而是开始任务。TinyBloom 希望通过任务管理、子任务拆分、专注计时、数据统计和轻量成就系统，帮助用户把一个较大的目标拆分成多个更容易完成的小步骤，并持续看到自己的进步。
+很多时候，真正困难的不是完成任务，而是开始任务。TinyBloom 希望通过任务管理、子任务拆分、平静的每日计划与本地数据存储，帮助用户把一个较大的目标拆分成多个更容易完成的小步骤，并持续看到自己的进步。
 
 项目采用 **免费 + 开源 + Local-first** 的设计理念：
 
@@ -16,7 +16,11 @@ TinyBloom 是一个基于 **C++20、Qt 6、QML、SQLite 和 CMake** 开发的桌
 - 无需订阅
 - 不依赖网络服务
 - 用户数据默认保存在本地 SQLite 数据库中
-- 支持数据导入、导出与备份
+- 支持数据导入与导出
+
+## ⬇️ 下载
+
+Windows 用户可以从 [GitHub Releases](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases) 下载 `TinyBloom-v0.1.0-windows-x64.zip`。解压完整目录后运行 `TinyBloom.exe`，无需安装 Qt 或注册账号。
 
 ## ✨ 主要功能
 
@@ -48,95 +52,24 @@ TinyBloom 支持基础任务管理能力，包括：
 □ 总结今天的内容
 ```
 
-### 🌱 Small Steps
+### 🌱 每日计划与快速开始
 
-TinyBloom 提供“小步开始”功能，帮助用户先行动起来，再逐渐进入状态。
-
-可选择的时间包括：
-
-- 5 min
-- 10 min
-- 15 min
-- 25 min
-
-示例流程：
-
-```text
-Study Data Structures
-        ↓
-   Start Small
-        ↓
-    5 Minutes
-```
-
-### 🕐 Focus Timer
-
-TinyBloom 提供简单的专注计时器，支持：
-
-- Start
-- Pause
-- Resume
-- Stop
-
-完成一次专注后，应用会记录本次专注时间，并将其加入统计数据。
-
-### ⭐ XP 与成就
-
-完成任务可以获得 XP，用于记录用户的持续进步。
-
-示例：
-
-```text
-完成任务        +10 XP
-完成较长任务    +20 XP
-完成今日计划    +50 XP
-```
-
-随着 XP 增长，用户可以提升等级，并通过成就系统记录长期进度。
-
-### 🌿 Garden
-
-完成任务、专注学习和解锁成就后，用户可以获得成长值。
-
-成长值用于培育属于自己的小花园，让长期坚持变成可以直观看见的成长。
-
-```text
-Task
- ↓
-XP
- ↓
-Growth
- ↓
-🌱
- ↓
-🌷
- ↓
-🌳
-```
-
-### 📊 数据统计
-
-TinyBloom 会统计用户的实际进度，包括：
-
-- 完成任务数量
-- 专注总时间
-- XP
-- 当前等级
-- 连续完成天数
-
-这些统计数据可以帮助用户回顾一段时间以来的积累。
+- Today 首页和当日完成进度
+- Today / Tomorrow / Later 自动分类
+- 快速添加任务与键盘快捷键
+- All / Active / Completed 状态筛选
+- 根据标题、描述和分类搜索任务
 
 ### 🎨 UI 主题
 
-TinyBloom 支持多种界面风格：
+TinyBloom v0.1.0 支持：
 
 - 🌿 Mint Garden
-- 🌸 Sakura
-- 🌊 Ocean
-- 💜 Lavender
 - 🌙 Midnight
+- 🇨🇳 简体中文（默认）
+- 🇬🇧 English
 
-用户可以根据自己的喜好切换主题。
+主题和语言选择都会保存在本地数据库中，并在下次启动时恢复。
 
 ### 💾 本地数据
 
@@ -144,18 +77,14 @@ TinyBloom 使用 SQLite 保存本地数据，包括：
 
 - Tasks
 - Subtasks
-- Achievements
-- XP
-- Focus Sessions
-- Statistics
 - Settings
-- Garden Data
 
 同时支持：
 
 - Export JSON
 - Import JSON
-- Backup Database
+
+Focus Timer、XP、成就、Garden 和高级统计仍在 Roadmap 中，尚未包含在 v0.1.0。
 
 ## 🛠️ 技术栈
 
@@ -188,21 +117,19 @@ SQLite
 核心模块包括：
 
 - TaskManager
-- FocusManager
-- AchievementManager
-- StatisticsManager
-- GardenManager
-- ThemeManager
+- SettingsManager
 - DatabaseManager
+- DataService
+- TaskListModel
 
 C++ 主要负责：
 
 - 数据管理
 - 业务逻辑
 - 任务系统
-- XP 与成就
 - 数据库操作
-- 统计
+- JSON 导入与导出
+- 输入校验与分类筛选
 
 QML 主要负责：
 
@@ -219,16 +146,13 @@ tinybloom/
 ├── CMakeLists.txt
 ├── README.md
 ├── LICENSE
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-│
 ├── docs/
 │   ├── architecture.md
 │   └── development-log.md
 │
 ├── src/
 │   ├── main.cpp
-│   ├── core/
+│   ├── models/
 │   ├── managers/
 │   ├── database/
 │   └── services/
@@ -237,12 +161,10 @@ tinybloom/
 │   ├── Main.qml
 │   ├── pages/
 │   ├── components/
-│   ├── dialogs/
 │   └── themes/
 │
-├── resources/
-│   └── resources.qrc
-│
+├── resources/icons/
+├── translations/
 └── tests/
 ```
 
@@ -261,8 +183,8 @@ tinybloom/
 ### Clone
 
 ```bash
-git clone https://github.com/stellablack528/tinybloom.git
-cd tinybloom
+git clone https://github.com/stellablack528/TinyBloom-Personal-Planner.git
+cd TinyBloom-Personal-Planner
 ```
 
 ### Configure
@@ -287,11 +209,9 @@ cmake --build build --config Release
 - 任务完成
 - 子任务
 - SQLite 数据保存与读取
-- XP 计算
-- 成就解锁
-- Focus Timer
 - 数据导入与导出
 - 主题切换
+- 中英文语言设置
 - 设置持久化
 
 测试命令：
@@ -304,7 +224,7 @@ ctest --test-dir build --output-on-failure
 
 TinyBloom 默认采用本地优先设计。
 
-用户的任务、统计和个人数据默认保存在本地设备中。项目不要求：
+用户的任务、设置和个人数据默认保存在本地设备中。项目不要求：
 
 - 注册账号
 - 登录
@@ -335,8 +255,11 @@ TinyBloom 希望成为一个：
 
 - 基础桌面框架
 - 任务管理
+- 子任务、搜索与筛选
 - SQLite 持久化
 - Today 页面
+- 双主题与中英文界面
+- JSON 导入与导出
 
 ### v0.2
 
@@ -356,15 +279,9 @@ TinyBloom 希望成为一个：
 
 ### v0.5
 
-- 多主题
-- UI 动画
-- 个性化设置
-
-### v0.6
-
-- 数据导入
-- 数据导出
+- 更多主题
 - 数据备份
+- 个性化设置
 
 ### v1.0
 

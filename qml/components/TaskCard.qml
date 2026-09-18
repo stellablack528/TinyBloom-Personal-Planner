@@ -50,9 +50,9 @@ Rectangle {
                 id: details; visible: category.length > 0 || estimatedMinutes > 0 || dueDate.toString().length > 0 || subtaskCount > 0
                 spacing: 12
                 Text { visible: category.length > 0; text: category; color: theme.primary; font.pixelSize: 12; font.weight: Font.DemiBold }
-                Text { visible: estimatedMinutes > 0; text: "◷ " + estimatedMinutes + " min"; color: theme.muted; font.pixelSize: 12 }
-                Text { visible: dueDate.toString().length > 0; text: "◫ " + Qt.formatDate(dueDate, "MMM d"); color: theme.muted; font.pixelSize: 12 }
-                Text { visible: subtaskCount > 0; text: completedSubtaskCount + " / " + subtaskCount + " steps"; color: theme.muted; font.pixelSize: 12 }
+                Text { visible: estimatedMinutes > 0; text: qsTr("◷ %1 min").arg(estimatedMinutes); color: theme.muted; font.pixelSize: 12 }
+                Text { visible: dueDate.toString().length > 0; text: "◫ " + Qt.locale(settingsManager.language === "zh_CN" ? "zh_CN" : "en_US").toString(dueDate, "MMM d"); color: theme.muted; font.pixelSize: 12 }
+                Text { visible: subtaskCount > 0; text: qsTr("%1 / %2 steps").arg(completedSubtaskCount).arg(subtaskCount); color: theme.muted; font.pixelSize: 12 }
                 Item { Layout.fillWidth: true }
             }
         }
@@ -68,4 +68,3 @@ Rectangle {
         Text { text: "›"; color: theme.muted; font.pixelSize: 22 }
     }
 }
-

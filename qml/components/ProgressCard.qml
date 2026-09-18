@@ -15,9 +15,9 @@ Rectangle {
         anchors.fill: parent; anchors.margins: 22; spacing: 12
         RowLayout {
             Layout.fillWidth: true
-            Text { text: "Today's Progress"; color: theme.text; font.pixelSize: 16; font.weight: Font.DemiBold }
+            Text { text: qsTr("Today's Progress"); color: theme.text; font.pixelSize: 16; font.weight: Font.DemiBold }
             Item { Layout.fillWidth: true }
-            Text { text: completed + " / " + total + " completed"; color: theme.muted; font.pixelSize: 13 }
+            Text { text: qsTr("%1 / %2 completed").arg(completed).arg(total); color: theme.muted; font.pixelSize: 13 }
         }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 10; radius: 5; color: theme.primarySoft
@@ -28,7 +28,7 @@ Rectangle {
             }
         }
         Text {
-            text: total === 0 ? "A clear day is a lovely place to begin." : completed === total ? "Beautiful work — today's steps are complete." : "One small step at a time."
+            text: total === 0 ? qsTr("A clear day is a lovely place to begin.") : completed === total ? qsTr("Beautiful work — today's steps are complete.") : qsTr("One small step at a time.")
             color: theme.muted; font.pixelSize: 13
         }
     }

@@ -18,6 +18,8 @@ The database path comes from `QStandardPaths::AppDataLocation`. At startup, the 
 
 For isolated automated checks, `TINYBLOOM_DATABASE_PATH` can point the executable at a temporary database. `TINYBLOOM_SCREENSHOT_PATH` asks a test run to save one rendered frame and exit; normal launches do neither.
 
+Interface text uses Qt Linguist translations. Simplified Chinese is the default for a new profile, while English uses the source strings. The selected language is stored in SQLite and `QQmlApplicationEngine::retranslate()` updates the live interface. `TINYBLOOM_LANGUAGE_OVERRIDE` exists only for deterministic localization smoke tests and persists the requested test language in the isolated database.
+
 ## Boundaries
 
 QML never performs SQL or edits persistence state directly. The project does not introduce repositories per table, dependency-injection frameworks, or an event bus at this size. `DatabaseManager` can accept an alternate path for isolated tests without changing production path behavior.

@@ -39,3 +39,13 @@
 **Solution:** Repeat the screenshot smoke test using the native Windows platform and software Quick renderer against an isolated database.
 
 **Result:** The native render showed the expected Segoe-style text, icons, Mint Garden colors, spacing, and empty state. The application exited cleanly after saving the frame.
+
+## First release needed a real language switch
+
+**Problem:** The first release candidate only exposed English strings, while the intended initial audience needed Simplified Chinese by default and an English option.
+
+**Cause:** v0.1 originally centralized colors and settings but had no localization layer.
+
+**Solution:** Integrate Qt Linguist, translate all 127 user-facing strings, persist a `language` setting in SQLite, retranslate QML at runtime, refresh translated model roles, and format dates with the selected locale.
+
+**Result:** Fresh profiles start in Simplified Chinese. Users can switch to English in Settings, and the selection survives a restart.

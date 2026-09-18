@@ -1,5 +1,6 @@
 /build*/
 /dist/
+/translations/*.qm
 /.qt/
 /.qtc_clangd/
 *.user

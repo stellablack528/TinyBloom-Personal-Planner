@@ -1,13 +1,15 @@
 #include "Task.h"
 
+#include <QCoreApplication>
+
 QString priorityName(const Priority priority)
 {
     switch (priority) {
-    case Priority::Low: return QStringLiteral("Low");
-    case Priority::High: return QStringLiteral("High");
-    case Priority::Medium: return QStringLiteral("Medium");
+    case Priority::Low: return QCoreApplication::translate("Priority", "Low");
+    case Priority::High: return QCoreApplication::translate("Priority", "High");
+    case Priority::Medium: return QCoreApplication::translate("Priority", "Medium");
     }
-    return QStringLiteral("Medium");
+    return QCoreApplication::translate("Priority", "Medium");
 }
 
 Priority priorityFromInt(const int value)
@@ -16,4 +18,3 @@ Priority priorityFromInt(const int value)
     if (value == static_cast<int>(Priority::High)) return Priority::High;
     return Priority::Medium;
 }
-

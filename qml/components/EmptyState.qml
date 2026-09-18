@@ -19,8 +19,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap; Layout.maximumWidth: 340
     }
     AppButton {
-        theme: parent.theme; text: "+ Create Task"; Layout.alignment: Qt.AlignHCenter; Layout.topMargin: 8
+        theme: parent.theme; text: qsTr("+ Create Task"); Layout.alignment: Qt.AlignHCenter; Layout.topMargin: 8
         onClicked: parent.actionRequested()
     }
 }
-

@@ -21,7 +21,7 @@ Rectangle {
             Text { text: "TinyBloom"; color: theme.text; font.pixelSize: 20; font.weight: Font.Bold }
         }
         Repeater {
-            model: [{label:"Today", icon:"◉"}, {label:"Tasks", icon:"☰"}, {label:"Settings", icon:"⚙"}]
+            model: [{label:qsTr("Today"), icon:"◉"}, {label:qsTr("Tasks"), icon:"☰"}, {label:qsTr("Settings"), icon:"⚙"}]
             delegate: Rectangle {
                 required property var modelData
                 required property int index
@@ -38,9 +38,8 @@ Rectangle {
         }
         Item { Layout.fillHeight: true }
         Text {
-            Layout.fillWidth: true; text: "Small Steps,\nReal Progress."; color: theme.muted
+            Layout.fillWidth: true; text: qsTr("Small Steps,\nReal Progress."); color: theme.muted
             font.pixelSize: 12; lineHeight: 1.35
         }
     }
 }
-

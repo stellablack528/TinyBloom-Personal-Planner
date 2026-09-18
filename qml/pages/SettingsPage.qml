@@ -8,14 +8,14 @@ Item {
     property QtObject theme
 
     FileDialog {
-        id: exportDialog; title: "Export TinyBloom data"; fileMode: FileDialog.SaveFile
-        nameFilters: ["TinyBloom JSON (*.json)"]
+        id: exportDialog; title: qsTr("Export TinyBloom data"); fileMode: FileDialog.SaveFile
+        nameFilters: [qsTr("TinyBloom JSON (*.json)")]
         currentFile: "tinybloom-export.json"
         onAccepted: dataService.exportData(selectedFile)
     }
     FileDialog {
-        id: importDialog; title: "Import TinyBloom data"; fileMode: FileDialog.OpenFile
-        nameFilters: ["TinyBloom JSON (*.json)"]
+        id: importDialog; title: qsTr("Import TinyBloom data"); fileMode: FileDialog.OpenFile
+        nameFilters: [qsTr("TinyBloom JSON (*.json)")]
         onAccepted: dataService.importData(selectedFile)
     }
 
@@ -23,12 +23,30 @@ Item {
         anchors.fill: parent; contentHeight: content.implicitHeight + 80; clip: true
         ColumnLayout {
             id: content; x: 40; y: 40; width: Math.min(parent.width - 80, 780); spacing: 20
-            Text { text: "Settings"; color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-            Text { text: "Make TinyBloom feel comfortable for you."; color: theme.muted; font.pixelSize: 14; Layout.bottomMargin: 6 }
+            Text { text: qsTr("Settings"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
+            Text { text: qsTr("Make TinyBloom feel comfortable for you."); color: theme.muted; font.pixelSize: 14; Layout.bottomMargin: 6 }
+            Rectangle {
+                Layout.fillWidth: true; implicitHeight: languageRow.implicitHeight + 32; radius: theme.radius; color: theme.card; border.color: theme.border
+                RowLayout {
+                    id: languageRow; anchors.fill: parent; anchors.margins: 16; spacing: 16
+                    ColumnLayout {
+                        Layout.fillWidth: true; spacing: 3
+                        Text { text: qsTr("Language"); color: theme.text; font.pixelSize: 15; font.weight: Font.DemiBold }
+                        Text { text: qsTr("Choose the language used throughout TinyBloom"); color: theme.muted; font.pixelSize: 12 }
+                    }
+                    ComboBox {
+                        id: languageBox; model: [qsTr("简体中文"), qsTr("English")]
+                        currentIndex: settingsManager.language === "zh_CN" ? 0 : 1
+                        onActivated: settingsManager.language = currentIndex === 0 ? "zh_CN" : "en"
+                        contentItem: Text { leftPadding: 12; text: languageBox.displayText; color: theme.text; verticalAlignment: Text.AlignVCenter }
+                        background: Rectangle { implicitWidth: 150; radius: 10; color: theme.input; border.color: theme.border }
+                    }
+                }
+            }
             Repeater {
                 model: [
-                    {name:"Mint Garden", value:"mint", swatch:"#3D8B5D", desc:"Light, fresh and calm"},
-                    {name:"Midnight", value:"midnight", swatch:"#73C995", desc:"Soft contrast for darker rooms"}
+                    {name:qsTr("Mint Garden"), value:"mint", swatch:"#3D8B5D", desc:qsTr("Light, fresh and calm")},
+                    {name:qsTr("Midnight"), value:"midnight", swatch:"#73C995", desc:qsTr("Soft contrast for darker rooms")}
                 ]
                 delegate: Rectangle {
                     required property var modelData
@@ -51,23 +69,23 @@ Item {
                 Layout.fillWidth: true; implicitHeight: preferences.implicitHeight + 32; radius: theme.radius; color: theme.card; border.color: theme.border
                 ColumnLayout {
                     id: preferences; anchors.fill: parent; anchors.margins: 16; spacing: 14
-                    Text { text: "Preferences"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
+                    Text { text: qsTr("Preferences"); color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
                     RowLayout {
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
-                            Text { text: "Reduce animations"; color: theme.text; font.pixelSize: 14 }
-                            Text { text: "Use fewer motion effects throughout the app"; color: theme.muted; font.pixelSize: 12 }
+                            Text { text: qsTr("Reduce animations"); color: theme.text; font.pixelSize: 14 }
+                            Text { text: qsTr("Use fewer motion effects throughout the app"); color: theme.muted; font.pixelSize: 12 }
                         }
                         Switch { checked: settingsManager.reduceAnimations; onToggled: settingsManager.reduceAnimations = checked }
                     }
                     RowLayout {
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
-                            Text { text: "Default task duration"; color: theme.text; font.pixelSize: 14 }
-                            Text { text: "Used for new tasks"; color: theme.muted; font.pixelSize: 12 }
+                            Text { text: qsTr("Default task duration"); color: theme.text; font.pixelSize: 14 }
+                            Text { text: qsTr("Used for new tasks"); color: theme.muted; font.pixelSize: 12 }
                         }
                         SpinBox { from: 0; to: 480; editable: true; value: settingsManager.defaultTaskDuration; onValueModified: settingsManager.defaultTaskDuration = value }
-                        Text { text: "minutes"; color: theme.muted; font.pixelSize: 12 }
+                        Text { text: qsTr("minutes"); color: theme.muted; font.pixelSize: 12 }
                     }
                 }
             }
@@ -75,11 +93,11 @@ Item {
                 Layout.fillWidth: true; implicitHeight: dataColumn.implicitHeight + 32; radius: theme.radius; color: theme.card; border.color: theme.border
                 ColumnLayout {
                     id: dataColumn; anchors.fill: parent; anchors.margins: 16; spacing: 12
-                    Text { text: "Data"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
-                    Text { text: "Your data stays on this device unless you export it."; color: theme.muted; font.pixelSize: 12 }
+                    Text { text: qsTr("Data"); color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
+                    Text { text: qsTr("Your data stays on this device unless you export it."); color: theme.muted; font.pixelSize: 12 }
                     RowLayout {
-                        AppButton { theme: page.theme; text: "Export Data"; primary: false; onClicked: exportDialog.open() }
-                        AppButton { theme: page.theme; text: "Import Data"; primary: false; onClicked: importDialog.open() }
+                        AppButton { theme: page.theme; text: qsTr("Export Data"); primary: false; onClicked: exportDialog.open() }
+                        AppButton { theme: page.theme; text: qsTr("Import Data"); primary: false; onClicked: importDialog.open() }
                     }
                 }
             }
@@ -88,12 +106,11 @@ Item {
                 ColumnLayout {
                     id: aboutColumn; anchors.fill: parent; anchors.margins: 16; spacing: 5
                     Text { text: "TinyBloom"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
-                    Text { text: "Version 0.1.0"; color: theme.muted; font.pixelSize: 12 }
-                    Text { text: "Small Steps, Real Progress."; color: theme.primary; font.pixelSize: 13; font.weight: Font.DemiBold; Layout.topMargin: 4 }
-                    Text { text: "Free & Open Source · MIT License"; color: theme.muted; font.pixelSize: 12 }
+                    Text { text: qsTr("Version 0.1.0"); color: theme.muted; font.pixelSize: 12 }
+                    Text { text: qsTr("Small Steps, Real Progress."); color: theme.primary; font.pixelSize: 13; font.weight: Font.DemiBold; Layout.topMargin: 4 }
+                    Text { text: qsTr("Free & Open Source · MIT License"); color: theme.muted; font.pixelSize: 12 }
                 }
             }
         }
     }
 }
-
