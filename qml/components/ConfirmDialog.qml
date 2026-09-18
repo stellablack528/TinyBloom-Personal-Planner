@@ -8,9 +8,10 @@ Dialog {
     property var targetId: -1
     signal confirmed(var id)
     modal: true; anchors.centerIn: parent; width: 390
-    padding: 0; closePolicy: Popup.CloseOnEscape
+    padding: 22; closePolicy: Popup.CloseOnEscape
     background: Rectangle { radius: 16; color: theme.card; border.color: theme.border }
     contentItem: ColumnLayout {
+        Accessible.name: qsTr("Confirm task deletion")
         spacing: 14
         Text { text: qsTr("Delete this task?"); color: theme.text; font.pixelSize: 20; font.weight: Font.DemiBold }
         Text { text: qsTr("This task and its small steps will be removed."); color: theme.muted; font.pixelSize: 14; wrapMode: Text.WordWrap; Layout.fillWidth: true }

@@ -8,7 +8,7 @@ TinyBloom v0.1 intentionally uses a small, explicit architecture.
 2. **Application logic** is held by `TaskManager` and `SettingsManager`. They validate input, coordinate persistence, update models, and expose friendly errors.
 3. **Models** use `QAbstractListModel` delegates rather than creating task objects manually in QML. Four lightweight views share one in-memory task snapshot.
 4. **Database** is owned by one `DatabaseManager` connection. It enables SQLite foreign keys, creates the schema, and performs parameterized queries.
-5. **Data service** serializes a versioned JSON document. Exports use `QSaveFile`; imports validate before starting and use a transaction so failure leaves existing data intact.
+5. **Data service** serializes a versioned JSON document. Exports use `QSaveFile`; imports validate, create a timestamped safety backup beside the database, and use a transaction so failure leaves existing data intact.
 
 ## Data lifecycle
 
@@ -16,7 +16,7 @@ The database path comes from `QStandardPaths::AppDataLocation`. At startup, the 
 
 `subtasks.task_id` is a foreign key with `ON DELETE CASCADE`, preventing orphan rows. Dates are stored as ISO calendar dates; timestamps are stored as UTC ISO 8601 strings.
 
-For isolated automated checks, `TINYBLOOM_DATABASE_PATH` can point the executable at a temporary database. `TINYBLOOM_SCREENSHOT_PATH` asks a test run to save one rendered frame and exit; normal launches do neither.
+For isolated automated checks, `TINYBLOOM_DATABASE_PATH` can point the executable at a temporary database. `TINYBLOOM_SCREENSHOT_PATH` asks a test run to save one rendered frame and exit. `TINYBLOOM_SCREENSHOT_SCENARIO` can select a stable UI state such as `tasks`, `settings-midnight`, `task-dialog`, `task-dialog-advanced`, or `date-picker`; normal launches use none of these hooks.
 
 Interface text uses Qt Linguist translations. Simplified Chinese is the default for a new profile, while English uses the source strings. The selected language is stored in SQLite and `QQmlApplicationEngine::retranslate()` updates the live interface. `TINYBLOOM_LANGUAGE_OVERRIDE` exists only for deterministic localization smoke tests and persists the requested test language in the isolated database.
 

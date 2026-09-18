@@ -304,7 +304,7 @@ QJsonObject DatabaseManager::exportObject() const
     if (query.exec(QStringLiteral("SELECT key,value FROM settings"))) {
         while (query.next()) settings.insert(query.value(0).toString(), query.value(1).toString());
     }
-    return QJsonObject{{"version", QStringLiteral("0.1.0")},
+    return QJsonObject{{"version", QStringLiteral("0.1.1")},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
         {"subtasks", subtasksArray}, {"settings", settings}};
 }

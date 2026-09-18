@@ -1,9 +1,16 @@
 #include "database/DatabaseManager.h"
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
+#include "services/DataService.h"
 
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QSignalSpy>
 #include <QTemporaryDir>
+#include <QUrl>
 #include <QtTest>
 
 class CoreTests final : public QObject
@@ -17,6 +24,7 @@ private slots:
     void subtasksAndCascadeDelete();
     void settingsPersistence();
     void jsonRoundTripAndInvalidImportSafety();
+    void dataServiceImportCreatesSafetyBackup();
     void classificationSearchAndValidation();
     void completeUserJourney();
 
@@ -111,6 +119,36 @@ void CoreTests::jsonRoundTripAndInvalidImportSafety()
     QVERIFY(m_database->importObject(exported));
     QCOMPARE(m_database->loadTasks().size(), 1);
     QCOMPARE(m_database->loadTasks().first().title, QStringLiteral("Export me"));
+}
+
+void CoreTests::dataServiceImportCreatesSafetyBackup()
+{
+    SettingsManager settings(m_database.get());
+    settings.load();
+    DataService dataService(m_database.get(), m_tasks.get(), &settings);
+
+    QVERIFY(m_tasks->createTask(QStringLiteral("Export me")));
+    const QString importPath = m_temp->filePath(QStringLiteral("import.json"));
+    QVERIFY(dataService.exportData(QUrl::fromLocalFile(importPath)));
+    QVERIFY(m_tasks->createTask(QStringLiteral("Keep in backup")));
+    QCOMPARE(m_tasks->totalCount(), 2);
+
+    QSignalSpy successSpy(&dataService, &DataService::operationSucceeded);
+    QVERIFY(dataService.importData(QUrl::fromLocalFile(importPath)));
+    QCOMPARE(m_tasks->totalCount(), 1);
+    QCOMPARE(m_database->loadTasks().first().title, QStringLiteral("Export me"));
+    QCOMPARE(successSpy.count(), 1);
+
+    const QDir dataFolder(QFileInfo(m_database->databasePath()).absolutePath());
+    const QStringList backups = dataFolder.entryList(
+        {QStringLiteral("TinyBloom-backup-before-import-*.json")}, QDir::Files);
+    QCOMPARE(backups.size(), 1);
+    QFile backup(dataFolder.filePath(backups.first()));
+    QVERIFY(backup.open(QIODevice::ReadOnly));
+    QJsonParseError parseError;
+    const QJsonDocument backupDocument = QJsonDocument::fromJson(backup.readAll(), &parseError);
+    QCOMPARE(parseError.error, QJsonParseError::NoError);
+    QCOMPARE(backupDocument.object().value(QStringLiteral("tasks")).toArray().size(), 2);
 }
 
 void CoreTests::classificationSearchAndValidation()

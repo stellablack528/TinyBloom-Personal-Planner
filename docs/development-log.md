@@ -49,3 +49,13 @@
 **Solution:** Integrate Qt Linguist, translate all 127 user-facing strings, persist a `language` setting in SQLite, retranslate QML at runtime, refresh translated model roles, and format dates with the selected locale.
 
 **Result:** Fresh profiles start in Simplified Chinese. Users can switch to English in Settings, and the selection survives a restart.
+
+## User testing exposed release-quality usability gaps
+
+**Problem:** The first public build worked end to end, but ordinary-user testing found that imports could replace data without warning, the collapsed task dialog wasted space, date entry required typing a strict format, some filters were cramped, and the Windows executable had no recognizable icon.
+
+**Cause:** The first release focused on complete task flows and persistence. Destructive-action safeguards, platform packaging details, contrast, keyboard interaction, and compact states needed a second pass with the packaged application rather than only code-level tests.
+
+**Solution:** Add an import confirmation and timestamped automatic JSON backup, a localized date picker with Today/Tomorrow shortcuts, responsive dialog sizing, explicit filter widths, stronger Midnight contrast, keyboard and accessibility metadata for custom controls, and a multi-resolution Windows icon embedded in the executable.
+
+**Result:** v0.1.1 preserves current data before every import, exposes safer and faster date entry, renders the affected screens cleanly at the default window size, and presents TinyBloom with its own icon and Windows version metadata.

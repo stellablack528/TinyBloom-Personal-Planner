@@ -48,11 +48,15 @@ ApplicationWindow {
     Popup {
         id: toast; property string message
         x: root.width - width - 24; y: root.height - height - 24
-        width: Math.min(420, toastText.implicitWidth + 40); height: 52; padding: 0
+        width: Math.min(460, root.width - 48)
+        height: Math.max(52, toastText.implicitHeight + 24); padding: 0
         closePolicy: Popup.NoAutoClose
         background: Rectangle { radius: 12; color: theme.text }
-        contentItem: Text { id: toastText; text: toast.message; color: theme.window; font.pixelSize: 13; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-        Timer { id: toastTimer; interval: 2800; onTriggered: toast.close() }
+        contentItem: Text {
+            id: toastText; width: toast.width - 32; text: toast.message; color: theme.window; font.pixelSize: 13
+            wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+        }
+        Timer { id: toastTimer; interval: 4800; onTriggered: toast.close() }
         function show(text) { message = text; open(); toastTimer.restart() }
     }
     Connections { target: taskManager; function onErrorOccurred(message) { toast.show(message) } }
@@ -62,5 +66,18 @@ ApplicationWindow {
         function onOperationSucceeded(message) { toast.show(message) }
         function onOperationFailed(message) { toast.show(message) }
     }
-    Component.onCompleted: if (!databaseReady) toast.show(qsTr("Local storage could not be opened. Changes may not be saved."))
+    Component.onCompleted: {
+        if (!databaseReady) toast.show(qsTr("Local storage could not be opened. Changes may not be saved."))
+        if (screenshotScenario === "tasks") currentPage = 1
+        else if (screenshotScenario === "settings-midnight") {
+            settingsManager.theme = "midnight"
+            currentPage = 2
+        } else if (screenshotScenario === "task-dialog") {
+            Qt.callLater(() => taskDialog.openNew(Qt.formatDate(new Date(), "yyyy-MM-dd")))
+        } else if (screenshotScenario === "task-dialog-advanced") {
+            Qt.callLater(() => taskDialog.openScreenshotPreview(false))
+        } else if (screenshotScenario === "date-picker") {
+            Qt.callLater(() => taskDialog.openScreenshotPreview(true))
+        }
+    }
 }

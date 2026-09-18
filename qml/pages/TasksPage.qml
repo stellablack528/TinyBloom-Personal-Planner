@@ -25,9 +25,11 @@ Item {
             Layout.fillWidth: true; spacing: 12
             AppTextField {
                 id: searchField; theme: page.theme; Layout.fillWidth: true; placeholderText: qsTr("Search tasks...")
+                Accessible.name: qsTr("Search tasks")
                 onTextChanged: taskManager.searchTasks(text)
             }
             Rectangle {
+                Layout.preferredWidth: filterRow.implicitWidth + 10
                 implicitWidth: filterRow.implicitWidth + 10; implicitHeight: 44; radius: 11; color: theme.input; border.color: theme.border
                 RowLayout {
                     id: filterRow; anchors.centerIn: parent; spacing: 2
@@ -36,9 +38,11 @@ Item {
                         delegate: Button {
                             required property string modelData; required property int index
                             text: modelData; flat: true; checked: filterGroup.checkedButton === this
+                            implicitWidth: Math.max(68, filterLabel.implicitWidth + 24)
+                            Accessible.name: qsTr("Show %1 tasks").arg(modelData)
                             ButtonGroup.group: filterGroup
-                            contentItem: Text { text: parent.text; color: parent.checked ? theme.text : theme.muted; font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                            background: Rectangle { radius: 8; color: parent.checked ? theme.card : "transparent" }
+                            contentItem: Text { id: filterLabel; text: parent.text; color: parent.checked ? theme.text : theme.muted; font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                            background: Rectangle { radius: 8; color: parent.checked ? theme.card : "transparent"; border.width: parent.activeFocus ? 2 : 0; border.color: theme.primary }
                             onClicked: taskManager.filterTasks(index)
                             Component.onCompleted: if (index === 0) checked = true
                         }
@@ -55,9 +59,11 @@ Item {
                 delegate: Button {
                     required property string modelData; required property int index
                     text: modelData; flat: true; checked: scopeGroup.checkedButton === this
+                    implicitWidth: Math.max(58, scopeLabel.implicitWidth + 20)
+                    Accessible.name: qsTr("Show %1").arg(modelData)
                     ButtonGroup.group: scopeGroup
-                    contentItem: Text { text: parent.text; color: parent.checked ? theme.primary : theme.muted; font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                    background: Rectangle { radius: 8; color: parent.checked ? theme.primarySoft : "transparent" }
+                    contentItem: Text { id: scopeLabel; text: parent.text; color: parent.checked ? theme.primary : theme.muted; font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                    background: Rectangle { radius: 8; color: parent.checked ? theme.primarySoft : "transparent"; border.width: parent.activeFocus ? 2 : 0; border.color: theme.primary }
                     onClicked: taskManager.setTaskScope(index)
                     Component.onCompleted: if (index === 0) checked = true
                 }

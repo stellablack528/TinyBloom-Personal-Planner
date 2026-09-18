@@ -24,8 +24,8 @@ Button {
         color: control.danger ? (control.hovered ? Qt.alpha(theme.danger, 0.14) : "transparent")
             : control.primary ? (control.hovered ? theme.primaryHover : theme.primary)
             : (control.hovered ? theme.cardHover : "transparent")
-        border.color: control.primary ? "transparent" : (control.danger ? Qt.alpha(theme.danger, 0.4) : theme.border)
+        border.width: control.activeFocus ? 2 : 1
+        border.color: control.activeFocus ? theme.primary : control.primary ? "transparent" : (control.danger ? Qt.alpha(theme.danger, 0.4) : theme.border)
         Behavior on color { ColorAnimation { duration: theme.animationDuration } }
     }
 }
-

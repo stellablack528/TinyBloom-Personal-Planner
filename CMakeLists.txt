@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(TinyBloom VERSION 0.1.0 LANGUAGES CXX)
+project(TinyBloom VERSION 0.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,6 +29,12 @@ set(TINYBLOOM_SOURCES
 
 qt_add_executable(TinyBloom src/main.cpp ${TINYBLOOM_SOURCES})
 
+qt_add_resources(TinyBloom "tinybloom_app_assets"
+    PREFIX "/"
+    FILES
+        resources/icons/app-icon.svg
+)
+
 qt_add_qml_module(TinyBloom
     URI TinyBloom
     VERSION 1.0
@@ -38,7 +44,9 @@ qt_add_qml_module(TinyBloom
         qml/components/AppButton.qml
         qml/components/AppTextField.qml
         qml/components/ConfirmDialog.qml
+        qml/components/DatePickerPopup.qml
         qml/components/EmptyState.qml
+        qml/components/ImportConfirmDialog.qml
         qml/components/ProgressCard.qml
         qml/components/Sidebar.qml
         qml/components/TaskCard.qml
@@ -61,6 +69,7 @@ target_link_libraries(TinyBloom PRIVATE
 )
 
 if(WIN32)
+    target_sources(TinyBloom PRIVATE resources/tinybloom.rc)
     set_target_properties(TinyBloom PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 

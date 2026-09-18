@@ -4,6 +4,7 @@
 #include "services/DataService.h"
 
 #include <QGuiApplication>
+#include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
@@ -17,7 +18,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("TinyBloom"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("tinybloom.app"));
     QCoreApplication::setApplicationName(QStringLiteral("TinyBloom"));
-    QCoreApplication::setApplicationVersion(QStringLiteral("0.1.0"));
+    QCoreApplication::setApplicationVersion(QStringLiteral("0.1.1"));
+    QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/resources/icons/app-icon.svg")));
     QQuickStyle::setStyle(QStringLiteral("Basic"));
 
     DatabaseManager database;
@@ -53,6 +55,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("settingsManager"), &settingsManager);
     engine.rootContext()->setContextProperty(QStringLiteral("dataService"), &dataService);
     engine.rootContext()->setContextProperty(QStringLiteral("databaseReady"), database.isOpen());
+    engine.rootContext()->setContextProperty(QStringLiteral("screenshotScenario"),
+        qEnvironmentVariable("TINYBLOOM_SCREENSHOT_SCENARIO"));
     engine.loadFromModule(QStringLiteral("TinyBloom"), QStringLiteral("Main"));
     if (engine.rootObjects().isEmpty()) return -1;
     const QString screenshotPath = qEnvironmentVariable("TINYBLOOM_SCREENSHOT_PATH");

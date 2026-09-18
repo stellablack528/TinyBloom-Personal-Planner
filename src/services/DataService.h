@@ -21,8 +21,9 @@ signals:
     void operationFailed(const QString &message);
 
 private:
+    [[nodiscard]] QString createSafetyBackup();
+
     DatabaseManager *m_database;
     TaskManager *m_tasks;
     SettingsManager *m_settings;
 };
-

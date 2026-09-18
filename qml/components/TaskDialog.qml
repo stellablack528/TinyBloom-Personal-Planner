@@ -8,6 +8,13 @@ Dialog {
     property bool editing: false
     property var taskId: -1
     property var taskData: ({})
+    readonly property bool dueDateValid: {
+        const value = dueField.text.trim()
+        if (value.length === 0) return true
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+        const parsed = new Date(value + "T00:00:00")
+        return !isNaN(parsed.getTime()) && Qt.formatDate(parsed, "yyyy-MM-dd") === value
+    }
     signal deleteRequested(var id)
 
     Connections {
@@ -21,10 +28,17 @@ Dialog {
     modal: true
     anchors.centerIn: parent
     width: Math.min(620, parent ? parent.width - 40 : 620)
-    height: Math.min(720, parent ? parent.height - 40 : 720)
+    height: Math.min(moreOptions.checked ? (editing ? 700 : 610) : 310,
+                     parent ? parent.height - 40 : 700)
     padding: 0
     closePolicy: Popup.CloseOnEscape
+    Behavior on height { NumberAnimation { duration: theme.animationDuration; easing.type: Easing.OutCubic } }
     background: Rectangle { radius: 18; color: theme.card; border.color: theme.border }
+
+    DatePickerPopup {
+        id: datePicker; theme: dialog.theme
+        onDateSelected: value => dueField.text = Qt.formatDate(value, "yyyy-MM-dd")
+    }
 
     function openNew(defaultDate) {
         editing = false; taskId = -1; taskData = ({})
@@ -40,6 +54,11 @@ Dialog {
         priorityBox.currentIndex = task.priority; durationField.value = task.estimatedMinutes
         categoryField.text = task.category; moreOptions.checked = true; open(); titleField.forceActiveFocus()
     }
+    function openScreenshotPreview(showCalendar) {
+        openNew(Qt.formatDate(new Date(), "yyyy-MM-dd"))
+        moreOptions.checked = true
+        if (showCalendar) Qt.callLater(() => datePicker.openFor(dueField.text))
+    }
     function submit() {
         let success = editing
             ? taskManager.updateTask(taskId, titleField.text, descriptionField.text, dueField.text,
@@ -50,6 +69,7 @@ Dialog {
     }
 
     contentItem: ColumnLayout {
+        Accessible.name: dialog.editing ? qsTr("Edit task") : qsTr("Create task")
         anchors.fill: parent; anchors.margins: 26; spacing: 16
         RowLayout {
             Layout.fillWidth: true
@@ -61,17 +81,20 @@ Dialog {
             Item { Layout.fillWidth: true }
             RoundButton {
                 text: "×"; font.pixelSize: 22; flat: true
+                Accessible.name: qsTr("Close")
                 contentItem: Text { text: parent.text; color: theme.muted; font.pixelSize: 22; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                 onClicked: dialog.close()
             }
         }
         ScrollView {
+            id: formScroll
             Layout.fillWidth: true; Layout.fillHeight: true; clip: true
             ColumnLayout {
-                width: parent.width; spacing: 12
+                width: formScroll.availableWidth; spacing: 12
                 Text { text: qsTr("Task name"); color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
                 AppTextField {
                     id: titleField; theme: dialog.theme; Layout.fillWidth: true; placeholderText: qsTr("e.g. Read 10 pages")
+                    Accessible.name: qsTr("Task name")
                     maximumLength: 160; onAccepted: dialog.submit()
                 }
                 CheckBox {
@@ -97,9 +120,63 @@ Dialog {
                         Layout.fillWidth: true; columns: 2; columnSpacing: 12; rowSpacing: 8
                         Text { text: qsTr("Due date"); color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
                         Text { text: qsTr("Priority"); color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
-                        AppTextField { id: dueField; theme: dialog.theme; Layout.fillWidth: true; placeholderText: qsTr("YYYY-MM-DD"); maximumLength: 10 }
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 5
+                            RowLayout {
+                                Layout.fillWidth: true; spacing: 6
+                                AppTextField {
+                                    id: dueField; theme: dialog.theme; Layout.fillWidth: true
+                                    placeholderText: qsTr("No due date"); maximumLength: 10
+                                    Accessible.name: qsTr("Due date")
+                                    onAccepted: if (dialog.dueDateValid) dialog.submit()
+                                }
+                                ToolButton {
+                                    implicitWidth: 42; implicitHeight: 44; text: "▦"
+                                    Accessible.name: qsTr("Open calendar")
+                                    contentItem: Text { text: parent.text; color: theme.primary; font.pixelSize: 20; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                    background: Rectangle { radius: 10; color: parent.hovered ? theme.cardHover : theme.input; border.color: theme.border }
+                                    onClicked: datePicker.openFor(dueField.text)
+                                }
+                            }
+                            RowLayout {
+                                spacing: 2
+                                Repeater {
+                                    model: [
+                                        { label: qsTr("Today"), offset: 0 },
+                                        { label: qsTr("Tomorrow"), offset: 1 }
+                                    ]
+                                    delegate: Button {
+                                        required property var modelData
+                                        text: modelData.label; flat: true; implicitHeight: 28
+                                        implicitWidth: quickLabel.implicitWidth + 16
+                                        Accessible.name: modelData.label
+                                        contentItem: Text { id: quickLabel; text: parent.text; color: theme.primary; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                        background: Rectangle { radius: 7; color: parent.hovered ? theme.primarySoft : "transparent" }
+                                        onClicked: {
+                                            const value = new Date()
+                                            value.setDate(value.getDate() + modelData.offset)
+                                            dueField.text = Qt.formatDate(value, "yyyy-MM-dd")
+                                        }
+                                    }
+                                }
+                                Button {
+                                    text: qsTr("Clear"); flat: true; implicitHeight: 28
+                                    implicitWidth: clearLabel.implicitWidth + 16
+                                    Accessible.name: qsTr("Clear due date")
+                                    contentItem: Text { id: clearLabel; text: parent.text; color: theme.muted; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                    background: Rectangle { radius: 7; color: parent.hovered ? theme.cardHover : "transparent" }
+                                    onClicked: dueField.text = ""
+                                }
+                            }
+                            Text {
+                                visible: !dialog.dueDateValid
+                                text: qsTr("Use a valid date in YYYY-MM-DD format.")
+                                color: theme.danger; font.pixelSize: 11; wrapMode: Text.WordWrap; Layout.fillWidth: true
+                            }
+                        }
                         ComboBox {
                             id: priorityBox; Layout.fillWidth: true; model: [qsTr("Low"), qsTr("Medium"), qsTr("High")]
+                            Accessible.name: qsTr("Priority")
                             contentItem: Text { leftPadding: 12; text: priorityBox.displayText; color: theme.text; verticalAlignment: Text.AlignVCenter }
                             background: Rectangle { radius: 10; color: theme.input; border.color: theme.border }
                         }
@@ -107,10 +184,11 @@ Dialog {
                         Text { text: qsTr("Category"); color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
                         SpinBox {
                             id: durationField; Layout.fillWidth: true; from: 0; to: 10080; editable: true
+                            Accessible.name: qsTr("Estimate in minutes")
                             contentItem: TextInput { text: durationField.textFromValue(durationField.value, durationField.locale); color: theme.text; horizontalAlignment: Qt.AlignHCenter; verticalAlignment: Qt.AlignVCenter; inputMethodHints: Qt.ImhDigitsOnly }
                             background: Rectangle { radius: 10; color: theme.input; border.color: theme.border }
                         }
-                        AppTextField { id: categoryField; theme: dialog.theme; Layout.fillWidth: true; placeholderText: qsTr("Personal"); maximumLength: 80 }
+                        AppTextField { id: categoryField; theme: dialog.theme; Layout.fillWidth: true; placeholderText: qsTr("Personal"); maximumLength: 80; Accessible.name: qsTr("Category") }
                     }
                     ColumnLayout {
                         visible: dialog.editing; Layout.fillWidth: true; spacing: 8; Layout.topMargin: 4
@@ -122,18 +200,20 @@ Dialog {
                                 Layout.fillWidth: true
                                 CheckBox {
                                     checked: modelData.completed
+                                    Accessible.name: qsTr("Mark %1 complete").arg(modelData.title)
                                     onClicked: taskManager.toggleSubtask(dialog.taskId, modelData.id)
                                 }
                                 Text { Layout.fillWidth: true; text: modelData.title; color: modelData.completed ? theme.muted : theme.text; font.strikeout: modelData.completed; font.pixelSize: 13 }
                                 ToolButton {
                                     text: "×"; onClicked: taskManager.deleteSubtask(dialog.taskId, modelData.id)
+                                    Accessible.name: qsTr("Remove %1").arg(modelData.title)
                                     contentItem: Text { text: parent.text; color: theme.muted; font.pixelSize: 18; horizontalAlignment: Text.AlignHCenter }
                                 }
                             }
                         }
                         RowLayout {
                             Layout.fillWidth: true
-                            AppTextField { id: subtaskField; theme: dialog.theme; Layout.fillWidth: true; placeholderText: qsTr("Add a small step"); maximumLength: 160; onAccepted: addStepButton.clicked() }
+                            AppTextField { id: subtaskField; theme: dialog.theme; Layout.fillWidth: true; placeholderText: qsTr("Add a small step"); maximumLength: 160; Accessible.name: qsTr("New small step"); onAccepted: addStepButton.clicked() }
                             AppButton {
                                 id: addStepButton; theme: dialog.theme; text: qsTr("Add"); primary: false
                                 onClicked: if (taskManager.createSubtask(dialog.taskId, subtaskField.text)) subtaskField.text = ""
@@ -151,7 +231,12 @@ Dialog {
             }
             Item { Layout.fillWidth: true }
             AppButton { theme: dialog.theme; text: qsTr("Cancel"); primary: false; onClicked: dialog.close() }
-            AppButton { theme: dialog.theme; text: dialog.editing ? qsTr("Save changes") : qsTr("Create"); onClicked: dialog.submit() }
+            AppButton {
+                theme: dialog.theme; text: dialog.editing ? qsTr("Save changes") : qsTr("Create")
+                enabled: titleField.text.trim().length > 0 && dialog.dueDateValid
+                opacity: enabled ? 1 : 0.48
+                onClicked: dialog.submit()
+            }
         }
     }
 }

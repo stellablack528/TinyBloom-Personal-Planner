@@ -16,7 +16,14 @@ Item {
     FileDialog {
         id: importDialog; title: qsTr("Import TinyBloom data"); fileMode: FileDialog.OpenFile
         nameFilters: [qsTr("TinyBloom JSON (*.json)")]
-        onAccepted: dataService.importData(selectedFile)
+        onAccepted: {
+            importConfirm.sourceFile = selectedFile
+            importConfirm.open()
+        }
+    }
+    ImportConfirmDialog {
+        id: importConfirm; theme: page.theme
+        onConfirmed: file => dataService.importData(file)
     }
 
     Flickable {
@@ -36,6 +43,7 @@ Item {
                     }
                     ComboBox {
                         id: languageBox; model: [qsTr("简体中文"), qsTr("English")]
+                        Accessible.name: qsTr("Language")
                         currentIndex: settingsManager.language === "zh_CN" ? 0 : 1
                         onActivated: settingsManager.language = currentIndex === 0 ? "zh_CN" : "en"
                         contentItem: Text { leftPadding: 12; text: languageBox.displayText; color: theme.text; verticalAlignment: Text.AlignVCenter }
@@ -49,10 +57,17 @@ Item {
                     {name:qsTr("Midnight"), value:"midnight", swatch:"#73C995", desc:qsTr("Soft contrast for darker rooms")}
                 ]
                 delegate: Rectangle {
+                    id: themeChoice
                     required property var modelData
                     Layout.fillWidth: true; height: 72; radius: theme.radius; color: theme.card
                     border.width: settingsManager.theme === modelData.value ? 2 : 1
-                    border.color: settingsManager.theme === modelData.value ? theme.primary : theme.border
+                    border.color: activeFocus || settingsManager.theme === modelData.value ? theme.primary : theme.border
+                    activeFocusOnTab: true
+                    Accessible.role: Accessible.RadioButton
+                    Accessible.name: modelData.name
+                    Accessible.description: modelData.desc
+                    Accessible.checked: settingsManager.theme === modelData.value
+                    Accessible.focusable: true
                     RowLayout {
                         anchors.fill: parent; anchors.margins: 16; spacing: 14
                         Rectangle { width: 36; height: 36; radius: 11; color: modelData.swatch }
@@ -62,7 +77,9 @@ Item {
                         }
                         Text { text: settingsManager.theme === modelData.value ? "✓" : ""; color: theme.primary; font.pixelSize: 18; font.weight: Font.Bold }
                     }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: settingsManager.theme = modelData.value }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { themeChoice.forceActiveFocus(); settingsManager.theme = modelData.value } }
+                    Keys.onReturnPressed: event => { settingsManager.theme = modelData.value; event.accepted = true }
+                    Keys.onSpacePressed: event => { settingsManager.theme = modelData.value; event.accepted = true }
                 }
             }
             Rectangle {
@@ -76,7 +93,7 @@ Item {
                             Text { text: qsTr("Reduce animations"); color: theme.text; font.pixelSize: 14 }
                             Text { text: qsTr("Use fewer motion effects throughout the app"); color: theme.muted; font.pixelSize: 12 }
                         }
-                        Switch { checked: settingsManager.reduceAnimations; onToggled: settingsManager.reduceAnimations = checked }
+                        Switch { Accessible.name: qsTr("Reduce animations"); checked: settingsManager.reduceAnimations; onToggled: settingsManager.reduceAnimations = checked }
                     }
                     RowLayout {
                         Layout.fillWidth: true
@@ -84,7 +101,7 @@ Item {
                             Text { text: qsTr("Default task duration"); color: theme.text; font.pixelSize: 14 }
                             Text { text: qsTr("Used for new tasks"); color: theme.muted; font.pixelSize: 12 }
                         }
-                        SpinBox { from: 0; to: 480; editable: true; value: settingsManager.defaultTaskDuration; onValueModified: settingsManager.defaultTaskDuration = value }
+                        SpinBox { Accessible.name: qsTr("Default task duration in minutes"); from: 0; to: 480; editable: true; value: settingsManager.defaultTaskDuration; onValueModified: settingsManager.defaultTaskDuration = value }
                         Text { text: qsTr("minutes"); color: theme.muted; font.pixelSize: 12 }
                     }
                 }
@@ -106,7 +123,7 @@ Item {
                 ColumnLayout {
                     id: aboutColumn; anchors.fill: parent; anchors.margins: 16; spacing: 5
                     Text { text: "TinyBloom"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
-                    Text { text: qsTr("Version 0.1.0"); color: theme.muted; font.pixelSize: 12 }
+                    Text { text: qsTr("Version 0.1.1"); color: theme.muted; font.pixelSize: 12 }
                     Text { text: qsTr("Small Steps, Real Progress."); color: theme.primary; font.pixelSize: 13; font.weight: Font.DemiBold; Layout.topMargin: 4 }
                     Text { text: qsTr("Free & Open Source · MIT License"); color: theme.muted; font.pixelSize: 12 }
                 }

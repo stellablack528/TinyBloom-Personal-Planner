@@ -2,7 +2,10 @@
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
 
+#include <QDateTime>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonDocument>
 #include <QSaveFile>
 
@@ -31,9 +34,35 @@ bool DataService::importData(const QUrl &fileUrl)
         emit operationFailed(tr("This file does not contain valid JSON."));
         return false;
     }
+    const QString backupPath = createSafetyBackup();
+    if (backupPath.isEmpty()) return false;
     if (!m_database->importObject(document.object())) { emit operationFailed(m_database->lastError()); return false; }
     m_tasks->reload();
     m_settings->load();
-    emit operationSucceeded(tr("Your TinyBloom data was imported."));
+    emit operationSucceeded(tr("Your TinyBloom data was imported. Backup saved to %1")
+        .arg(QDir::toNativeSeparators(backupPath)));
     return true;
+}
+
+QString DataService::createSafetyBackup()
+{
+    const QFileInfo databaseInfo(m_database->databasePath());
+    if (databaseInfo.absolutePath().isEmpty()) {
+        emit operationFailed(tr("Unable to find the TinyBloom data folder."));
+        return {};
+    }
+    const QString timestamp = QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss-zzz"));
+    const QString backupPath = databaseInfo.dir().filePath(
+        QStringLiteral("TinyBloom-backup-before-import-%1.json").arg(timestamp));
+    QSaveFile backup(backupPath);
+    if (!backup.open(QIODevice::WriteOnly)) {
+        emit operationFailed(tr("Unable to create a safety backup. Import was cancelled."));
+        return {};
+    }
+    backup.write(QJsonDocument(m_database->exportObject()).toJson(QJsonDocument::Indented));
+    if (!backup.commit()) {
+        emit operationFailed(tr("Unable to finish the safety backup. Import was cancelled."));
+        return {};
+    }
+    return backupPath;
 }
