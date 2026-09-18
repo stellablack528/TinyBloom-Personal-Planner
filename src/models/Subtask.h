@@ -10,5 +10,5 @@ struct Subtask
     QString title;
     bool completed = false;
     QDateTime createdAt;
+    bool experienceAwarded = false;
 };
-

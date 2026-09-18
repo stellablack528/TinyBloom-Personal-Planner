@@ -1,6 +1,7 @@
 #include "database/DatabaseManager.h"
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
+#include "managers/GrowthManager.h"
 #include "services/DataService.h"
 
 #include <QDir>
@@ -9,6 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSignalSpy>
+#include <QSqlQuery>
 #include <QTemporaryDir>
 #include <QUrl>
 #include <QtTest>
@@ -25,6 +27,9 @@ private slots:
     void settingsPersistence();
     void jsonRoundTripAndInvalidImportSafety();
     void dataServiceImportCreatesSafetyBackup();
+    void growthRewardsAreOneTimeAndPersistent();
+    void vitalityDecaysAfterInactiveDays();
+    void legacyDatabaseMigratesToGrowthSchema();
     void classificationSearchAndValidation();
     void completeUserJourney();
 
@@ -149,6 +154,83 @@ void CoreTests::dataServiceImportCreatesSafetyBackup()
     const QJsonDocument backupDocument = QJsonDocument::fromJson(backup.readAll(), &parseError);
     QCOMPARE(parseError.error, QJsonParseError::NoError);
     QCOMPARE(backupDocument.object().value(QStringLiteral("tasks")).toArray().size(), 2);
+}
+
+void CoreTests::growthRewardsAreOneTimeAndPersistent()
+{
+    GrowthManager growth(m_database.get());
+    QVERIFY(growth.initialize());
+    connect(m_tasks.get(), &TaskManager::taskCompleted, &growth, &GrowthManager::recordTaskCompleted);
+    connect(m_tasks.get(), &TaskManager::subtaskCompleted, &growth, &GrowthManager::recordSubtaskCompleted);
+
+    QVERIFY(m_tasks->createTask(QStringLiteral("Grow one leaf")));
+    const qint64 taskId = m_database->exportObject().value(QStringLiteral("tasks")).toArray().first().toObject().value(QStringLiteral("id")).toInteger();
+    QSignalSpy rewardSpy(&growth, &GrowthManager::experienceAwarded);
+    QVERIFY(m_tasks->toggleTask(taskId));
+    QCOMPARE(growth.totalXp(), 20);
+    QCOMPARE(growth.todayXp(), 20);
+    QCOMPARE(growth.progressDays(), 1);
+    QCOMPARE(rewardSpy.count(), 1);
+
+    QVERIFY(m_tasks->toggleTask(taskId));
+    QVERIFY(m_tasks->toggleTask(taskId));
+    QCOMPARE(growth.totalXp(), 20);
+    QCOMPARE(rewardSpy.count(), 1);
+
+    QVERIFY(m_tasks->createSubtask(taskId, QStringLiteral("Water it")));
+    const QVariantMap task = m_tasks->getTask(taskId);
+    const qint64 subtaskId = task.value(QStringLiteral("subtasks")).toList().first().toMap().value(QStringLiteral("id")).toLongLong();
+    QVERIFY(m_tasks->toggleSubtask(taskId, subtaskId));
+    QCOMPARE(growth.totalXp(), 25);
+    QCOMPARE(growth.todayXp(), 25);
+    QCOMPARE(rewardSpy.count(), 2);
+
+    GrowthManager reopened(m_database.get());
+    QVERIFY(reopened.initialize());
+    QCOMPARE(reopened.totalXp(), 25);
+    QCOMPARE(reopened.progressDays(), 1);
+}
+
+void CoreTests::vitalityDecaysAfterInactiveDays()
+{
+    QJsonObject exported = m_database->exportObject();
+    QJsonObject growth = exported.value(QStringLiteral("growth")).toObject();
+    growth.insert(QStringLiteral("vitality"), 100);
+    growth.insert(QStringLiteral("vitalityUpdatedDate"), QDate::currentDate().addDays(-5).toString(Qt::ISODate));
+    exported.insert(QStringLiteral("growth"), growth);
+    QVERIFY(m_database->importObject(exported));
+
+    GrowthManager growthManager(m_database.get());
+    QVERIFY(growthManager.initialize());
+    QCOMPARE(growthManager.vitality(), 25);
+    QCOMPARE(growthManager.vitalityState(), 2);
+    QCOMPARE(growthManager.totalXp(), 0);
+}
+
+void CoreTests::legacyDatabaseMigratesToGrowthSchema()
+{
+    const QString path = m_temp->filePath(QStringLiteral("legacy.sqlite3"));
+    const QString connectionName = QStringLiteral("legacy_setup");
+    {
+        QSqlDatabase legacy = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connectionName);
+        legacy.setDatabaseName(path);
+        QVERIFY(legacy.open());
+        QSqlQuery query(legacy);
+        QVERIFY(query.exec(QStringLiteral("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,description TEXT NOT NULL DEFAULT '',completed INTEGER NOT NULL DEFAULT 0,priority INTEGER NOT NULL DEFAULT 1,due_date TEXT,estimated_minutes INTEGER NOT NULL DEFAULT 25,category TEXT NOT NULL DEFAULT '',created_at TEXT NOT NULL,updated_at TEXT NOT NULL,completed_at TEXT)")));
+        QVERIFY(query.exec(QStringLiteral("CREATE TABLE subtasks (id INTEGER PRIMARY KEY AUTOINCREMENT,task_id INTEGER NOT NULL,title TEXT NOT NULL,completed INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL,FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE)")));
+        QVERIFY(query.exec(QStringLiteral("CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)")));
+        QVERIFY(query.exec(QStringLiteral("INSERT INTO tasks(title,description,completed,priority,estimated_minutes,category,created_at,updated_at,completed_at) VALUES('Already finished','',1,1,25,'','2026-01-01T00:00:00.000Z','2026-01-01T00:00:00.000Z','2026-01-01T00:00:00.000Z')")));
+        legacy.close();
+    }
+    QSqlDatabase::removeDatabase(connectionName);
+
+    DatabaseManager migrated;
+    QVERIFY(migrated.initializeDatabase(path));
+    QCOMPARE(migrated.loadTasks().size(), 1);
+    GrowthManager growth(&migrated);
+    QVERIFY(growth.initialize());
+    QCOMPARE(growth.totalXp(), 20);
+    QCOMPARE(growth.progressDays(), 1);
 }
 
 void CoreTests::classificationSearchAndValidation()

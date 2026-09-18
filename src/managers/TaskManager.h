@@ -52,6 +52,8 @@ public:
 signals:
     void tasksChanged();
     void statisticsChanged();
+    void taskCompleted(qint64 taskId, const QString &title);
+    void subtaskCompleted(qint64 subtaskId, const QString &title);
     void errorOccurred(const QString &message);
 
 private:

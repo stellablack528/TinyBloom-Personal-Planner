@@ -21,7 +21,12 @@ Rectangle {
             Text { text: "TinyBloom"; color: theme.text; font.pixelSize: 20; font.weight: Font.Bold }
         }
         Repeater {
-            model: [{label:qsTr("Today"), icon:"◉"}, {label:qsTr("Tasks"), icon:"☰"}, {label:qsTr("Settings"), icon:"⚙"}]
+            model: [
+                {label:qsTr("Today"), icon:"◉"},
+                {label:qsTr("Tasks"), icon:"☰"},
+                {label:qsTr("Garden"), icon:"✿"},
+                {label:qsTr("Settings"), icon:"⚙"}
+            ]
             delegate: Rectangle {
                 id: navigationItem
                 required property var modelData

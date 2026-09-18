@@ -1,6 +1,7 @@
 #include "DataService.h"
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
+#include "managers/GrowthManager.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -9,8 +10,9 @@
 #include <QJsonDocument>
 #include <QSaveFile>
 
-DataService::DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings, QObject *parent)
-    : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings) {}
+DataService::DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings,
+    GrowthManager *growth, QObject *parent)
+    : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings), m_growth(growth) {}
 
 bool DataService::exportData(const QUrl &fileUrl)
 {
@@ -39,6 +41,7 @@ bool DataService::importData(const QUrl &fileUrl)
     if (!m_database->importObject(document.object())) { emit operationFailed(m_database->lastError()); return false; }
     m_tasks->reload();
     m_settings->load();
+    if (m_growth) m_growth->reload();
     emit operationSucceeded(tr("Your TinyBloom data was imported. Backup saved to %1")
         .arg(QDir::toNativeSeparators(backupPath)));
     return true;

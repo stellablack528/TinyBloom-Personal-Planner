@@ -5,7 +5,7 @@ TinyBloom v0.1 intentionally uses a small, explicit architecture.
 ## Layers
 
 1. **QML presentation** renders pages and reusable controls. It contains view state only and invokes C++ operations.
-2. **Application logic** is held by `TaskManager` and `SettingsManager`. They validate input, coordinate persistence, update models, and expose friendly errors.
+2. **Application logic** is held by `TaskManager`, `SettingsManager`, and `GrowthManager`. They validate input, coordinate persistence, update models, and expose friendly errors.
 3. **Models** use `QAbstractListModel` delegates rather than creating task objects manually in QML. Four lightweight views share one in-memory task snapshot.
 4. **Database** is owned by one `DatabaseManager` connection. It enables SQLite foreign keys, creates the schema, and performs parameterized queries.
 5. **Data service** serializes a versioned JSON document. Exports use `QSaveFile`; imports validate, create a timestamped safety backup beside the database, and use a transaction so failure leaves existing data intact.
@@ -15,6 +15,8 @@ TinyBloom v0.1 intentionally uses a small, explicit architecture.
 The database path comes from `QStandardPaths::AppDataLocation`. At startup, the schema is created idempotently and tasks are read once into `TaskManager`. Successful mutations update SQLite first, then update the in-memory snapshot and reset the small filtered models. Import is the only operation that intentionally reloads the snapshot.
 
 `subtasks.task_id` is a foreign key with `ON DELETE CASCADE`, preventing orphan rows. Dates are stored as ISO calendar dates; timestamps are stored as UTC ISO 8601 strings.
+
+Growth state lives in a single `growth_profile` row. Tasks and subtasks carry a persisted one-time reward flag so repeatedly toggling completion cannot farm XP. Completing a task grants 20 XP and 28 vitality; a small step grants 5 XP and 10 vitality. Vitality decays by 15 for every calendar day without care and is applied when the profile is next loaded. XP and levels never decrease, while the QML plant renders healthy, tired, and wilted states from current vitality.
 
 For isolated automated checks, `TINYBLOOM_DATABASE_PATH` can point the executable at a temporary database. `TINYBLOOM_SCREENSHOT_PATH` asks a test run to save one rendered frame and exit. `TINYBLOOM_SCREENSHOT_SCENARIO` can select a stable UI state such as `tasks`, `settings-midnight`, `task-dialog`, `task-dialog-advanced`, or `date-picker`; normal launches use none of these hooks.
 

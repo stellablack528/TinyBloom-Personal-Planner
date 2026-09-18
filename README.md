@@ -4,6 +4,14 @@
 
 > **Small Steps, Real Progress.**
 
+## 🌱 普通用户直接下载
+
+如果你只是想使用 TinyBloom，不需要点击 GitHub 页面里的 `Code`、`Compare` 或分支按钮。
+
+👉 [直接下载 TinyBloom v0.1.0 Windows 版](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.1.0/TinyBloom-v0.1.0-windows-x64.zip)
+
+下载后解压完整文件夹，双击 `TinyBloom.exe` 即可使用。下面的构建说明主要提供给开发者。
+
 ## 📖 项目简介
 
 TinyBloom 是一个基于 **C++20、Qt 6、QML、SQLite 和 CMake** 开发的桌面计划管理应用。
@@ -17,10 +25,6 @@ TinyBloom 是一个基于 **C++20、Qt 6、QML、SQLite 和 CMake** 开发的桌
 - 不依赖网络服务
 - 用户数据默认保存在本地 SQLite 数据库中
 - 支持数据导入与导出
-
-## ⬇️ 下载
-
-Windows 用户可以从 [GitHub Releases](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases) 下载 `TinyBloom-v0.1.0-windows-x64.zip`。解压完整目录后运行 `TinyBloom.exe`，无需安装 Qt 或注册账号。
 
 ## ✨ 主要功能
 
@@ -72,6 +76,14 @@ TinyBloom v0.1.0 支持：
 
 主题和语言选择都会保存在本地数据库中，并在下次启动时恢复。
 
+### 🌿 XP 与花园（main 分支 v0.2）
+
+- 完成任务获得 20 XP，完成小步骤获得 5 XP
+- XP 和等级永久保留，植物会随累计进度经历种子、嫩芽、花苞和盛放等阶段
+- 花园活力每天会下降 15 点；长期没有行动时，植物会从精神变为疲惫并最终枯萎
+- 完成任务或小步骤可恢复活力，枯萎的植物也始终可以重新养好
+- 每个任务和小步骤只发放一次 XP，反复取消和勾选不会重复获得奖励
+
 ### 💾 本地数据
 
 TinyBloom 使用 SQLite 保存本地数据，包括：
@@ -79,14 +91,13 @@ TinyBloom 使用 SQLite 保存本地数据，包括：
 - Tasks
 - Subtasks
 - Settings
+- Growth profile（XP、等级与花园活力）
 
 同时支持：
 
 - Export JSON
 - Import JSON
 - 导入前自动创建安全备份，避免误覆盖现有数据
-
-Focus Timer、XP、成就、Garden 和高级统计仍在 Roadmap 中，尚未包含在 v0.1.0。
 
 ## 🛠️ 技术栈
 
@@ -119,6 +130,7 @@ SQLite
 核心模块包括：
 
 - TaskManager
+- GrowthManager
 - SettingsManager
 - DatabaseManager
 - DataService
@@ -273,19 +285,20 @@ TinyBloom 希望成为一个：
 
 ### v0.2
 
+- XP、等级与完成反馈
+- 会成长也会枯萎的个人花园
+- 活力恢复与每日衰减机制
 - Focus Timer
 - 基础统计
 
 ### v0.3
 
-- XP
-- 等级
 - 成就系统
 
 ### v0.4
 
-- Garden
-- 成长系统
+- 更多植物与花园装饰
+- 更丰富的成长阶段
 
 ### v0.5
 

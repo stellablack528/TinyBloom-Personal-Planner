@@ -111,6 +111,7 @@ bool TaskManager::toggleTask(const qint64 id)
     if (!m_database->updateTask(updated)) return fail(m_database->lastError());
     *task = updated;
     refreshModels();
+    if (updated.completed) emit taskCompleted(updated.id, updated.title);
     return true;
 }
 
@@ -148,6 +149,7 @@ bool TaskManager::toggleSubtask(const qint64 taskId, const qint64 subtaskId)
         if (!m_database->updateSubtask(updated)) return fail(m_database->lastError());
         subtask = updated;
         refreshModels();
+        if (updated.completed) emit subtaskCompleted(updated.id, updated.title);
         return true;
     }
     return fail(tr("This small step no longer exists."));

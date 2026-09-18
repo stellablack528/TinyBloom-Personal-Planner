@@ -75,7 +75,7 @@ bool DatabaseManager::openDatabase(const QString &path)
 
 bool DatabaseManager::createTables()
 {
-    return execute(QStringLiteral(R"(
+    if (!(execute(QStringLiteral(R"(
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL CHECK(length(title) BETWEEN 1 AND 160),
@@ -87,7 +87,8 @@ bool DatabaseManager::createTables()
             category TEXT NOT NULL DEFAULT '',
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
-            completed_at TEXT
+            completed_at TEXT,
+            experience_awarded INTEGER NOT NULL DEFAULT 0
         ))"))
         && execute(QStringLiteral(R"(
         CREATE TABLE IF NOT EXISTS subtasks (
@@ -96,6 +97,7 @@ bool DatabaseManager::createTables()
             title TEXT NOT NULL CHECK(length(title) BETWEEN 1 AND 160),
             completed INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
+            experience_awarded INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE
         ))"))
         && execute(QStringLiteral(R"(
@@ -103,8 +105,24 @@ bool DatabaseManager::createTables()
             key TEXT PRIMARY KEY,
             value TEXT NOT NULL
         ))"))
+        && execute(QStringLiteral(R"(
+        CREATE TABLE IF NOT EXISTS growth_profile (
+            id INTEGER PRIMARY KEY CHECK(id = 1),
+            total_xp INTEGER NOT NULL DEFAULT 0 CHECK(total_xp >= 0),
+            progress_days INTEGER NOT NULL DEFAULT 0 CHECK(progress_days >= 0),
+            today_xp INTEGER NOT NULL DEFAULT 0 CHECK(today_xp >= 0),
+            last_progress_date TEXT NOT NULL DEFAULT '',
+            vitality INTEGER NOT NULL DEFAULT 100 CHECK(vitality BETWEEN 0 AND 100),
+            vitality_updated_date TEXT NOT NULL DEFAULT ''
+        ))"))
+        && execute(QStringLiteral("INSERT OR IGNORE INTO growth_profile(id,total_xp,progress_days,today_xp,last_progress_date,vitality,vitality_updated_date) VALUES(1,0,0,0,'',100,'')"))
         && execute(QStringLiteral("CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date)"))
-        && execute(QStringLiteral("CREATE INDEX IF NOT EXISTS idx_subtasks_task_id ON subtasks(task_id)"));
+        && execute(QStringLiteral("CREATE INDEX IF NOT EXISTS idx_subtasks_task_id ON subtasks(task_id)")))) return false;
+
+    return ensureColumn(QStringLiteral("tasks"), QStringLiteral("experience_awarded"),
+               QStringLiteral("INTEGER NOT NULL DEFAULT 0"))
+        && ensureColumn(QStringLiteral("subtasks"), QStringLiteral("experience_awarded"),
+               QStringLiteral("INTEGER NOT NULL DEFAULT 0"));
 }
 
 void DatabaseManager::closeDatabase()
@@ -124,7 +142,7 @@ QVector<Task> DatabaseManager::loadTasks() const
 {
     QVector<Task> tasks;
     QSqlQuery query(m_database);
-    if (!query.exec(QStringLiteral("SELECT id,title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at FROM tasks ORDER BY completed ASC, due_date IS NULL, due_date ASC, created_at DESC"))) {
+    if (!query.exec(QStringLiteral("SELECT id,title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at,experience_awarded FROM tasks ORDER BY completed ASC, due_date IS NULL, due_date ASC, created_at DESC"))) {
         setError(tr("Unable to load tasks."), query.lastError().text());
         return tasks;
     }
@@ -141,13 +159,14 @@ QVector<Task> DatabaseManager::loadTasks() const
         task.createdAt = dateTime(query.value(8));
         task.updatedAt = dateTime(query.value(9));
         task.completedAt = dateTime(query.value(10));
+        task.experienceAwarded = query.value(11).toBool();
         tasks.append(task);
     }
 
     QHash<qint64, int> taskIndexes;
     for (int i = 0; i < tasks.size(); ++i) taskIndexes.insert(tasks[i].id, i);
     QSqlQuery subquery(m_database);
-    if (!subquery.exec(QStringLiteral("SELECT id,task_id,title,completed,created_at FROM subtasks ORDER BY id ASC"))) {
+    if (!subquery.exec(QStringLiteral("SELECT id,task_id,title,completed,created_at,experience_awarded FROM subtasks ORDER BY id ASC"))) {
         setError(tr("Unable to load subtasks."), subquery.lastError().text());
         return tasks;
     }
@@ -160,6 +179,7 @@ QVector<Task> DatabaseManager::loadTasks() const
         subtask.title = subquery.value(2).toString();
         subtask.completed = subquery.value(3).toBool();
         subtask.createdAt = dateTime(subquery.value(4));
+        subtask.experienceAwarded = subquery.value(5).toBool();
         tasks[taskIndexes.value(taskId)].subtasks.append(subtask);
     }
     return tasks;
@@ -168,7 +188,7 @@ QVector<Task> DatabaseManager::loadTasks() const
 bool DatabaseManager::insertTask(Task &task)
 {
     QSqlQuery query(m_database);
-    query.prepare(QStringLiteral("INSERT INTO tasks(title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at) VALUES(?,?,?,?,?,?,?,?,?,?)"));
+    query.prepare(QStringLiteral("INSERT INTO tasks(title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at,experience_awarded) VALUES(?,?,?,?,?,?,?,?,?,?,?)"));
     query.addBindValue(task.title);
     query.addBindValue(task.description.isNull() ? QStringLiteral("") : task.description);
     query.addBindValue(task.completed);
@@ -179,6 +199,7 @@ bool DatabaseManager::insertTask(Task &task)
     query.addBindValue(iso(task.createdAt));
     query.addBindValue(iso(task.updatedAt));
     query.addBindValue(task.completedAt.isValid() ? iso(task.completedAt) : QVariant{});
+    query.addBindValue(task.experienceAwarded);
     if (!query.exec()) {
         setError(tr("Unable to save this task."), query.lastError().text());
         return false;
@@ -223,11 +244,12 @@ bool DatabaseManager::deleteTask(const qint64 taskId)
 bool DatabaseManager::insertSubtask(Subtask &subtask)
 {
     QSqlQuery query(m_database);
-    query.prepare(QStringLiteral("INSERT INTO subtasks(task_id,title,completed,created_at) VALUES(?,?,?,?)"));
+    query.prepare(QStringLiteral("INSERT INTO subtasks(task_id,title,completed,created_at,experience_awarded) VALUES(?,?,?,?,?)"));
     query.addBindValue(subtask.taskId);
     query.addBindValue(subtask.title);
     query.addBindValue(subtask.completed);
     query.addBindValue(iso(subtask.createdAt));
+    query.addBindValue(subtask.experienceAwarded);
     if (!query.exec()) {
         setError(tr("Unable to save this small step."), query.lastError().text());
         return false;
@@ -293,10 +315,11 @@ QJsonObject DatabaseManager::exportObject() const
             {"completed", task.completed}, {"priority", static_cast<int>(task.priority)},
             {"dueDate", task.dueDate.toString(Qt::ISODate)}, {"estimatedMinutes", task.estimatedMinutes},
             {"category", task.category}, {"createdAt", iso(task.createdAt)}, {"updatedAt", iso(task.updatedAt)},
-            {"completedAt", iso(task.completedAt)}});
+            {"completedAt", iso(task.completedAt)}, {"experienceAwarded", task.experienceAwarded}});
         for (const Subtask &subtask : task.subtasks) {
             subtasksArray.append(QJsonObject{{"id", subtask.id}, {"taskId", subtask.taskId}, {"title", subtask.title},
-                {"completed", subtask.completed}, {"createdAt", iso(subtask.createdAt)}});
+                {"completed", subtask.completed}, {"createdAt", iso(subtask.createdAt)},
+                {"experienceAwarded", subtask.experienceAwarded}});
         }
     }
     QJsonObject settings;
@@ -304,9 +327,13 @@ QJsonObject DatabaseManager::exportObject() const
     if (query.exec(QStringLiteral("SELECT key,value FROM settings"))) {
         while (query.next()) settings.insert(query.value(0).toString(), query.value(1).toString());
     }
-    return QJsonObject{{"version", QStringLiteral("0.1.1")},
+    const GrowthStats growth = loadGrowthStats();
+    const QJsonObject growthObject{{"totalXp", growth.totalXp}, {"progressDays", growth.progressDays},
+        {"todayXp", growth.todayXp}, {"lastProgressDate", growth.lastProgressDate.toString(Qt::ISODate)},
+        {"vitality", growth.vitality}, {"vitalityUpdatedDate", growth.vitalityUpdatedDate.toString(Qt::ISODate)}};
+    return QJsonObject{{"version", QStringLiteral("0.2.0")},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
-        {"subtasks", subtasksArray}, {"settings", settings}};
+        {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject}};
 }
 
 bool DatabaseManager::importObject(const QJsonObject &root)
@@ -354,6 +381,7 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         task.updatedAt = QDateTime::fromString(item.value("updatedAt").toString(), Qt::ISODateWithMs);
         if (!task.updatedAt.isValid()) task.updatedAt = task.createdAt;
         task.completedAt = QDateTime::fromString(item.value("completedAt").toString(), Qt::ISODateWithMs);
+        task.experienceAwarded = item.value("experienceAwarded").toBool(false);
         if (!insertTask(task)) return rollback(m_lastError);
         ids.insert(oldId, task.id);
     }
@@ -364,6 +392,7 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         if (!value.isObject() || parentId == 0 || title.isEmpty()) return rollback(QStringLiteral("Invalid subtask"));
         Subtask subtask{0, parentId, title.left(160), item.value("completed").toBool(),
             QDateTime::fromString(item.value("createdAt").toString(), Qt::ISODateWithMs)};
+        subtask.experienceAwarded = item.value("experienceAwarded").toBool(false);
         if (!subtask.createdAt.isValid()) subtask.createdAt = QDateTime::currentDateTimeUtc();
         if (!insertSubtask(subtask)) return rollback(m_lastError);
     }
@@ -372,8 +401,175 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         if (!it.value().isString() || !setSetting(it.key().left(80), it.value().toString().left(500)))
             return rollback(m_lastError);
     }
+    const QJsonObject growth = root.value("growth").toObject();
+    const int totalXp = qMax(0, growth.value("totalXp").toInt(0));
+    const int progressDays = qMax(0, growth.value("progressDays").toInt(0));
+    const QDate lastProgressDate = QDate::fromString(growth.value("lastProgressDate").toString(), Qt::ISODate);
+    const int todayXp = lastProgressDate == QDate::currentDate()
+        ? qMax(0, growth.value("todayXp").toInt(0)) : 0;
+    const int vitality = qBound(0, growth.value("vitality").toInt(100), 100);
+    const QDate vitalityUpdatedDate = QDate::fromString(growth.value("vitalityUpdatedDate").toString(), Qt::ISODate);
+    query.prepare(QStringLiteral("UPDATE growth_profile SET total_xp=?,progress_days=?,today_xp=?,last_progress_date=?,vitality=?,vitality_updated_date=? WHERE id=1"));
+    query.addBindValue(totalXp);
+    query.addBindValue(progressDays);
+    query.addBindValue(todayXp);
+    query.addBindValue(lastProgressDate.isValid() ? lastProgressDate.toString(Qt::ISODate) : QStringLiteral(""));
+    query.addBindValue(vitality);
+    query.addBindValue((vitalityUpdatedDate.isValid() ? vitalityUpdatedDate : QDate::currentDate()).toString(Qt::ISODate));
+    if (!query.exec()) return rollback(query.lastError().text());
     if (!m_database.commit()) return rollback(m_database.lastError().text());
     return true;
+}
+
+DatabaseManager::GrowthStats DatabaseManager::loadGrowthStats() const
+{
+    GrowthStats stats;
+    QSqlQuery query(m_database);
+    if (!query.exec(QStringLiteral("SELECT total_xp,progress_days,today_xp,last_progress_date,vitality,vitality_updated_date FROM growth_profile WHERE id=1"))
+        || !query.next()) {
+        setError(tr("Unable to load your garden."), query.lastError().text());
+        return stats;
+    }
+    stats.totalXp = query.value(0).toInt();
+    stats.progressDays = query.value(1).toInt();
+    stats.todayXp = query.value(2).toInt();
+    stats.lastProgressDate = QDate::fromString(query.value(3).toString(), Qt::ISODate);
+    stats.vitality = query.value(4).toInt();
+    stats.vitalityUpdatedDate = QDate::fromString(query.value(5).toString(), Qt::ISODate);
+    return stats;
+}
+
+bool DatabaseManager::awardTaskExperience(const qint64 taskId, const int xp, const int vitality, bool &awarded)
+{
+    return awardExperience(QStringLiteral("tasks"), taskId, xp, vitality, awarded);
+}
+
+bool DatabaseManager::awardSubtaskExperience(const qint64 subtaskId, const int xp, const int vitality, bool &awarded)
+{
+    return awardExperience(QStringLiteral("subtasks"), subtaskId, xp, vitality, awarded);
+}
+
+bool DatabaseManager::awardExperience(const QString &table, const qint64 sourceId, const int xp,
+    const int vitality, bool &awarded)
+{
+    awarded = false;
+    if (table != QStringLiteral("tasks") && table != QStringLiteral("subtasks")) return false;
+    if (!m_database.transaction()) {
+        setError(tr("Unable to update your garden."), m_database.lastError().text());
+        return false;
+    }
+    const auto rollback = [this](const QString &technical) {
+        m_database.rollback();
+        setError(tr("Unable to update your garden."), technical);
+        return false;
+    };
+    if (!applyVitalityDecay()) return rollback(m_lastError);
+    QSqlQuery update(m_database);
+    update.prepare(QStringLiteral("UPDATE %1 SET experience_awarded=1 WHERE id=? AND completed=1 AND experience_awarded=0").arg(table));
+    update.addBindValue(sourceId);
+    if (!update.exec()) return rollback(update.lastError().text());
+    awarded = update.numRowsAffected() == 1;
+    if (awarded && !addExperienceToProfile(qMax(0, xp), qMax(0, vitality))) return rollback(m_lastError);
+    if (!m_database.commit()) return rollback(m_database.lastError().text());
+    return true;
+}
+
+bool DatabaseManager::reconcileExperience(const int taskXp, const int taskVitality,
+    const int subtaskXp, const int subtaskVitality, int &awardedXp)
+{
+    awardedXp = 0;
+    if (!m_database.transaction()) {
+        setError(tr("Unable to update your garden."), m_database.lastError().text());
+        return false;
+    }
+    const auto rollback = [this](const QString &technical) {
+        m_database.rollback();
+        setError(tr("Unable to update your garden."), technical);
+        return false;
+    };
+    if (!applyVitalityDecay()) return rollback(m_lastError);
+
+    QSqlQuery taskCountQuery(m_database);
+    QSqlQuery subtaskCountQuery(m_database);
+    if (!taskCountQuery.exec(QStringLiteral("SELECT COUNT(*) FROM tasks WHERE completed=1 AND experience_awarded=0"))
+        || !taskCountQuery.next()
+        || !subtaskCountQuery.exec(QStringLiteral("SELECT COUNT(*) FROM subtasks WHERE completed=1 AND experience_awarded=0"))
+        || !subtaskCountQuery.next()) return rollback(QStringLiteral("Unable to count unrecorded progress"));
+    const int taskCount = taskCountQuery.value(0).toInt();
+    const int subtaskCount = subtaskCountQuery.value(0).toInt();
+    awardedXp = taskCount * qMax(0, taskXp) + subtaskCount * qMax(0, subtaskXp);
+    const int restoredVitality = taskCount * qMax(0, taskVitality) + subtaskCount * qMax(0, subtaskVitality);
+
+    QSqlQuery update(m_database);
+    if (!update.exec(QStringLiteral("UPDATE tasks SET experience_awarded=1 WHERE completed=1 AND experience_awarded=0"))
+        || !update.exec(QStringLiteral("UPDATE subtasks SET experience_awarded=1 WHERE completed=1 AND experience_awarded=0")))
+        return rollback(update.lastError().text());
+    if (awardedXp > 0 && !addExperienceToProfile(awardedXp, restoredVitality)) return rollback(m_lastError);
+    if (!m_database.commit()) return rollback(m_database.lastError().text());
+    return true;
+}
+
+bool DatabaseManager::addExperienceToProfile(const int xp, const int vitality)
+{
+    QSqlQuery query(m_database);
+    if (!query.exec(QStringLiteral("SELECT progress_days,today_xp,last_progress_date,vitality FROM growth_profile WHERE id=1"))
+        || !query.next()) {
+        setError(tr("Unable to update your garden."), query.lastError().text());
+        return false;
+    }
+    const QDate today = QDate::currentDate();
+    const QDate lastProgress = QDate::fromString(query.value(2).toString(), Qt::ISODate);
+    const bool firstProgressToday = lastProgress != today;
+    const int progressDays = query.value(0).toInt() + (firstProgressToday ? 1 : 0);
+    const int todayXp = (firstProgressToday ? 0 : query.value(1).toInt()) + xp;
+    const int restoredVitality = qBound(0, query.value(3).toInt() + vitality, 100);
+
+    query.prepare(QStringLiteral("UPDATE growth_profile SET total_xp=total_xp+?,progress_days=?,today_xp=?,last_progress_date=?,vitality=?,vitality_updated_date=? WHERE id=1"));
+    query.addBindValue(xp);
+    query.addBindValue(progressDays);
+    query.addBindValue(todayXp);
+    query.addBindValue(today.toString(Qt::ISODate));
+    query.addBindValue(restoredVitality);
+    query.addBindValue(today.toString(Qt::ISODate));
+    if (query.exec()) return true;
+    setError(tr("Unable to update your garden."), query.lastError().text());
+    return false;
+}
+
+bool DatabaseManager::applyVitalityDecay()
+{
+    QSqlQuery query(m_database);
+    if (!query.exec(QStringLiteral("SELECT vitality,vitality_updated_date,last_progress_date FROM growth_profile WHERE id=1"))
+        || !query.next()) {
+        setError(tr("Unable to update your garden."), query.lastError().text());
+        return false;
+    }
+    const QDate today = QDate::currentDate();
+    const QDate updatedDate = QDate::fromString(query.value(1).toString(), Qt::ISODate);
+    const QDate lastProgressDate = QDate::fromString(query.value(2).toString(), Qt::ISODate);
+    const int elapsedDays = updatedDate.isValid() ? qMax(0, updatedDate.daysTo(today)) : 0;
+    const int vitality = qMax(0, query.value(0).toInt() - elapsedDays * 15);
+    const int todayXp = lastProgressDate == today ? -1 : 0;
+
+    query.prepare(todayXp < 0
+        ? QStringLiteral("UPDATE growth_profile SET vitality=?,vitality_updated_date=? WHERE id=1")
+        : QStringLiteral("UPDATE growth_profile SET vitality=?,vitality_updated_date=?,today_xp=0 WHERE id=1"));
+    query.addBindValue(vitality);
+    query.addBindValue(today.toString(Qt::ISODate));
+    if (query.exec()) return true;
+    setError(tr("Unable to update your garden."), query.lastError().text());
+    return false;
+}
+
+bool DatabaseManager::ensureColumn(const QString &table, const QString &column, const QString &definition)
+{
+    QSqlQuery query(m_database);
+    if (!query.exec(QStringLiteral("PRAGMA table_info(%1)").arg(table))) {
+        setError(tr("Unable to initialize local storage."), query.lastError().text());
+        return false;
+    }
+    while (query.next()) if (query.value(1).toString() == column) return true;
+    return execute(QStringLiteral("ALTER TABLE %1 ADD COLUMN %2 %3").arg(table, column, definition));
 }
 
 bool DatabaseManager::execute(const QString &sql) const

@@ -27,12 +27,14 @@ ApplicationWindow {
                 theme: theme
                 onCreateRequested: date => taskDialog.openNew(date)
                 onEditRequested: id => taskDialog.openEdit(id)
+                onGardenRequested: root.currentPage = 2
             }
             TasksPage {
                 id: tasksPage; theme: theme
                 onCreateRequested: date => taskDialog.openNew(date)
                 onEditRequested: id => taskDialog.openEdit(id)
             }
+            GardenPage { theme: theme }
             SettingsPage { theme: theme }
         }
     }
@@ -45,6 +47,7 @@ ApplicationWindow {
         id: confirmDialog; theme: theme
         onConfirmed: id => taskManager.deleteTask(id)
     }
+    XpToast { id: xpToast; theme: theme }
     Popup {
         id: toast; property string message
         x: root.width - width - 24; y: root.height - height - 24
@@ -62,6 +65,11 @@ ApplicationWindow {
     Connections { target: taskManager; function onErrorOccurred(message) { toast.show(message) } }
     Connections { target: settingsManager; function onErrorOccurred(message) { toast.show(message) } }
     Connections {
+        target: growthManager
+        function onExperienceAwarded(amount, reason) { xpToast.showReward(amount, reason) }
+        function onErrorOccurred(message) { toast.show(message) }
+    }
+    Connections {
         target: dataService
         function onOperationSucceeded(message) { toast.show(message) }
         function onOperationFailed(message) { toast.show(message) }
@@ -69,9 +77,10 @@ ApplicationWindow {
     Component.onCompleted: {
         if (!databaseReady) toast.show(qsTr("Local storage could not be opened. Changes may not be saved."))
         if (screenshotScenario === "tasks") currentPage = 1
+        else if (screenshotScenario === "garden") currentPage = 2
         else if (screenshotScenario === "settings-midnight") {
             settingsManager.theme = "midnight"
-            currentPage = 2
+            currentPage = 3
         } else if (screenshotScenario === "task-dialog") {
             Qt.callLater(() => taskDialog.openNew(Qt.formatDate(new Date(), "yyyy-MM-dd")))
         } else if (screenshotScenario === "task-dialog-advanced") {

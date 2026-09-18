@@ -11,6 +11,15 @@ class DatabaseManager final : public QObject
     Q_OBJECT
 
 public:
+    struct GrowthStats {
+        int totalXp = 0;
+        int progressDays = 0;
+        int todayXp = 0;
+        int vitality = 100;
+        QDate lastProgressDate;
+        QDate vitalityUpdatedDate;
+    };
+
     explicit DatabaseManager(QObject *parent = nullptr);
     ~DatabaseManager() override;
 
@@ -32,11 +41,19 @@ public:
     bool setSetting(const QString &key, const QString &value);
     [[nodiscard]] QJsonObject exportObject() const;
     bool importObject(const QJsonObject &root);
+    [[nodiscard]] GrowthStats loadGrowthStats() const;
+    bool awardTaskExperience(qint64 taskId, int xp, int vitality, bool &awarded);
+    bool awardSubtaskExperience(qint64 subtaskId, int xp, int vitality, bool &awarded);
+    bool reconcileExperience(int taskXp, int taskVitality, int subtaskXp, int subtaskVitality, int &awardedXp);
 
 private:
     bool openDatabase(const QString &path);
     bool createTables();
     bool execute(const QString &sql) const;
+    bool ensureColumn(const QString &table, const QString &column, const QString &definition);
+    bool awardExperience(const QString &table, qint64 sourceId, int xp, int vitality, bool &awarded);
+    bool addExperienceToProfile(int xp, int vitality);
+    bool applyVitalityDecay();
     void setError(const QString &context, const QString &technical) const;
 
     QString m_connectionName;
@@ -44,4 +61,3 @@ private:
     QSqlDatabase m_database;
     mutable QString m_lastError;
 };
-

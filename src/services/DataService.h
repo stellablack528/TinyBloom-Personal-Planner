@@ -6,12 +6,14 @@
 
 class TaskManager;
 class SettingsManager;
+class GrowthManager;
 
 class DataService final : public QObject
 {
     Q_OBJECT
 public:
-    DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings, QObject *parent = nullptr);
+    DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings,
+        GrowthManager *growth = nullptr, QObject *parent = nullptr);
 
     Q_INVOKABLE bool exportData(const QUrl &fileUrl);
     Q_INVOKABLE bool importData(const QUrl &fileUrl);
@@ -26,4 +28,5 @@ private:
     DatabaseManager *m_database;
     TaskManager *m_tasks;
     SettingsManager *m_settings;
+    GrowthManager *m_growth;
 };

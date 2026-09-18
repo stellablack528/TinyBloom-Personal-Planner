@@ -7,6 +7,7 @@ Item {
     property QtObject theme
     signal createRequested(string date)
     signal editRequested(var id)
+    signal gardenRequested()
 
     function greeting() {
         let hour = new Date().getHours()
@@ -25,7 +26,20 @@ Item {
             Item { Layout.fillWidth: true }
             AppButton { theme: page.theme; text: qsTr("+ Add Task"); onClicked: page.createRequested(Qt.formatDate(new Date(), "yyyy-MM-dd")) }
         }
-        ProgressCard { theme: page.theme; completed: taskManager.todayCompletedCount; total: taskManager.todayCount }
+        GridLayout {
+            id: statsGrid
+            Layout.fillWidth: true; columns: width < 700 ? 1 : 2; columnSpacing: 14; rowSpacing: 12
+            ProgressCard {
+                theme: page.theme; completed: taskManager.todayCompletedCount; total: taskManager.todayCount
+                Layout.fillWidth: true; Layout.preferredWidth: 430
+                Layout.minimumWidth: statsGrid.columns === 1 ? 0 : 400
+            }
+            GrowthSummaryCard {
+                theme: page.theme; Layout.fillWidth: true; Layout.preferredWidth: 290
+                Layout.minimumWidth: statsGrid.columns === 1 ? 0 : 260
+                onGardenRequested: page.gardenRequested()
+            }
+        }
         Text { text: qsTr("Today's Tasks"); color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
         StackLayout {
             Layout.fillWidth: true; Layout.fillHeight: true

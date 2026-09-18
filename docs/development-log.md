@@ -59,3 +59,13 @@
 **Solution:** Add an import confirmation and timestamped automatic JSON backup, a localized date picker with Today/Tomorrow shortcuts, responsive dialog sizing, explicit filter widths, stronger Midnight contrast, keyboard and accessibility metadata for custom controls, and a multi-resolution Windows icon embedded in the executable.
 
 **Result:** v0.1.1 preserves current data before every import, exposes safer and faster date entry, renders the affected screens cleanly at the default window size, and presents TinyBloom with its own icon and Windows version metadata.
+
+## Growth rewards needed both encouragement and consequence
+
+**Problem:** A purely decorative garden could provide a pleasant reward but would not help users notice when they had stopped acting. At the same time, deleting XP or killing the plant would make returning feel punishing.
+
+**Cause:** Long-term progress and current care are different signals. Treating both as one score either makes rest consequence-free or destroys earned progress.
+
+**Solution:** Keep XP and levels permanent, while tracking a separate 0–100 vitality value. Completing a task or small step grants a one-time XP reward and restores vitality; each inactive calendar day removes 15 vitality. The plant changes from healthy to tired to wilted, and can always recover through another completed step.
+
+**Result:** The garden creates visible accountability without allowing repeated completion toggles to farm rewards or making a lapse irreversible.

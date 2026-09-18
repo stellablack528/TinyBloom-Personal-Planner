@@ -1,6 +1,7 @@
 #include "database/DatabaseManager.h"
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
+#include "managers/GrowthManager.h"
 #include "services/DataService.h"
 
 #include <QGuiApplication>
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("TinyBloom"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("tinybloom.app"));
     QCoreApplication::setApplicationName(QStringLiteral("TinyBloom"));
-    QCoreApplication::setApplicationVersion(QStringLiteral("0.1.1"));
+    QCoreApplication::setApplicationVersion(QStringLiteral("0.2.0"));
     QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/resources/icons/app-icon.svg")));
     QQuickStyle::setStyle(QStringLiteral("Basic"));
 
@@ -28,13 +29,19 @@ int main(int argc, char *argv[])
     TaskManager taskManager(&database);
     SettingsManager settingsManager(&database);
     settingsManager.load();
+    GrowthManager growthManager(&database);
+    growthManager.initialize();
     const QString languageOverride = qEnvironmentVariable("TINYBLOOM_LANGUAGE_OVERRIDE");
     if (!languageOverride.isEmpty()) settingsManager.setLanguage(languageOverride);
-    DataService dataService(&database, &taskManager, &settingsManager);
+    DataService dataService(&database, &taskManager, &settingsManager, &growthManager);
+    QObject::connect(&taskManager, &TaskManager::taskCompleted,
+        &growthManager, &GrowthManager::recordTaskCompleted);
+    QObject::connect(&taskManager, &TaskManager::subtaskCompleted,
+        &growthManager, &GrowthManager::recordSubtaskCompleted);
 
     QQmlApplicationEngine engine;
     QTranslator translator;
-    const auto applyLanguage = [&app, &engine, &translator, &settingsManager, &taskManager](const bool retranslate) {
+    const auto applyLanguage = [&app, &engine, &translator, &settingsManager, &taskManager, &growthManager](const bool retranslate) {
         app.removeTranslator(&translator);
         if (settingsManager.language() == QStringLiteral("zh_CN")) {
             if (!translator.load(QStringLiteral(":/i18n/tinybloom_zh_CN.qm")))
@@ -45,6 +52,7 @@ int main(int argc, char *argv[])
         if (retranslate) {
             engine.retranslate();
             taskManager.retranslate();
+            growthManager.retranslate();
         }
     };
     applyLanguage(false);
@@ -53,6 +61,7 @@ int main(int argc, char *argv[])
         [&applyLanguage] { applyLanguage(true); });
     engine.rootContext()->setContextProperty(QStringLiteral("taskManager"), &taskManager);
     engine.rootContext()->setContextProperty(QStringLiteral("settingsManager"), &settingsManager);
+    engine.rootContext()->setContextProperty(QStringLiteral("growthManager"), &growthManager);
     engine.rootContext()->setContextProperty(QStringLiteral("dataService"), &dataService);
     engine.rootContext()->setContextProperty(QStringLiteral("databaseReady"), database.isOpen());
     engine.rootContext()->setContextProperty(QStringLiteral("screenshotScenario"),

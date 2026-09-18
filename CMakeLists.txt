@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(TinyBloom VERSION 0.1.1 LANGUAGES CXX)
+project(TinyBloom VERSION 0.2.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,6 +16,8 @@ set(TINYBLOOM_SOURCES
     src/database/DatabaseManager.h
     src/managers/SettingsManager.cpp
     src/managers/SettingsManager.h
+    src/managers/GrowthManager.cpp
+    src/managers/GrowthManager.h
     src/managers/TaskManager.cpp
     src/managers/TaskManager.h
     src/models/Task.cpp
@@ -47,10 +49,14 @@ qt_add_qml_module(TinyBloom
         qml/components/DatePickerPopup.qml
         qml/components/EmptyState.qml
         qml/components/ImportConfirmDialog.qml
+        qml/components/GardenPlant.qml
+        qml/components/GrowthSummaryCard.qml
         qml/components/ProgressCard.qml
         qml/components/Sidebar.qml
         qml/components/TaskCard.qml
         qml/components/TaskDialog.qml
+        qml/components/XpToast.qml
+        qml/pages/GardenPage.qml
         qml/pages/TodayPage.qml
         qml/pages/TasksPage.qml
         qml/pages/SettingsPage.qml

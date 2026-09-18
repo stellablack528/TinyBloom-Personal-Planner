@@ -32,52 +32,52 @@
 <context>
     <name>DataService</name>
     <message>
-        <location filename="../src/services/DataService.cpp" line="18"/>
+        <location filename="../src/services/DataService.cpp" line="20"/>
         <source>Please choose a valid save location.</source>
         <translation>请选择有效的保存位置。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="20"/>
+        <location filename="../src/services/DataService.cpp" line="22"/>
         <source>Unable to write the export file.</source>
         <translation>无法写入导出文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="22"/>
+        <location filename="../src/services/DataService.cpp" line="24"/>
         <source>Unable to finish writing the export file.</source>
         <translation>无法完成导出文件的写入。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="23"/>
+        <location filename="../src/services/DataService.cpp" line="25"/>
         <source>Your TinyBloom data was exported.</source>
         <translation>TinyBloom 数据已成功导出。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="30"/>
+        <location filename="../src/services/DataService.cpp" line="32"/>
         <source>Unable to read this file.</source>
         <translation>无法读取此文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="34"/>
+        <location filename="../src/services/DataService.cpp" line="36"/>
         <source>This file does not contain valid JSON.</source>
         <translation>此文件不是有效的 JSON 文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="42"/>
+        <location filename="../src/services/DataService.cpp" line="45"/>
         <source>Your TinyBloom data was imported. Backup saved to %1</source>
         <translation>TinyBloom 数据已成功导入。安全备份已保存到 %1</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="51"/>
+        <location filename="../src/services/DataService.cpp" line="54"/>
         <source>Unable to find the TinyBloom data folder.</source>
         <translation>无法找到 TinyBloom 数据文件夹。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="59"/>
+        <location filename="../src/services/DataService.cpp" line="62"/>
         <source>Unable to create a safety backup. Import was cancelled.</source>
         <translation>无法创建安全备份，导入已取消。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="64"/>
+        <location filename="../src/services/DataService.cpp" line="67"/>
         <source>Unable to finish the safety backup. Import was cancelled.</source>
         <translation>无法完成安全备份，导入已取消。</translation>
     </message>
@@ -105,72 +105,90 @@
         <translation>无法启用数据库完整性检查。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="128"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="146"/>
         <source>Unable to load tasks.</source>
         <translation>无法加载任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="151"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="170"/>
         <source>Unable to load subtasks.</source>
         <translation>无法加载小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="183"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="204"/>
         <source>Unable to save this task.</source>
         <translation>无法保存此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="205"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="226"/>
         <source>Unable to update this task.</source>
         <translation>无法更新此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="217"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="238"/>
         <source>Unable to delete this task.</source>
         <translation>无法删除此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="232"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="254"/>
         <source>Unable to save this small step.</source>
         <translation>无法保存此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="247"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="269"/>
         <source>Unable to update this small step.</source>
         <translation>无法更新此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="259"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="281"/>
         <source>Unable to delete this small step.</source>
         <translation>无法删除此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="281"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="303"/>
         <source>Unable to save settings.</source>
         <translation>无法保存设置。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="316"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="343"/>
         <source>This file is not a valid TinyBloom export.</source>
         <translation>此文件不是有效的 TinyBloom 导出文件。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="323"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="350"/>
         <source>This file contains an invalid task.</source>
         <translation>此文件包含无效任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="328"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="355"/>
         <source>Unable to start data import.</source>
         <translation>无法开始导入数据。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="333"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="360"/>
         <source>Unable to import data. Your existing data is unchanged.</source>
         <translation>无法导入数据，现有数据未被修改。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="383"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="429"/>
+        <source>Unable to load your garden.</source>
+        <translation>无法读取你的花园。</translation>
+    </message>
+    <message>
+        <location filename="../src/database/DatabaseManager.cpp" line="456"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="461"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="480"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="485"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="515"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="533"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="542"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="558"/>
+        <source>Unable to update your garden.</source>
+        <translation>暂时无法更新你的花园。</translation>
+    </message>
+    <message>
+        <location filename="../src/database/DatabaseManager.cpp" line="566"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="577"/>
         <source>Unable to initialize local storage.</source>
         <translation>无法初始化本地存储。</translation>
     </message>
@@ -212,6 +230,205 @@
     </message>
 </context>
 <context>
+    <name>GardenPage</name>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="17"/>
+        <source>Your Garden</source>
+        <translation>你的花园</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="18"/>
+        <source>What you care for grows — and what you leave alone will wilt.</source>
+        <translation>用心照料的会生长，放着不管的也会枯萎。</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="25"/>
+        <source>Level %1</source>
+        <translation>等级 %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="27"/>
+        <source>%1 XP</source>
+        <translation>%1 XP</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="52"/>
+        <source>Garden vitality</source>
+        <translation>花园活力</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="67"/>
+        <source>Next growth at %1 XP · %2 XP to go</source>
+        <translation>达到 %1 XP 后继续生长 · 还差 %2 XP</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="79"/>
+        <source>+20 XP</source>
+        <translation>+20 XP</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="79"/>
+        <source>Complete a task</source>
+        <translation>完成一个任务</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="79"/>
+        <source>Restores 28 vitality</source>
+        <translation>恢复 28 点活力</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="80"/>
+        <source>+5 XP</source>
+        <translation>+5 XP</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="80"/>
+        <source>Complete a small step</source>
+        <translation>完成一个小步骤</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="80"/>
+        <source>Restores 10 vitality</source>
+        <translation>恢复 10 点活力</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="81"/>
+        <source>Days with progress</source>
+        <translation>有进步的天数</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="81"/>
+        <source>A quiet day costs 15 vitality</source>
+        <translation>每休息一天会消耗 15 点活力</translation>
+    </message>
+</context>
+<context>
+    <name>GrowthManager</name>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="17"/>
+        <source>Local storage is not available.</source>
+        <translation>本地存储当前不可用。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="54"/>
+        <source>A tiny seed</source>
+        <translation>一颗小小的种子</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="55"/>
+        <source>First sprout</source>
+        <translation>破土的新芽</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="56"/>
+        <source>Young leaves</source>
+        <translation>舒展的嫩叶</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="57"/>
+        <source>Flower bud</source>
+        <translation>含苞待放</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="58"/>
+        <source>In bloom</source>
+        <translation>初次绽放</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="59"/>
+        <source>Flourishing garden</source>
+        <translation>繁盛的花园</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="66"/>
+        <source>Every garden begins with one small step.</source>
+        <translation>每座花园，都从一个小步骤开始。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="67"/>
+        <source>Your effort has broken through the soil.</source>
+        <translation>你的努力已经穿过泥土，冒出了新芽。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="68"/>
+        <source>Steady care is growing something real.</source>
+        <translation>持续的照料，正在长成真实可见的成果。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="69"/>
+        <source>A bloom is close. Keep showing up.</source>
+        <translation>离开花不远了，再坚持出现几次。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="70"/>
+        <source>Your small steps have become a flower.</source>
+        <translation>你走过的小步骤，已经开成了一朵花。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="71"/>
+        <source>This garden carries every step you kept.</source>
+        <translation>这座花园记得你坚持走过的每一步。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="77"/>
+        <source>Your garden feels bright and cared for.</source>
+        <translation>你的花园很有精神，看得出被认真照料着。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="78"/>
+        <source>Your plant is getting tired. A completed step will help it recover.</source>
+        <translation>植物有些疲惫了，完成一个步骤就能帮它恢复。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="79"/>
+        <source>Your plant is wilting. Come back with one small, doable step.</source>
+        <translation>植物正在枯萎。回来完成一个做得到的小步骤，把它救回来吧。</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="97"/>
+        <source>Task complete: %1</source>
+        <translation>完成任务：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/managers/GrowthManager.cpp" line="109"/>
+        <source>Small step complete: %1</source>
+        <translation>完成小步骤：%1</translation>
+    </message>
+</context>
+<context>
+    <name>GrowthSummaryCard</name>
+    <message>
+        <location filename="../qml/components/GrowthSummaryCard.qml" line="13"/>
+        <source>Open your garden</source>
+        <translation>打开你的花园</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/GrowthSummaryCard.qml" line="20"/>
+        <source>Level %1</source>
+        <translation>等级 %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/GrowthSummaryCard.qml" line="22"/>
+        <source>+%1 XP today</source>
+        <translation>今天 +%1 XP</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/GrowthSummaryCard.qml" line="33"/>
+        <source>%1 / %2 XP</source>
+        <translation>%1 / %2 XP</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/GrowthSummaryCard.qml" line="35"/>
+        <source>View garden  ›</source>
+        <translation>查看花园  ›</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/GrowthSummaryCard.qml" line="39"/>
+        <source>Vitality</source>
+        <translation>活力</translation>
+    </message>
+</context>
+<context>
     <name>ImportConfirmDialog</name>
     <message>
         <location filename="../qml/components/ImportConfirmDialog.qml" line="19"/>
@@ -247,7 +464,7 @@
         <translation>TinyBloom — 小步开始，真实进步。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="70"/>
+        <location filename="../qml/Main.qml" line="78"/>
         <source>Local storage could not be opened. Changes may not be saved.</source>
         <translation>无法打开本地存储，更改可能不会被保存。</translation>
     </message>
@@ -426,8 +643,12 @@
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="126"/>
+        <source>Version 0.2.0</source>
+        <translation>版本 0.2.0</translation>
+    </message>
+    <message>
         <source>Version 0.1.1</source>
-        <translation>版本 0.1.1</translation>
+        <translation type="vanished">版本 0.1.1</translation>
     </message>
     <message>
         <source>Version 0.1.0</source>
@@ -447,22 +668,27 @@
 <context>
     <name>Sidebar</name>
     <message>
-        <location filename="../qml/components/Sidebar.qml" line="24"/>
+        <location filename="../qml/components/Sidebar.qml" line="25"/>
         <source>Today</source>
         <translation>今天</translation>
     </message>
     <message>
-        <location filename="../qml/components/Sidebar.qml" line="24"/>
+        <location filename="../qml/components/Sidebar.qml" line="26"/>
         <source>Tasks</source>
         <translation>任务</translation>
     </message>
     <message>
-        <location filename="../qml/components/Sidebar.qml" line="24"/>
+        <location filename="../qml/components/Sidebar.qml" line="27"/>
+        <source>Garden</source>
+        <translation>花园</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/Sidebar.qml" line="28"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../qml/components/Sidebar.qml" line="53"/>
+        <location filename="../qml/components/Sidebar.qml" line="58"/>
         <source>Small Steps,
 Real Progress.</source>
         <translation>小步开始，
@@ -716,39 +942,39 @@ Real Progress.</source>
         <location filename="../src/managers/TaskManager.cpp" line="79"/>
         <location filename="../src/managers/TaskManager.cpp" line="96"/>
         <location filename="../src/managers/TaskManager.cpp" line="106"/>
-        <location filename="../src/managers/TaskManager.cpp" line="121"/>
-        <location filename="../src/managers/TaskManager.cpp" line="133"/>
-        <location filename="../src/managers/TaskManager.cpp" line="143"/>
+        <location filename="../src/managers/TaskManager.cpp" line="122"/>
+        <location filename="../src/managers/TaskManager.cpp" line="134"/>
+        <location filename="../src/managers/TaskManager.cpp" line="144"/>
         <source>This task no longer exists.</source>
         <translation>此任务已不存在。</translation>
     </message>
     <message>
-        <location filename="../src/managers/TaskManager.cpp" line="122"/>
+        <location filename="../src/managers/TaskManager.cpp" line="123"/>
         <source>A small step needs a title under 160 characters.</source>
         <translation>小步骤需要一个不超过 160 个字符的标题。</translation>
     </message>
     <message>
-        <location filename="../src/managers/TaskManager.cpp" line="153"/>
+        <location filename="../src/managers/TaskManager.cpp" line="155"/>
         <source>This small step no longer exists.</source>
         <translation>此小步骤已不存在。</translation>
     </message>
     <message>
-        <location filename="../src/managers/TaskManager.cpp" line="193"/>
+        <location filename="../src/managers/TaskManager.cpp" line="195"/>
         <source>Please give this task a name.</source>
         <translation>请给这个任务起个名字。</translation>
     </message>
     <message>
-        <location filename="../src/managers/TaskManager.cpp" line="194"/>
+        <location filename="../src/managers/TaskManager.cpp" line="196"/>
         <source>Task names can be up to 160 characters.</source>
         <translation>任务名称最多可包含 160 个字符。</translation>
     </message>
     <message>
-        <location filename="../src/managers/TaskManager.cpp" line="195"/>
+        <location filename="../src/managers/TaskManager.cpp" line="197"/>
         <source>Descriptions can be up to 4,000 characters.</source>
         <translation>任务描述最多可包含 4,000 个字符。</translation>
     </message>
     <message>
-        <location filename="../src/managers/TaskManager.cpp" line="196"/>
+        <location filename="../src/managers/TaskManager.cpp" line="198"/>
         <source>Choose an estimate between 0 and 10,080 minutes.</source>
         <translation>请选择 0 到 10,080 分钟之间的预计时长。</translation>
     </message>
@@ -850,39 +1076,47 @@ Real Progress.</source>
 <context>
     <name>TodayPage</name>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="13"/>
+        <location filename="../qml/pages/TodayPage.qml" line="14"/>
         <source>Good morning 🌱</source>
         <translation>早上好 🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="13"/>
+        <location filename="../qml/pages/TodayPage.qml" line="14"/>
         <source>Good afternoon 🌱</source>
         <translation>下午好 🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="13"/>
+        <location filename="../qml/pages/TodayPage.qml" line="14"/>
         <source>Good evening 🌱</source>
         <translation>晚上好 🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="26"/>
+        <location filename="../qml/pages/TodayPage.qml" line="27"/>
         <source>+ Add Task</source>
         <translation>+ 添加任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="29"/>
+        <location filename="../qml/pages/TodayPage.qml" line="34"/>
         <source>Today&apos;s Tasks</source>
         <translation>今日任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="35"/>
+        <location filename="../qml/pages/TodayPage.qml" line="40"/>
         <source>Your day is clear. 🌱</source>
         <translation>今天很清爽。🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="36"/>
+        <location filename="../qml/pages/TodayPage.qml" line="41"/>
         <source>Create a small task to get started.</source>
         <translation>创建一个小任务，轻松开始吧。</translation>
+    </message>
+</context>
+<context>
+    <name>XpToast</name>
+    <message>
+        <location filename="../qml/components/XpToast.qml" line="31"/>
+        <source>Your garden grew</source>
+        <translation>你的花园成长了</translation>
     </message>
 </context>
 </TS>

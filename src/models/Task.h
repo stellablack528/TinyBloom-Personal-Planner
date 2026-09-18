@@ -27,9 +27,9 @@ struct Task
     QDateTime createdAt;
     QDateTime updatedAt;
     QDateTime completedAt;
+    bool experienceAwarded = false;
     QVector<Subtask> subtasks;
 };
 
 QString priorityName(Priority priority);
 Priority priorityFromInt(int value);
-
