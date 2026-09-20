@@ -8,9 +8,13 @@
 
 如果你只是想使用 TinyBloom，不需要点击 GitHub 页面里的 `Code`、`Compare` 或分支按钮。
 
-👉 [直接下载 TinyBloom Desktop v0.2.0（Windows x64）](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.2.0-desktop/TinyBloom-Desktop-v0.2.0-windows-x64.zip)
+👉 [推荐：下载 TinyBloom Desktop v0.2.0 安装程序（Windows x64）](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.2.0-desktop/TinyBloom-Desktop-v0.2.0-Windows-x64-Setup.exe)
 
-下载后解压完整文件夹，双击 `TinyBloom.exe` 即可使用。下面的构建说明主要提供给开发者。
+双击安装程序，根据提示完成安装。安装程序会创建开始菜单入口，并可选择创建桌面快捷方式，也可以从 Windows 设置中正常卸载。
+
+如果不想安装，也可以下载 [便携版 ZIP](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.2.0-desktop/TinyBloom-Desktop-v0.2.0-windows-x64.zip)，解压完整文件夹后双击 `TinyBloom.exe` 使用。
+
+下面的构建说明主要提供给开发者。
 
 ## 📖 项目简介
 
@@ -178,6 +182,7 @@ tinybloom/
 │   └── themes/
 │
 ├── resources/icons/
+├── packaging/windows/
 ├── translations/
 └── tests/
 ```
