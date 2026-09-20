@@ -1,6 +1,6 @@
 # Architecture
 
-TinyBloom v0.1 intentionally uses a small, explicit architecture.
+TinyBloom Desktop v0.2 intentionally uses a small, explicit architecture.
 
 ## Layers
 
@@ -8,7 +8,7 @@ TinyBloom v0.1 intentionally uses a small, explicit architecture.
 2. **Application logic** is held by `TaskManager`, `SettingsManager`, and `GrowthManager`. They validate input, coordinate persistence, update models, and expose friendly errors.
 3. **Models** use `QAbstractListModel` delegates rather than creating task objects manually in QML. Four lightweight views share one in-memory task snapshot.
 4. **Database** is owned by one `DatabaseManager` connection. It enables SQLite foreign keys, creates the schema, and performs parameterized queries.
-5. **Data service** serializes a versioned JSON document. Exports use `QSaveFile`; imports validate, create a timestamped safety backup beside the database, and use a transaction so failure leaves existing data intact.
+5. **Data service** serializes a versioned JSON document. Every export identifies the application, `desktop` platform, app version, and an independent numeric schema version so a future mobile client does not need to infer compatibility from a product version. Exports use `QSaveFile`; imports validate identities and parent relationships, create a timestamped safety backup beside the database, and use a transaction so failure leaves existing data intact.
 
 ## Data lifecycle
 

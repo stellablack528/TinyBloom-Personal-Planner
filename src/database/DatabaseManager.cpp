@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QLoggingCategory>
+#include <QSet>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
@@ -331,7 +332,9 @@ QJsonObject DatabaseManager::exportObject() const
     const QJsonObject growthObject{{"totalXp", growth.totalXp}, {"progressDays", growth.progressDays},
         {"todayXp", growth.todayXp}, {"lastProgressDate", growth.lastProgressDate.toString(Qt::ISODate)},
         {"vitality", growth.vitality}, {"vitalityUpdatedDate", growth.vitalityUpdatedDate.toString(Qt::ISODate)}};
-    return QJsonObject{{"version", QStringLiteral("0.2.0")},
+    return QJsonObject{{"application", QStringLiteral("TinyBloom")},
+        {"platform", QStringLiteral("desktop")}, {"schemaVersion", 1},
+        {"version", QStringLiteral("0.2.0")},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
         {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject}};
 }
@@ -344,12 +347,28 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         return false;
     }
     const QJsonArray tasks = root.value("tasks").toArray();
+    QSet<qint64> taskIds;
     for (const auto &value : tasks) {
         const QJsonObject item = value.toObject();
-        if (!value.isObject() || item.value("title").toString().trimmed().isEmpty()) {
-            setError(tr("This file contains an invalid task."), QStringLiteral("Task title missing"));
+        const qint64 taskId = item.value("id").toInteger();
+        if (!value.isObject() || taskId <= 0 || taskIds.contains(taskId)
+            || item.value("title").toString().trimmed().isEmpty()) {
+            setError(tr("This file contains an invalid task."), QStringLiteral("Invalid task identity or title"));
             return false;
         }
+        taskIds.insert(taskId);
+    }
+    QSet<qint64> subtaskIds;
+    for (const auto &value : root.value("subtasks").toArray()) {
+        const QJsonObject item = value.toObject();
+        const qint64 subtaskId = item.value("id").toInteger();
+        const qint64 parentId = item.value("taskId").toInteger();
+        if (!value.isObject() || subtaskId <= 0 || subtaskIds.contains(subtaskId)
+            || !taskIds.contains(parentId) || item.value("title").toString().trimmed().isEmpty()) {
+            setError(tr("This file contains an invalid small step."), QStringLiteral("Invalid subtask identity"));
+            return false;
+        }
+        subtaskIds.insert(subtaskId);
     }
     if (!m_database.transaction()) {
         setError(tr("Unable to start data import."), m_database.lastError().text());

@@ -113,6 +113,9 @@ void CoreTests::jsonRoundTripAndInvalidImportSafety()
     QVERIFY(m_tasks->createTask(QStringLiteral("Export me"), QString{}, QDate::currentDate().addDays(1).toString(Qt::ISODate)));
     const QJsonObject exported = m_database->exportObject();
     QVERIFY(exported.value(QStringLiteral("version")).isString());
+    QCOMPARE(exported.value(QStringLiteral("application")).toString(), QStringLiteral("TinyBloom"));
+    QCOMPARE(exported.value(QStringLiteral("platform")).toString(), QStringLiteral("desktop"));
+    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 1);
     QCOMPARE(exported.value(QStringLiteral("tasks")).toArray().size(), 1);
 
     QJsonObject invalid{{"version", "0.1.0"}, {"tasks", QJsonArray{QJsonObject{{"title", ""}}}},
@@ -121,6 +124,13 @@ void CoreTests::jsonRoundTripAndInvalidImportSafety()
     QCOMPARE(m_database->loadTasks().size(), 1);
 
     QVERIFY(m_tasks->createTask(QStringLiteral("Temporary")));
+    QJsonObject duplicateIds = exported;
+    QJsonArray duplicateTasks = exported.value(QStringLiteral("tasks")).toArray();
+    duplicateTasks.append(duplicateTasks.first());
+    duplicateIds.insert(QStringLiteral("tasks"), duplicateTasks);
+    QVERIFY(!m_database->importObject(duplicateIds));
+    QCOMPARE(m_database->loadTasks().size(), 2);
+
     QVERIFY(m_database->importObject(exported));
     QCOMPARE(m_database->loadTasks().size(), 1);
     QCOMPARE(m_database->loadTasks().first().title, QStringLiteral("Export me"));

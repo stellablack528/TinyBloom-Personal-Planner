@@ -122,8 +122,8 @@ Item {
                 Layout.fillWidth: true; implicitHeight: aboutColumn.implicitHeight + 32; radius: theme.radius; color: theme.card; border.color: theme.border
                 ColumnLayout {
                     id: aboutColumn; anchors.fill: parent; anchors.margins: 16; spacing: 5
-                    Text { text: "TinyBloom"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
-                    Text { text: qsTr("Version 0.2.0"); color: theme.muted; font.pixelSize: 12 }
+                    Text { text: "TinyBloom Desktop"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
+                    Text { text: qsTr("Windows desktop · Version 0.2.0"); color: theme.muted; font.pixelSize: 12 }
                     Text { text: qsTr("Small Steps, Real Progress."); color: theme.primary; font.pixelSize: 13; font.weight: Font.DemiBold; Layout.topMargin: 4 }
                     Text { text: qsTr("Free & Open Source · MIT License"); color: theme.muted; font.pixelSize: 12 }
                 }

@@ -1,6 +1,6 @@
 # TinyBloom 🌱
 
-一个免费、开源、注重真实使用体验的个人计划管理桌面应用，帮助用户把复杂目标拆分成更容易开始的小步骤。
+一个免费、开源、注重真实使用体验的个人计划管理应用。当前发布的是 **TinyBloom Desktop（Windows 桌面版）**，帮助用户把复杂目标拆分成更容易开始的小步骤。
 
 > **Small Steps, Real Progress.**
 
@@ -8,7 +8,7 @@
 
 如果你只是想使用 TinyBloom，不需要点击 GitHub 页面里的 `Code`、`Compare` 或分支按钮。
 
-👉 [直接下载 TinyBloom v0.1.0 Windows 版](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.1.0/TinyBloom-v0.1.0-windows-x64.zip)
+👉 [直接下载 TinyBloom Desktop v0.2.0（Windows x64）](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.2.0-desktop/TinyBloom-Desktop-v0.2.0-windows-x64.zip)
 
 下载后解压完整文件夹，双击 `TinyBloom.exe` 即可使用。下面的构建说明主要提供给开发者。
 
@@ -67,7 +67,7 @@ TinyBloom 支持基础任务管理能力，包括：
 
 ### 🎨 UI 主题
 
-TinyBloom v0.1.0 支持：
+TinyBloom Desktop 支持：
 
 - 🌿 Mint Garden
 - 🌙 Midnight
@@ -76,7 +76,7 @@ TinyBloom v0.1.0 支持：
 
 主题和语言选择都会保存在本地数据库中，并在下次启动时恢复。
 
-### 🌿 XP 与花园（main 分支 v0.2）
+### 🌿 XP 与花园
 
 - 完成任务获得 20 XP，完成小步骤获得 5 XP
 - XP 和等级永久保留，植物会随累计进度经历种子、嫩芽、花苞和盛放等阶段
@@ -285,14 +285,15 @@ TinyBloom 希望成为一个：
 
 ### v0.2
 
+- Windows 桌面版发布
 - XP、等级与完成反馈
 - 会成长也会枯萎的个人花园
 - 活力恢复与每日衰减机制
-- Focus Timer
-- 基础统计
 
 ### v0.3
 
+- Focus Timer
+- 基础统计
 - 成就系统
 
 ### v0.4
@@ -312,6 +313,12 @@ TinyBloom 希望成为一个：
 - 完整测试
 - 完整文档
 - 跨平台支持
+
+### Future：移动端与同步
+
+- 独立的 TinyBloom Mobile 客户端
+- 桌面端与移动端共享稳定的数据结构版本
+- 在充分验证隐私与冲突处理后，再引入可选的跨端同步
 
 ## 🤖 AI-assisted Development
 

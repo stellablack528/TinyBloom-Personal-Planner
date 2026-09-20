@@ -6,7 +6,7 @@ import TinyBloom
 ApplicationWindow {
     id: root
     width: 1120; height: 760; minimumWidth: 780; minimumHeight: 580
-    visible: true; title: qsTr("TinyBloom — Small Steps, Real Progress.")
+    visible: true; title: "TinyBloom Desktop — " + qsTr("Small Steps, Real Progress.")
     color: theme.window
     property int currentPage: 0
 

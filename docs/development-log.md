@@ -69,3 +69,11 @@
 **Solution:** Keep XP and levels permanent, while tracking a separate 0–100 vitality value. Completing a task or small step grants a one-time XP reward and restores vitality; each inactive calendar day removes 15 vitality. The plant changes from healthy to tired to wilted, and can always recover through another completed step.
 
 **Result:** The garden creates visible accountability without allowing repeated completion toggles to farm rewards or making a lapse irreversible.
+
+## Desktop release metadata needed a cross-device boundary
+
+**Problem:** The v0.2 interface, Windows metadata, archive name, and JSON export described TinyBloom generically. That would make desktop and future mobile builds hard to distinguish, while duplicate imported task identifiers could attach small steps to the wrong task.
+
+**Solution:** Brand this build as TinyBloom Desktop without changing the existing application data directory, add explicit application/platform/schema metadata to exports, and reject duplicate or orphaned identities before an import transaction starts.
+
+**Result:** Users can identify the Windows desktop build immediately, future clients have a stable compatibility marker, and malformed cross-device data is rejected without touching existing data.
