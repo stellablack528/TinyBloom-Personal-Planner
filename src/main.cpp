@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain(QStringLiteral("tinybloom.app"));
     QCoreApplication::setApplicationName(QStringLiteral("TinyBloom"));
     QGuiApplication::setApplicationDisplayName(QStringLiteral("TinyBloom Desktop"));
-    QCoreApplication::setApplicationVersion(QStringLiteral("0.2.0"));
+    QCoreApplication::setApplicationVersion(QStringLiteral("0.3.0-beta.1"));
     QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/resources/icons/app-icon.svg")));
     QQuickStyle::setStyle(QStringLiteral("Basic"));
 

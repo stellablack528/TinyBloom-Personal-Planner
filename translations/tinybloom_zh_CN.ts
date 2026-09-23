@@ -1165,8 +1165,12 @@
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="144"/>
+        <source>Windows desktop · Version %1</source>
+        <translation>Windows 桌面版 · 版本 %1</translation>
+    </message>
+    <message>
         <source>Windows desktop · Version 0.2.0</source>
-        <translation>Windows 桌面版 · 版本 0.2.0</translation>
+        <translation type="vanished">Windows 桌面版 · 版本 0.2.0</translation>
     </message>
     <message>
         <source>Version 0.2.0</source>

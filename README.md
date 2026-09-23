@@ -4,17 +4,24 @@
 
 > **Small Steps, Real Progress.**
 
-## 🌱 普通用户直接下载
+## 🧪 最新测试版下载
 
-如果你只是想使用 TinyBloom，不需要点击 GitHub 页面里的 `Code`、`Compare` 或分支按钮。
+当前最新开发测试版为 **TinyBloom Desktop v0.3.0 Beta 1（Windows x64）**。它包含长期任务目标地图、花园自习室、多花种、任务交互修复、后台导出和兼容渲染模式。
 
-👉 [推荐：下载 TinyBloom Desktop v0.2.0 安装程序（Windows x64）](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.2.0-desktop/TinyBloom-Desktop-v0.2.0-Windows-x64-Setup.exe)
+> 这是 Pre-release，适合愿意帮助测试和反馈问题的用户。升级前建议先在“设置 → 数据”中导出一份 JSON 备份。
 
-双击安装程序，根据提示完成安装。安装程序会创建开始菜单入口，并可选择创建桌面快捷方式，也可以从 Windows 设置中正常卸载。
+- 👉 [推荐：下载 v0.3.0 Beta 1 安装程序](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.3.0-desktop-beta.1/TinyBloom-Desktop-v0.3.0-beta.1-Windows-x64-Setup.exe)
+- 📦 [下载 v0.3.0 Beta 1 便携版 ZIP](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.3.0-desktop-beta.1/TinyBloom-Desktop-v0.3.0-beta.1-windows-x64.zip)
+- 🔐 [下载 SHA-256 校验文件](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.3.0-desktop-beta.1/TinyBloom-Desktop-v0.3.0-beta.1-SHA256SUMS.txt)
+- 🇨🇳 [Gitee Releases 镜像页](https://gitee.com/stella-green/TinyBloom/releases)
 
-如果不想安装，也可以下载 [便携版 ZIP](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.2.0-desktop/TinyBloom-Desktop-v0.2.0-windows-x64.zip)，解压完整文件夹后双击 `TinyBloom.exe` 使用。
+安装版可以创建开始菜单和桌面快捷方式，并支持从 Windows 设置中卸载。便携版必须完整解压后再运行 `TinyBloom.exe`，不能只单独复制 EXE。
+
+需要更稳定版本的用户仍可下载 [TinyBloom Desktop v0.2.0](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/tag/v0.2.0-desktop)。
 
 下面的构建说明主要提供给开发者。
+
+📘 参与开发前请阅读：[TinyBloom Desktop 中文开发文档](docs/development-guide.zh-CN.md)。
 
 ## 📖 项目简介
 
@@ -69,6 +76,14 @@ TinyBloom 支持基础任务管理能力，包括：
 - All / Active / Completed 状态筛选
 - 根据标题、描述和分类搜索任务
 
+### 🗺️ 长期任务目标地图
+
+- 创建独立的大任务，填写愿景和目标日期
+- 使用“大任务 → 阶段 → 行动步骤”的树状结构拆解目标
+- 阶段与步骤均可新增、改名、完成和删除
+- 自动计算总体进度，完成所有最终步骤后自动完成大任务
+- 长期任务进度会进入 XP 和花园成长系统
+
 ### 🎨 UI 主题
 
 TinyBloom Desktop 支持：
@@ -87,6 +102,14 @@ TinyBloom Desktop 支持：
 - 花园活力每天会下降 15 点；长期没有行动时，植物会从精神变为疲惫并最终枯萎
 - 完成任务或小步骤可恢复活力，枯萎的植物也始终可以重新养好
 - 每个任务和小步骤只发放一次 XP，反复取消和勾选不会重复获得奖励
+- 两个独立花位，可选择小粉花、向日葵、郁金香和玫瑰
+- 花园升级为带轻动画和 25 分钟专注计时器的花园自习室
+
+### ⚙️ 稳定性与性能
+
+- 使用增量模型更新，连续勾选或删除任务时不再跳回列表顶部
+- 使用 `QThreadPool` 在后台完成 JSON 序列化和文件写入
+- 提供兼容渲染模式，显卡驱动不稳定时可在重启后使用软件渲染
 
 ### 💾 本地数据
 
@@ -166,6 +189,7 @@ tinybloom/
 ├── LICENSE
 ├── docs/
 │   ├── architecture.md
+│   ├── development-guide.zh-CN.md
 │   └── development-log.md
 │
 ├── src/
@@ -297,9 +321,12 @@ TinyBloom 希望成为一个：
 
 ### v0.3
 
-- Focus Timer
-- 基础统计
-- 成就系统
+- 长期任务目标地图
+- 花园自习室与 25 分钟 Focus Timer
+- 两个花位与四种花朵
+- 任务列表交互和筛选修复
+- 线程池后台导出
+- 软件渲染兼容模式
 
 ### v0.4
 

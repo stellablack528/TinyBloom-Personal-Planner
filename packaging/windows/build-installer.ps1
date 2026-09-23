@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$Version = "0.2.0"
+    [string]$Version = "0.3.0-beta.1",
+    [string]$NumericVersion = "0.3.0.0"
 )
 
 $ErrorActionPreference = "Stop"
@@ -30,7 +31,7 @@ if (-not $iscc) {
     throw "Inno Setup 6 or 7 was not found. Install it from https://jrsoftware.org/isdl.php"
 }
 
-& $iscc "/DAppVersion=$Version" "/DAppSourceDir=$packageDir" "/DOutputDir=$distDir" $installerScript
+& $iscc "/DAppVersion=$Version" "/DAppNumericVersion=$NumericVersion" "/DAppSourceDir=$packageDir" "/DOutputDir=$distDir" $installerScript
 if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE"
 }

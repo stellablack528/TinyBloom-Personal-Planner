@@ -346,7 +346,7 @@ QJsonObject DatabaseManager::exportObject() const
         {"vitality", growth.vitality}, {"vitalityUpdatedDate", growth.vitalityUpdatedDate.toString(Qt::ISODate)}};
     return QJsonObject{{"application", QStringLiteral("TinyBloom")},
         {"platform", QStringLiteral("desktop")}, {"schemaVersion", 2},
-        {"version", QStringLiteral("0.2.0")},
+        {"version", QStringLiteral("0.3.0-beta.1")},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
         {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject}};
 }

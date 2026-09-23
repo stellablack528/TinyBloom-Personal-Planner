@@ -1,5 +1,7 @@
 # Architecture
 
+> This file records the original v0.2 architecture. For the current architecture, long-term task tree, incremental models, thread pool, rendering fallback, build and release workflow, see [the Chinese development guide](development-guide.zh-CN.md).
+
 TinyBloom Desktop v0.2 intentionally uses a small, explicit architecture.
 
 ## Layers

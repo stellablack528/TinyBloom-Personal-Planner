@@ -2,7 +2,11 @@
 #define AppExeName "TinyBloom.exe"
 
 #ifndef AppVersion
-  #define AppVersion "0.2.0"
+  #define AppVersion "0.3.0-beta.1"
+#endif
+
+#ifndef AppNumericVersion
+  #define AppNumericVersion "0.3.0.0"
 #endif
 
 #ifndef AppSourceDir
@@ -39,11 +43,11 @@ SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
 RestartApplications=no
-VersionInfoVersion={#AppVersion}.0
+VersionInfoVersion={#AppNumericVersion}
 VersionInfoCompany=TinyBloom Contributors
 VersionInfoDescription=TinyBloom Desktop Windows Installer
 VersionInfoProductName=TinyBloom Desktop
-VersionInfoProductVersion={#AppVersion}
+VersionInfoProductVersion={#AppNumericVersion}
 VersionInfoCopyright=Copyright (C) TinyBloom Contributors
 
 [Languages]
