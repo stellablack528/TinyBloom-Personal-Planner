@@ -5,17 +5,45 @@ import QtQuick.Layouts
 Item {
     id: page
     property QtObject theme
+    property int focusSeconds: 25 * 60
+    property bool focusRunning: false
+    signal focusSessionCompleted()
+    signal seedPlanted(string flowerName)
+
+    function focusTimeText() {
+        let minutes = Math.floor(focusSeconds / 60)
+        let seconds = focusSeconds % 60
+        return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+    }
+    function resetFocus() {
+        focusRunning = false
+        focusSeconds = 25 * 60
+    }
+
+    function speciesName(species) {
+        if (species === "sunflower") return qsTr("Sunflower")
+        if (species === "tulip") return qsTr("Tulip")
+        if (species === "rose") return qsTr("Rose")
+        return qsTr("Pink blossom")
+    }
+    function openSeeds(slot) {
+        seedPicker.slot = slot
+        seedPicker.replanting = slot === 0 ? growthManager.firstPlantSpecies.length > 0
+            : growthManager.secondPlantSpecies.length > 0
+        seedPicker.open()
+    }
 
     Flickable {
-        anchors.fill: parent; contentHeight: content.implicitHeight + 80; clip: true
+        anchors.fill: parent; contentWidth: width; contentHeight: content.implicitHeight + 80; clip: true
+        ScrollBar.vertical: ScrollBar {}
         ColumnLayout {
-            id: content; x: 40; y: 40; width: parent.width - 80; spacing: 20
+            id: content; x: 40; y: 36; width: parent.width - 80; spacing: 18
             RowLayout {
                 Layout.fillWidth: true
                 ColumnLayout {
                     spacing: 4
-                    Text { text: qsTr("Your Garden"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-                    Text { text: qsTr("What you care for grows — and what you leave alone will wilt."); color: theme.muted; font.pixelSize: 14 }
+                    Text { text: qsTr("Bloom Study Room"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
+                    Text { text: qsTr("A quiet room where focused effort becomes something alive."); color: theme.muted; font.pixelSize: 14 }
                 }
                 Item { Layout.fillWidth: true }
                 Rectangle {
@@ -27,71 +55,221 @@ Item {
                         Text { text: qsTr("%1 XP").arg(growthManager.totalXp); color: theme.text; font.pixelSize: 13 }
                     }
                 }
+
             }
 
             Rectangle {
-                Layout.fillWidth: true; implicitHeight: page.width < 760 ? 720 : 430; radius: 24
-                color: theme.card; border.color: theme.border
-                GridLayout {
-                    anchors.fill: parent; anchors.margins: 24; columnSpacing: 18; rowSpacing: 18
-                    columns: page.width < 760 ? 1 : 2
-                    Item {
-                        Layout.fillWidth: true; Layout.fillHeight: true; Layout.minimumWidth: page.width < 760 ? 0 : 390
-                        GardenPlant {
-                            anchors.centerIn: parent; theme: page.theme
-                            stage: growthManager.gardenStage; vitalityState: growthManager.vitalityState
-                        }
-                    }
-                    ColumnLayout {
-                        Layout.preferredWidth: 330; Layout.fillHeight: true; spacing: 12
-                        Item { Layout.fillHeight: true }
-                        Text { text: growthManager.gardenStageName; color: theme.text; font.pixelSize: 25; font.weight: Font.Bold }
-                        Text { Layout.fillWidth: true; text: growthManager.gardenMessage; color: theme.muted; font.pixelSize: 14; wrapMode: Text.WordWrap; lineHeight: 1.25 }
-                        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: theme.border; Layout.topMargin: 6; Layout.bottomMargin: 4 }
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Text { text: qsTr("Garden vitality"); color: theme.text; font.pixelSize: 14; font.weight: Font.DemiBold }
-                            Item { Layout.fillWidth: true }
-                            Text { text: growthManager.vitality + "%"; color: growthManager.vitalityState === 0 ? theme.primary : growthManager.vitalityState === 1 ? theme.warning : "#A47A61"; font.pixelSize: 14; font.weight: Font.Bold }
-                        }
+                id: panorama
+                Layout.fillWidth: true; Layout.preferredHeight: page.width < 760 ? 760 : 510
+                radius: 24; clip: true; border.color: theme.border
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: theme.dark ? "#172A28" : "#DFF2ED" }
+                    GradientStop { position: 0.58; color: theme.dark ? "#21332C" : "#F5EEDC" }
+                    GradientStop { position: 1.0; color: theme.dark ? "#1A211C" : "#D9C2A3" }
+                }
+
+                Rectangle {
+                    x: 26; y: 28; width: parent.width - 52; height: page.width < 760 ? 188 : 162
+                    radius: 18; color: theme.dark ? "#183D45" : "#C8E8F2"; border.color: Qt.alpha(theme.text, 0.1)
+                    Rectangle { x: parent.width / 2 - 3; width: 6; height: parent.height; color: Qt.alpha(theme.text, 0.1) }
+                    Rectangle { y: parent.height / 2 - 3; width: parent.width; height: 6; color: Qt.alpha(theme.text, 0.1) }
+                    Rectangle { x: parent.width - 76; y: 24; width: 34; height: 34; radius: 17; color: theme.dark ? "#F1D58A" : "#FFF1A8" }
+                    Repeater {
+                        model: 3
                         Rectangle {
-                            Layout.fillWidth: true; Layout.preferredHeight: 12; radius: 6; color: theme.input
-                            Rectangle {
-                                width: parent.width * growthManager.vitality / 100; height: parent.height; radius: 6
-                                color: growthManager.vitalityState === 0 ? theme.primary : growthManager.vitalityState === 1 ? theme.warning : "#A47A61"
-                                Behavior on width { NumberAnimation { duration: theme.animationDuration + 160; easing.type: Easing.OutCubic } }
+                            required property int index
+                            x: 42 + index * 128; y: 42 + (index % 2) * 46
+                            width: 76 + index * 9; height: 18; radius: 9; color: Qt.alpha("white", theme.dark ? 0.14 : 0.62)
+                            SequentialAnimation on x {
+                                loops: Animation.Infinite; running: theme.animationDuration > 0
+                                NumberAnimation { from: 42 + index * 128; to: 72 + index * 128; duration: 5000 + index * 700; easing.type: Easing.InOutSine }
+                                NumberAnimation { from: 72 + index * 128; to: 42 + index * 128; duration: 5000 + index * 700; easing.type: Easing.InOutSine }
                             }
                         }
-                        Text { Layout.fillWidth: true; text: growthManager.vitalityMessage; color: theme.muted; font.pixelSize: 13; wrapMode: Text.WordWrap }
-                        Text {
-                            visible: growthManager.gardenStage < 5
-                            text: qsTr("Next growth at %1 XP · %2 XP to go").arg(growthManager.nextStageXp).arg(Math.max(0, growthManager.nextStageXp - growthManager.totalXp))
-                            color: theme.primary; font.pixelSize: 12; font.weight: Font.DemiBold; Layout.topMargin: 4
+                    }
+                }
+
+                Repeater {
+                    model: 10
+                    Rectangle {
+                        required property int index
+                        x: 40 + (index * 83) % Math.max(120, panorama.width - 80)
+                        y: 105 + (index % 4) * 62
+                        width: 4 + index % 3; height: width; radius: width / 2
+                        color: Qt.alpha(theme.dark ? "#F4DA91" : "#FFFFFF", 0.55)
+                        SequentialAnimation on opacity {
+                            loops: Animation.Infinite; running: theme.animationDuration > 0
+                            NumberAnimation { from: 0.18; to: 0.78; duration: 1200 + index * 110 }
+                            NumberAnimation { from: 0.78; to: 0.18; duration: 1200 + index * 110 }
                         }
-                        Item { Layout.fillHeight: true }
+                    }
+                }
+
+                Rectangle {
+                    id: focusPanel
+                    anchors.horizontalCenter: parent.horizontalCenter; y: 20; z: 10
+                    width: 272; height: 104; radius: 17
+                    color: Qt.alpha(theme.card, theme.dark ? 0.84 : 0.9)
+                    border.color: Qt.alpha(theme.primary, 0.24)
+                    RowLayout {
+                        anchors.fill: parent; anchors.margins: 14; spacing: 12
+                        Rectangle {
+                            Layout.preferredWidth: 12; Layout.preferredHeight: 12; radius: 6
+                            color: page.focusRunning ? theme.primary : theme.border
+                            SequentialAnimation on scale {
+                                loops: Animation.Infinite
+                                running: page.focusRunning && theme.animationDuration > 0
+                                NumberAnimation { from: 0.75; to: 1.25; duration: 720; easing.type: Easing.InOutSine }
+                                NumberAnimation { from: 1.25; to: 0.75; duration: 720; easing.type: Easing.InOutSine }
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: qsTr("Focus session"); color: theme.muted; font.pixelSize: 11; font.weight: Font.DemiBold }
+                            Text { text: page.focusTimeText(); color: theme.text; font.pixelSize: 27; font.weight: Font.Bold }
+                        }
+                        Item { Layout.fillWidth: true }
+                        ColumnLayout {
+                            spacing: 4
+                            AppButton {
+                                theme: page.theme; implicitWidth: 76; implicitHeight: 34
+                                text: page.focusRunning ? qsTr("Pause") : qsTr("Start")
+                                onClicked: page.focusRunning = !page.focusRunning
+                            }
+                            AppButton {
+                                theme: page.theme; implicitWidth: 76; implicitHeight: 28
+                                text: qsTr("Reset"); primary: false
+                                onClicked: page.resetFocus()
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
+                    height: page.width < 760 ? 520 : 286; color: theme.dark ? "#202820" : "#CBB08C"
+                }
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 34
+                    width: parent.width - 74; height: page.width < 760 ? 500 : 232; radius: 18
+                    color: theme.dark ? "#26342B" : "#E8D4B7"; border.color: Qt.alpha(theme.text, 0.1)
+                }
+
+                GridLayout {
+                    anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
+                    anchors.leftMargin: 50; anchors.rightMargin: 50; anchors.bottomMargin: 44
+                    height: page.width < 760 ? 488 : 338
+                    columns: page.width < 760 ? 1 : 2; columnSpacing: 20; rowSpacing: 12
+                    Repeater {
+                        model: [
+                            {slot: 0, species: growthManager.firstPlantSpecies},
+                            {slot: 1, species: growthManager.secondPlantSpecies}
+                        ]
+                        delegate: Rectangle {
+                            id: plantRoom
+                            required property var modelData
+                            Layout.fillWidth: true; Layout.fillHeight: true; radius: 18
+                            color: Qt.alpha(theme.card, theme.dark ? 0.68 : 0.78)
+                            border.color: Qt.alpha(theme.text, 0.1)
+                            ColumnLayout {
+                                anchors.fill: parent; anchors.margins: 12; spacing: 0
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Text { text: qsTr("Flower pot %1").arg(plantRoom.modelData.slot + 1); color: theme.muted; font.pixelSize: 11; font.weight: Font.DemiBold }
+                                    Item { Layout.fillWidth: true }
+                                    Text {
+                                        visible: plantRoom.modelData.species.length > 0
+                                        text: page.speciesName(plantRoom.modelData.species); color: theme.primary; font.pixelSize: 12; font.weight: Font.DemiBold
+                                    }
+                                    AppButton {
+                                        visible: plantRoom.modelData.species.length > 0
+                                        theme: page.theme; text: qsTr("Replant"); primary: false
+                                        implicitWidth: 72; implicitHeight: 29
+                                        onClicked: page.openSeeds(plantRoom.modelData.slot)
+                                    }
+                                }
+                                Item {
+                                    Layout.fillWidth: true; Layout.fillHeight: true
+                                    GardenPlant {
+                                        anchors.centerIn: parent; theme: page.theme
+                                        species: plantRoom.modelData.species
+                                        stage: {
+                                            let currentXp = growthManager.totalXp
+                                            return growthManager.plantStage(plantRoom.modelData.slot)
+                                        }
+                                        vitalityState: growthManager.vitalityState
+                                        scale: page.width < 760 ? 0.72 : 0.8
+                                    }
+                                    AppButton {
+                                        anchors.centerIn: parent; anchors.verticalCenterOffset: 42
+                                        visible: plantRoom.modelData.species.length === 0
+                                        theme: page.theme; text: qsTr("Choose a seed and plant")
+                                        onClicked: page.openSeeds(plantRoom.modelData.slot)
+                                    }
+                                }
+                                RowLayout {
+                                    Layout.fillWidth: true; visible: plantRoom.modelData.species.length > 0
+                                    Text {
+                                        text: {
+                                            let currentXp = growthManager.totalXp
+                                            return growthManager.plantStageName(plantRoom.modelData.slot)
+                                        }
+                                        color: theme.text; font.pixelSize: 12; font.weight: Font.DemiBold
+                                    }
+                                    Item { Layout.fillWidth: true }
+                                    Text {
+                                        text: {
+                                            let currentXp = growthManager.totalXp
+                                            return qsTr("%1 XP since planting").arg(growthManager.plantEarnedXp(plantRoom.modelData.slot))
+                                        }
+                                        color: theme.muted; font.pixelSize: 11
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             RowLayout {
-                Layout.fillWidth: true; spacing: 16
+                Layout.fillWidth: true; spacing: 14
                 Repeater {
                     model: [
+                        {value: growthManager.vitality + "%", title: qsTr("Room vitality"), detail: growthManager.vitalityMessage},
                         {value: qsTr("+20 XP"), title: qsTr("Complete a task"), detail: qsTr("Restores 28 vitality")},
-                        {value: qsTr("+5 XP"), title: qsTr("Complete a small step"), detail: qsTr("Restores 10 vitality")},
                         {value: growthManager.progressDays, title: qsTr("Days with progress"), detail: qsTr("A quiet day costs 15 vitality")}
                     ]
                     delegate: Rectangle {
                         required property var modelData
-                        Layout.fillWidth: true; implicitHeight: 108; radius: theme.radius; color: theme.card; border.color: theme.border
+                        Layout.fillWidth: true; implicitHeight: 106; radius: theme.radius; color: theme.card; border.color: theme.border
                         ColumnLayout {
-                            anchors.fill: parent; anchors.margins: 16; spacing: 4
-                            Text { text: modelData.value; color: theme.primary; font.pixelSize: 20; font.weight: Font.Bold }
+                            anchors.fill: parent; anchors.margins: 15; spacing: 4
+                            Text { text: modelData.value; color: theme.primary; font.pixelSize: 19; font.weight: Font.Bold }
                             Text { text: modelData.title; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
-                            Text { text: modelData.detail; color: theme.muted; font.pixelSize: 11 }
+                            Text { Layout.fillWidth: true; text: modelData.detail; color: theme.muted; font.pixelSize: 11; elide: Text.ElideRight }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    SeedPickerDialog {
+        id: seedPicker; theme: page.theme
+        onSeedSelected: (slot, species) => {
+            if (growthManager.plantSeed(slot, species)) page.seedPlanted(page.speciesName(species))
+        }
+    }
+
+    Timer {
+        interval: 1000; repeat: true; running: page.focusRunning
+        onTriggered: {
+            if (page.focusSeconds > 1) {
+                --page.focusSeconds
+            } else {
+                page.focusSeconds = 0
+                page.focusRunning = false
+                page.focusSessionCompleted()
             }
         }
     }

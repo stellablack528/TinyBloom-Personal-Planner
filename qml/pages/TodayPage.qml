@@ -7,6 +7,7 @@ Item {
     property QtObject theme
     signal createRequested(string date)
     signal editRequested(var id)
+    signal deleteRequested(var id)
     signal gardenRequested()
 
     function greeting() {
@@ -58,6 +59,7 @@ Item {
                     theme: page.theme
                     onToggleRequested: id => taskManager.toggleTask(id)
                     onEditRequested: id => page.editRequested(id)
+                    onDeleteRequested: id => page.deleteRequested(id)
                 }
             }
         }

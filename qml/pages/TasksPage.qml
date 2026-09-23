@@ -5,9 +5,16 @@ import QtQuick.Layouts
 Item {
     id: page
     property QtObject theme
+    property int selectedView: 0
     signal createRequested(string date)
     signal editRequested(var id)
+    signal deleteRequested(var id)
     function focusSearch() { searchField.forceActiveFocus(); searchField.selectAll() }
+    function applyView(index) {
+        selectedView = index
+        taskManager.filterTasks(index === 1 ? 1 : index === 5 ? 2 : 0)
+        taskManager.setTaskScope(index === 2 ? 1 : index === 3 ? 2 : index === 4 ? 3 : 0)
+    }
 
     ColumnLayout {
         anchors.fill: parent; anchors.margins: 40; spacing: 20
@@ -21,54 +28,41 @@ Item {
             Item { Layout.fillWidth: true }
             AppButton { theme: page.theme; text: qsTr("+ Add Task"); onClicked: page.createRequested("") }
         }
-        RowLayout {
-            Layout.fillWidth: true; spacing: 12
-            AppTextField {
-                id: searchField; theme: page.theme; Layout.fillWidth: true; placeholderText: qsTr("Search tasks...")
-                Accessible.name: qsTr("Search tasks")
-                onTextChanged: taskManager.searchTasks(text)
-            }
-            Rectangle {
-                Layout.preferredWidth: filterRow.implicitWidth + 10
-                implicitWidth: filterRow.implicitWidth + 10; implicitHeight: 44; radius: 11; color: theme.input; border.color: theme.border
-                RowLayout {
-                    id: filterRow; anchors.centerIn: parent; spacing: 2
-                    Repeater {
-                        model: [qsTr("All"), qsTr("Active"), qsTr("Completed")]
-                        delegate: Button {
-                            required property string modelData; required property int index
-                            text: modelData; flat: true; checked: filterGroup.checkedButton === this
-                            implicitWidth: Math.max(68, filterLabel.implicitWidth + 24)
-                            Accessible.name: qsTr("Show %1 tasks").arg(modelData)
-                            ButtonGroup.group: filterGroup
-                            contentItem: Text { id: filterLabel; text: parent.text; color: parent.checked ? theme.text : theme.muted; font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                            background: Rectangle { radius: 8; color: parent.checked ? theme.card : "transparent"; border.width: parent.activeFocus ? 2 : 0; border.color: theme.primary }
-                            onClicked: taskManager.filterTasks(index)
-                            Component.onCompleted: if (index === 0) checked = true
-                        }
-                    }
-                    ButtonGroup { id: filterGroup; exclusive: true }
-                }
-            }
+        AppTextField {
+            id: searchField; theme: page.theme; Layout.fillWidth: true; placeholderText: qsTr("Search tasks...")
+            Accessible.name: qsTr("Search tasks")
+            onTextChanged: taskManager.searchTasks(text)
         }
         RowLayout {
-            Layout.fillWidth: true; spacing: 8
-            Text { text: qsTr("View"); color: theme.muted; font.pixelSize: 12; Layout.rightMargin: 4 }
-            Repeater {
-                model: [qsTr("All"), qsTr("Today"), qsTr("Tomorrow"), qsTr("Later")]
-                delegate: Button {
-                    required property string modelData; required property int index
-                    text: modelData; flat: true; checked: scopeGroup.checkedButton === this
-                    implicitWidth: Math.max(58, scopeLabel.implicitWidth + 20)
-                    Accessible.name: qsTr("Show %1").arg(modelData)
-                    ButtonGroup.group: scopeGroup
-                    contentItem: Text { id: scopeLabel; text: parent.text; color: parent.checked ? theme.primary : theme.muted; font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                    background: Rectangle { radius: 8; color: parent.checked ? theme.primarySoft : "transparent"; border.width: parent.activeFocus ? 2 : 0; border.color: theme.primary }
-                    onClicked: taskManager.setTaskScope(index)
-                    Component.onCompleted: if (index === 0) checked = true
+            Layout.fillWidth: true; spacing: 10
+            Text { text: qsTr("Task view"); color: theme.muted; font.pixelSize: 12; Layout.preferredWidth: 62 }
+            Rectangle {
+                implicitWidth: viewRow.implicitWidth + 8; implicitHeight: 42; radius: 11
+                color: theme.input; border.color: theme.border
+                RowLayout {
+                    id: viewRow; anchors.centerIn: parent; spacing: 2
+                    Repeater {
+                        model: [qsTr("All"), qsTr("Active"), qsTr("Today"), qsTr("Tomorrow"), qsTr("Later"), qsTr("Completed")]
+                        delegate: Button {
+                            required property string modelData; required property int index
+                            text: modelData; flat: true; checked: page.selectedView === index
+                            implicitWidth: Math.max(58, viewLabel.implicitWidth + 20); implicitHeight: 34
+                            Accessible.name: qsTr("Show %1 tasks").arg(modelData)
+                            contentItem: Text {
+                                id: viewLabel; text: parent.text
+                                color: parent.checked ? theme.primary : theme.muted
+                                font.pixelSize: 13; font.weight: parent.checked ? Font.DemiBold : Font.Normal
+                                horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                radius: 8; color: parent.checked ? theme.primarySoft : "transparent"
+                                border.width: parent.activeFocus && !parent.checked ? 2 : 0; border.color: theme.primary
+                            }
+                            onClicked: page.applyView(index)
+                        }
+                    }
                 }
             }
-            ButtonGroup { id: scopeGroup; exclusive: true }
             Item { Layout.fillWidth: true }
         }
         StackLayout {
@@ -88,6 +82,7 @@ Item {
                     theme: page.theme
                     onToggleRequested: id => taskManager.toggleTask(id)
                     onEditRequested: id => page.editRequested(id)
+                    onDeleteRequested: id => page.deleteRequested(id)
                 }
             }
         }

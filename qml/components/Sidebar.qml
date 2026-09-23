@@ -24,7 +24,8 @@ Rectangle {
             model: [
                 {label:qsTr("Today"), icon:"◉"},
                 {label:qsTr("Tasks"), icon:"☰"},
-                {label:qsTr("Garden"), icon:"✿"},
+                {label:qsTr("Big Tasks"), icon:"⌘"},
+                {label:qsTr("Study Room"), icon:"✿"},
                 {label:qsTr("Settings"), icon:"⚙"}
             ]
             delegate: Rectangle {

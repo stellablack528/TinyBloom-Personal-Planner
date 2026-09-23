@@ -10,6 +10,7 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
+#include <QSGRendererInterface>
 #include <QTimer>
 #include <QTranslator>
 
@@ -30,6 +31,10 @@ int main(int argc, char *argv[])
     TaskManager taskManager(&database);
     SettingsManager settingsManager(&database);
     settingsManager.load();
+    if (settingsManager.compatibilityRendering()
+        || qEnvironmentVariableIntValue("TINYBLOOM_SOFTWARE_RENDERING") == 1) {
+        QQuickWindow::setGraphicsApi(QSGRendererInterface::Software);
+    }
     GrowthManager growthManager(&database);
     growthManager.initialize();
     const QString languageOverride = qEnvironmentVariable("TINYBLOOM_LANGUAGE_OVERRIDE");

@@ -8,11 +8,26 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
+#include <QMetaObject>
+#include <QPointer>
 #include <QSaveFile>
+#include <QThread>
 
 DataService::DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings,
     GrowthManager *growth, QObject *parent)
-    : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings), m_growth(growth) {}
+    : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings), m_growth(growth)
+{
+    const int availableWorkers = qMax(1, QThread::idealThreadCount() - 1);
+    m_threadPool.setMaxThreadCount(qMin(2, availableWorkers));
+    m_threadPool.setExpiryTimeout(15000);
+}
+
+DataService::~DataService()
+{
+    m_threadPool.waitForDone();
+}
+
+bool DataService::busy() const { return m_busy; }
 
 bool DataService::exportData(const QUrl &fileUrl)
 {
@@ -23,6 +38,41 @@ bool DataService::exportData(const QUrl &fileUrl)
     file.write(QJsonDocument(m_database->exportObject()).toJson(QJsonDocument::Indented));
     if (!file.commit()) { emit operationFailed(tr("Unable to finish writing the export file.")); return false; }
     emit operationSucceeded(tr("Your TinyBloom data was exported."));
+    return true;
+}
+
+bool DataService::exportDataAsync(const QUrl &fileUrl)
+{
+    const QString path = fileUrl.toLocalFile();
+    if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid save location.")); return false; }
+    if (m_busy) { emit operationFailed(tr("A data operation is already in progress.")); return false; }
+
+    // SQLite remains on its owning (UI) thread. Only immutable JSON and file I/O
+    // cross the thread boundary, so the render and database threads stay safe.
+    const QJsonObject snapshot = m_database->exportObject();
+    m_busy = true;
+    emit busyChanged();
+    QPointer<DataService> self(this);
+    m_threadPool.start([self, snapshot, path] {
+        int result = 0;
+        QSaveFile file(path);
+        if (!file.open(QIODevice::WriteOnly)) {
+            result = 1;
+        } else {
+            const QByteArray payload = QJsonDocument(snapshot).toJson(QJsonDocument::Indented);
+            if (file.write(payload) != payload.size()) result = 1;
+            else if (!file.commit()) result = 2;
+        }
+        if (!self) return;
+        QMetaObject::invokeMethod(self, [self, result] {
+            if (!self) return;
+            self->m_busy = false;
+            emit self->busyChanged();
+            if (result == 0) emit self->operationSucceeded(DataService::tr("Your TinyBloom data was exported in the background."));
+            else if (result == 1) emit self->operationFailed(DataService::tr("Unable to write the export file."));
+            else emit self->operationFailed(DataService::tr("Unable to finish writing the export file."));
+        }, Qt::QueuedConnection);
+    });
     return true;
 }
 

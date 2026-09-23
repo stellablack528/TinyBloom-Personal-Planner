@@ -1,9 +1,20 @@
 #include "GrowthManager.h"
 
 #include <array>
+#include <QStringList>
 
 namespace {
 constexpr std::array<int, 6> StageThresholds{0, 60, 160, 320, 520, 800};
+
+int stageForXp(const int xp)
+{
+    int stage = 0;
+    for (int i = 1; i < static_cast<int>(StageThresholds.size()); ++i) {
+        if (xp < StageThresholds.at(i)) break;
+        stage = i;
+    }
+    return stage;
+}
 }
 
 GrowthManager::GrowthManager(DatabaseManager *database, QObject *parent)
@@ -40,12 +51,7 @@ int GrowthManager::vitalityState() const
 
 int GrowthManager::gardenStage() const
 {
-    int stage = 0;
-    for (int i = 1; i < static_cast<int>(StageThresholds.size()); ++i) {
-        if (m_stats.totalXp < StageThresholds.at(i)) break;
-        stage = i;
-    }
-    return stage;
+    return stageForXp(m_stats.totalXp);
 }
 
 QString GrowthManager::gardenStageName() const
@@ -83,6 +89,60 @@ int GrowthManager::nextStageXp() const
 {
     const int next = gardenStage() + 1;
     return next < static_cast<int>(StageThresholds.size()) ? StageThresholds.at(next) : m_stats.totalXp;
+}
+
+QString GrowthManager::firstPlantSpecies() const { return m_plantSpecies.at(0); }
+QString GrowthManager::secondPlantSpecies() const { return m_plantSpecies.at(1); }
+
+bool GrowthManager::plantSeed(const int slot, const QString &species)
+{
+    static const QStringList allowed{QStringLiteral("pink"), QStringLiteral("sunflower"),
+        QStringLiteral("tulip"), QStringLiteral("rose")};
+    if (!validSlot(slot) || !allowed.contains(species)) {
+        emit errorOccurred(tr("Please choose a valid flower seed."));
+        return false;
+    }
+    const QString value = QStringLiteral("%1|%2").arg(species).arg(m_stats.totalXp);
+    if (!m_database->setSetting(QStringLiteral("garden.plant.%1").arg(slot), value)) {
+        emit errorOccurred(m_database->lastError());
+        return false;
+    }
+    m_plantSpecies[slot] = species;
+    m_plantStartXp[slot] = m_stats.totalXp;
+    emit growthChanged();
+    return true;
+}
+
+int GrowthManager::plantEarnedXp(const int slot) const
+{
+    return validSlot(slot) && !m_plantSpecies.at(slot).isEmpty()
+        ? qMax(0, m_stats.totalXp - m_plantStartXp.at(slot)) : 0;
+}
+
+int GrowthManager::plantStage(const int slot) const
+{
+    return validSlot(slot) && !m_plantSpecies.at(slot).isEmpty()
+        ? stageForXp(plantEarnedXp(slot)) : 0;
+}
+
+int GrowthManager::nextPlantStageXp(const int slot) const
+{
+    if (!validSlot(slot) || m_plantSpecies.at(slot).isEmpty()) return 0;
+    const int next = plantStage(slot) + 1;
+    return next < static_cast<int>(StageThresholds.size())
+        ? StageThresholds.at(next) : plantEarnedXp(slot);
+}
+
+QString GrowthManager::plantStageName(const int slot) const
+{
+    switch (plantStage(slot)) {
+    case 0: return tr("A tiny seed");
+    case 1: return tr("First sprout");
+    case 2: return tr("Young leaves");
+    case 3: return tr("Flower bud");
+    case 4: return tr("In bloom");
+    default: return tr("Flourishing garden");
+    }
 }
 
 void GrowthManager::recordTaskCompleted(const qint64 taskId, const QString &title)
@@ -131,5 +191,41 @@ bool GrowthManager::reconcile()
 void GrowthManager::load()
 {
     m_stats = m_database->loadGrowthStats();
+    loadGarden();
     emit growthChanged();
+}
+
+void GrowthManager::loadGarden()
+{
+    static const QStringList allowed{QStringLiteral("pink"), QStringLiteral("sunflower"),
+        QStringLiteral("tulip"), QStringLiteral("rose")};
+    for (int slot = 0; slot < 2; ++slot) {
+        const QString key = QStringLiteral("garden.plant.%1").arg(slot);
+        const QString stored = m_database->setting(key, QStringLiteral("__missing__"));
+        if (stored == QStringLiteral("__missing__")) {
+            m_plantSpecies[slot].clear();
+            m_plantStartXp[slot] = m_stats.totalXp;
+            if (slot == 0 && m_stats.totalXp > 0) {
+                m_plantSpecies[slot] = QStringLiteral("pink");
+                m_plantStartXp[slot] = 0;
+                m_database->setSetting(key, QStringLiteral("pink|0"));
+            }
+            continue;
+        }
+        const QStringList parts = stored.split('|');
+        bool baselineOk = false;
+        const int baseline = parts.value(1).toInt(&baselineOk);
+        if (parts.size() != 2 || !allowed.contains(parts.first()) || !baselineOk || baseline < 0) {
+            m_plantSpecies[slot].clear();
+            m_plantStartXp[slot] = m_stats.totalXp;
+            continue;
+        }
+        m_plantSpecies[slot] = parts.first();
+        m_plantStartXp[slot] = qMin(baseline, m_stats.totalXp);
+    }
+}
+
+bool GrowthManager::validSlot(const int slot) const
+{
+    return slot >= 0 && slot < static_cast<int>(m_plantSpecies.size());
 }

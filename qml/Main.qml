@@ -5,14 +5,18 @@ import TinyBloom
 
 ApplicationWindow {
     id: root
-    width: 1120; height: 760; minimumWidth: 780; minimumHeight: 580
+    width: 1260; height: 760; minimumWidth: 900; minimumHeight: 580
     visible: true; title: "TinyBloom Desktop — " + qsTr("Small Steps, Real Progress.")
     color: theme.window
     property int currentPage: 0
 
     Theme { id: theme }
 
-    Shortcut { sequence: "Ctrl+N"; onActivated: taskDialog.openNew(currentPage === 0 ? Qt.formatDate(new Date(), "yyyy-MM-dd") : "") }
+    Shortcut {
+        sequence: "Ctrl+N"
+        onActivated: currentPage === 2 ? longTermPage.createNew()
+            : taskDialog.openNew(currentPage === 0 ? Qt.formatDate(new Date(), "yyyy-MM-dd") : "")
+    }
     Shortcut { sequence: "Ctrl+F"; onActivated: { currentPage = 1; tasksPage.focusSearch() } }
 
     RowLayout {
@@ -27,14 +31,21 @@ ApplicationWindow {
                 theme: theme
                 onCreateRequested: date => taskDialog.openNew(date)
                 onEditRequested: id => taskDialog.openEdit(id)
-                onGardenRequested: root.currentPage = 2
+                onDeleteRequested: id => { confirmDialog.targetId = id; confirmDialog.open() }
+                onGardenRequested: root.currentPage = 3
             }
             TasksPage {
                 id: tasksPage; theme: theme
                 onCreateRequested: date => taskDialog.openNew(date)
                 onEditRequested: id => taskDialog.openEdit(id)
+                onDeleteRequested: id => { confirmDialog.targetId = id; confirmDialog.open() }
             }
-            GardenPage { theme: theme }
+            LongTermPage { id: longTermPage; theme: theme }
+            GardenPage {
+                id: gardenPage; theme: theme
+                onSeedPlanted: flowerName => toast.show(qsTr("%1 seed planted. Let your next small step help it grow.").arg(flowerName))
+                onFocusSessionCompleted: toast.show(qsTr("Focus session complete. Take a breath, then mark the progress you made."))
+            }
             SettingsPage { theme: theme }
         }
     }
@@ -77,10 +88,54 @@ ApplicationWindow {
     Component.onCompleted: {
         if (!databaseReady) toast.show(qsTr("Local storage could not be opened. Changes may not be saved."))
         if (screenshotScenario === "tasks") currentPage = 1
-        else if (screenshotScenario === "garden") currentPage = 2
+        else if (screenshotScenario === "tasks-demo") {
+            if (taskManager.totalCount === 0) {
+                taskManager.createTask("Review tomorrow's lesson", "", Qt.formatDate(new Date(Date.now() + 86400000), "yyyy-MM-dd"), 2, 30, "Study")
+                taskManager.createTask("Prepare the project notes", "", Qt.formatDate(new Date(Date.now() + 604800000), "yyyy-MM-dd"), 1, 25, "Project")
+                taskManager.createTask("Read ten pages", "", "", 1, 20, "Reading")
+            }
+            currentPage = 1
+        }
+        else if (screenshotScenario === "long-term-demo") {
+            if (taskManager.longTermTasks.count === 0) {
+                taskManager.createLongTermTask("完成个人作品集", "把最好的作品整理成一个让我愿意自豪分享的故事。", Qt.formatDate(new Date(Date.now() + 7776000000), "yyyy-MM-dd"))
+                const goalId = taskManager.longTermTasks.get(0).taskId
+                taskManager.createSubtask(goalId, "规划内容故事", 0)
+                let goal = taskManager.getTask(goalId)
+                const planningId = goal.subtasks[0].id
+                taskManager.createSubtask(goalId, "选出三个代表项目", planningId)
+                taskManager.createSubtask(goalId, "写好个人介绍", planningId)
+                taskManager.createSubtask(goalId, "制作与打磨", 0)
+                goal = taskManager.getTask(goalId)
+                const buildId = goal.subtasks.filter(node => node.title === "制作与打磨")[0].id
+                taskManager.createSubtask(goalId, "完成第一个页面", buildId)
+                taskManager.createSubtask(goalId, "请朋友体验并反馈", buildId)
+                taskManager.createSubtask(goalId, "正式发布", 0)
+                goal = taskManager.getTask(goalId)
+                const firstActionId = goal.subtasks.filter(node => Number(node.parentId) === Number(planningId))[0].id
+                taskManager.toggleSubtask(goalId, firstActionId)
+            }
+            currentPage = 2
+        }
+        else if (screenshotScenario === "garden") currentPage = 3
+        else if (screenshotScenario === "garden-showcase") {
+            if (taskManager.totalCount === 0 && growthManager.totalXp === 0) {
+                growthManager.plantSeed(0, "sunflower")
+                growthManager.plantSeed(1, "rose")
+                for (let i = 0; i < 26; ++i) {
+                    taskManager.createTask("Garden visual test " + i, "", "", 1, 25, "")
+                    taskManager.toggleTask(i + 1)
+                }
+            }
+            currentPage = 3
+        }
+        else if (screenshotScenario === "garden-seeds") {
+            currentPage = 3
+            Qt.callLater(() => gardenPage.openSeeds(0))
+        }
         else if (screenshotScenario === "settings-midnight") {
             settingsManager.theme = "midnight"
-            currentPage = 3
+            currentPage = 4
         } else if (screenshotScenario === "task-dialog") {
             Qt.callLater(() => taskDialog.openNew(Qt.formatDate(new Date(), "yyyy-MM-dd")))
         } else if (screenshotScenario === "task-dialog-advanced") {

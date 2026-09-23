@@ -17,6 +17,7 @@ Rectangle {
     property QtObject theme
     signal toggleRequested(var id)
     signal editRequested(var id)
+    signal deleteRequested(var id)
 
     width: ListView.view ? ListView.view.width : 500
     height: details.visible ? 96 : 78
@@ -80,6 +81,25 @@ Rectangle {
                 id: priorityLabel; anchors.centerIn: parent; text: priorityName
                 color: priority === 2 ? theme.warning : theme.primary; font.pixelSize: 11; font.weight: Font.DemiBold
             }
+        }
+        Rectangle {
+            id: deleteControl
+            Layout.preferredWidth: 52; Layout.preferredHeight: 34; radius: 9
+            color: deleteMouse.containsMouse ? Qt.alpha(theme.danger, 0.12) : "transparent"
+            border.width: activeFocus ? 2 : 0; border.color: theme.danger
+            activeFocusOnTab: true
+            Accessible.role: Accessible.Button
+            Accessible.name: qsTr("Delete %1").arg(card.title)
+            Accessible.focusable: true
+            Text { anchors.centerIn: parent; text: qsTr("Delete"); color: theme.danger; font.pixelSize: 12; font.weight: Font.DemiBold }
+            MouseArea {
+                id: deleteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                onClicked: { deleteControl.forceActiveFocus(); card.deleteRequested(card.taskId) }
+            }
+            Keys.onReturnPressed: event => { card.deleteRequested(card.taskId); event.accepted = true }
+            Keys.onSpacePressed: event => { card.deleteRequested(card.taskId); event.accepted = true }
+            ToolTip.visible: deleteMouse.containsMouse
+            ToolTip.text: qsTr("Delete task")
         }
         Text { text: "›"; color: theme.muted; font.pixelSize: 22 }
     }

@@ -15,6 +15,8 @@
 #include <QUrl>
 #include <QtTest>
 
+#include <algorithm>
+
 class CoreTests final : public QObject
 {
     Q_OBJECT
@@ -27,10 +29,14 @@ private slots:
     void settingsPersistence();
     void jsonRoundTripAndInvalidImportSafety();
     void dataServiceImportCreatesSafetyBackup();
+    void backgroundExportUsesThreadPoolAndCallback();
     void growthRewardsAreOneTimeAndPersistent();
     void vitalityDecaysAfterInactiveDays();
+    void gardenSeedsPersistAndGrowIndependently();
     void legacyDatabaseMigratesToGrowthSchema();
     void classificationSearchAndValidation();
+    void incrementalTaskModelUpdates();
+    void longTermTaskMapPersistsAndCompletes();
     void completeUserJourney();
 
 private:
@@ -99,12 +105,14 @@ void CoreTests::settingsPersistence()
     settings.setTheme(QStringLiteral("midnight"));
     settings.setLanguage(QStringLiteral("en"));
     settings.setReduceAnimations(true);
+    settings.setCompatibilityRendering(true);
     settings.setDefaultTaskDuration(40);
     SettingsManager reopened(m_database.get());
     reopened.load();
     QCOMPARE(reopened.theme(), QStringLiteral("midnight"));
     QCOMPARE(reopened.language(), QStringLiteral("en"));
     QCOMPARE(reopened.reduceAnimations(), true);
+    QCOMPARE(reopened.compatibilityRendering(), true);
     QCOMPARE(reopened.defaultTaskDuration(), 40);
 }
 
@@ -115,7 +123,7 @@ void CoreTests::jsonRoundTripAndInvalidImportSafety()
     QVERIFY(exported.value(QStringLiteral("version")).isString());
     QCOMPARE(exported.value(QStringLiteral("application")).toString(), QStringLiteral("TinyBloom"));
     QCOMPARE(exported.value(QStringLiteral("platform")).toString(), QStringLiteral("desktop"));
-    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 1);
+    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 2);
     QCOMPARE(exported.value(QStringLiteral("tasks")).toArray().size(), 1);
 
     QJsonObject invalid{{"version", "0.1.0"}, {"tasks", QJsonArray{QJsonObject{{"title", ""}}}},
@@ -164,6 +172,31 @@ void CoreTests::dataServiceImportCreatesSafetyBackup()
     const QJsonDocument backupDocument = QJsonDocument::fromJson(backup.readAll(), &parseError);
     QCOMPARE(parseError.error, QJsonParseError::NoError);
     QCOMPARE(backupDocument.object().value(QStringLiteral("tasks")).toArray().size(), 2);
+}
+
+void CoreTests::backgroundExportUsesThreadPoolAndCallback()
+{
+    SettingsManager settings(m_database.get());
+    settings.load();
+    DataService dataService(m_database.get(), m_tasks.get(), &settings);
+    QVERIFY(m_tasks->createTask(QStringLiteral("Export without blocking the UI")));
+
+    const QString path = m_temp->filePath(QStringLiteral("background-export.json"));
+    QSignalSpy successSpy(&dataService, &DataService::operationSucceeded);
+    QSignalSpy failureSpy(&dataService, &DataService::operationFailed);
+    QVERIFY(dataService.exportDataAsync(QUrl::fromLocalFile(path)));
+    QVERIFY(dataService.busy());
+    QVERIFY(!dataService.exportDataAsync(QUrl::fromLocalFile(path)));
+    QTRY_COMPARE_WITH_TIMEOUT(successSpy.count(), 1, 5000);
+    QCOMPARE(failureSpy.count(), 1);
+    QVERIFY(!dataService.busy());
+
+    QFile file(path);
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
+    QCOMPARE(parseError.error, QJsonParseError::NoError);
+    QCOMPARE(document.object().value(QStringLiteral("tasks")).toArray().size(), 1);
 }
 
 void CoreTests::growthRewardsAreOneTimeAndPersistent()
@@ -217,6 +250,43 @@ void CoreTests::vitalityDecaysAfterInactiveDays()
     QCOMPARE(growthManager.totalXp(), 0);
 }
 
+void CoreTests::gardenSeedsPersistAndGrowIndependently()
+{
+    GrowthManager growth(m_database.get());
+    QVERIFY(growth.initialize());
+    QCOMPARE(growth.firstPlantSpecies(), QString{});
+    QCOMPARE(growth.secondPlantSpecies(), QString{});
+    QVERIFY(!growth.plantSeed(2, QStringLiteral("rose")));
+    QVERIFY(!growth.plantSeed(0, QStringLiteral("cactus")));
+    QVERIFY(growth.plantSeed(0, QStringLiteral("sunflower")));
+    QVERIFY(growth.plantSeed(1, QStringLiteral("rose")));
+    QCOMPARE(growth.plantStage(0), 0);
+
+    connect(m_tasks.get(), &TaskManager::taskCompleted, &growth, &GrowthManager::recordTaskCompleted);
+    for (int i = 0; i < 3; ++i) {
+        QVERIFY(m_tasks->createTask(QStringLiteral("Grow %1").arg(i)));
+        const qint64 id = m_database->exportObject().value(QStringLiteral("tasks"))
+            .toArray().first().toObject().value(QStringLiteral("id")).toInteger();
+        QVERIFY(m_tasks->toggleTask(id));
+    }
+    QCOMPARE(growth.plantEarnedXp(0), 60);
+    QCOMPARE(growth.plantStage(0), 1);
+    QCOMPARE(growth.plantStage(1), 1);
+    QCOMPARE(m_database->exportObject().value(QStringLiteral("settings")).toObject()
+        .value(QStringLiteral("garden.plant.0")).toString(), QStringLiteral("sunflower|0"));
+
+    QVERIFY(growth.plantSeed(0, QStringLiteral("tulip")));
+    QCOMPARE(growth.firstPlantSpecies(), QStringLiteral("tulip"));
+    QCOMPARE(growth.plantEarnedXp(0), 0);
+    QCOMPARE(growth.plantStage(0), 0);
+
+    GrowthManager reopened(m_database.get());
+    QVERIFY(reopened.initialize());
+    QCOMPARE(reopened.firstPlantSpecies(), QStringLiteral("tulip"));
+    QCOMPARE(reopened.secondPlantSpecies(), QStringLiteral("rose"));
+    QCOMPARE(reopened.plantStage(0), 0);
+}
+
 void CoreTests::legacyDatabaseMigratesToGrowthSchema()
 {
     const QString path = m_temp->filePath(QStringLiteral("legacy.sqlite3"));
@@ -241,6 +311,7 @@ void CoreTests::legacyDatabaseMigratesToGrowthSchema()
     QVERIFY(growth.initialize());
     QCOMPARE(growth.totalXp(), 20);
     QCOMPARE(growth.progressDays(), 1);
+    QCOMPARE(growth.firstPlantSpecies(), QStringLiteral("pink"));
 }
 
 void CoreTests::classificationSearchAndValidation()
@@ -259,6 +330,9 @@ void CoreTests::classificationSearchAndValidation()
     m_tasks->searchTasks(QStringLiteral("Home"));
     QCOMPARE(m_tasks->allTasks()->count(), 1);
     m_tasks->searchTasks(QString{});
+    m_tasks->filterTasks(1);
+    m_tasks->setTaskScope(0);
+    QCOMPARE(m_tasks->allTasks()->count(), 4);
     m_tasks->setTaskScope(2);
     QCOMPARE(m_tasks->allTasks()->count(), 1);
     m_tasks->setTaskScope(0);
@@ -268,6 +342,95 @@ void CoreTests::classificationSearchAndValidation()
 
     QVERIFY(!m_tasks->createTask(QStringLiteral("Bad date"), QString{}, QStringLiteral("2026-99-42")));
     QCOMPARE(m_tasks->totalCount(), 4);
+}
+
+void CoreTests::incrementalTaskModelUpdates()
+{
+    QSignalSpy resetSpy(m_tasks->allTasks(), &QAbstractItemModel::modelReset);
+    QSignalSpy insertedSpy(m_tasks->allTasks(), &QAbstractItemModel::rowsInserted);
+    QSignalSpy removedSpy(m_tasks->allTasks(), &QAbstractItemModel::rowsRemoved);
+
+    QVERIFY(m_tasks->createTask(QStringLiteral("First task")));
+    QVERIFY(m_tasks->createTask(QStringLiteral("Second task")));
+    QCOMPARE(resetSpy.count(), 0);
+    QCOMPARE(insertedSpy.count(), 2);
+
+    const qint64 firstId = m_database->exportObject().value(QStringLiteral("tasks"))
+        .toArray().last().toObject().value(QStringLiteral("id")).toInteger();
+    QVERIFY(m_tasks->toggleTask(firstId));
+    QCOMPARE(resetSpy.count(), 0);
+    QVERIFY(m_tasks->deleteTask(firstId));
+    QCOMPARE(resetSpy.count(), 0);
+    QCOMPARE(removedSpy.count(), 1);
+}
+
+void CoreTests::longTermTaskMapPersistsAndCompletes()
+{
+    QVERIFY(m_tasks->createTask(QStringLiteral("Keep ordinary tasks separate")));
+    QVERIFY(m_tasks->createLongTermTask(QStringLiteral("Finish graduation project"),
+        QStringLiteral("Build something useful"), QDate::currentDate().addMonths(3).toString(Qt::ISODate)));
+    QCOMPARE(m_tasks->totalCount(), 1);
+    QCOMPARE(m_tasks->allTasks()->count(), 1);
+    QCOMPARE(m_tasks->longTermTasks()->count(), 1);
+
+    const qint64 goalId = m_tasks->longTermTasks()->get(0).value(QStringLiteral("taskId")).toLongLong();
+    QVERIFY(goalId > 0);
+    QVERIFY(m_tasks->createSubtask(goalId, QStringLiteral("Research")));
+    QVariantMap goal = m_tasks->getTask(goalId);
+    const qint64 branchId = goal.value(QStringLiteral("subtasks")).toList().first().toMap()
+        .value(QStringLiteral("id")).toLongLong();
+    QVERIFY(m_tasks->createSubtask(goalId, QStringLiteral("Read three papers"), branchId));
+    QVERIFY(m_tasks->createSubtask(goalId, QStringLiteral("Build prototype")));
+    goal = m_tasks->getTask(goalId);
+    const QVariantList nodes = goal.value(QStringLiteral("subtasks")).toList();
+    QCOMPARE(nodes.size(), 3);
+    qint64 actionId = 0;
+    qint64 standaloneId = 0;
+    for (const QVariant &value : nodes) {
+        const QVariantMap node = value.toMap();
+        if (node.value(QStringLiteral("parentId")).toLongLong() == branchId) actionId = node.value(QStringLiteral("id")).toLongLong();
+        if (node.value(QStringLiteral("title")).toString() == QStringLiteral("Build prototype")) standaloneId = node.value(QStringLiteral("id")).toLongLong();
+    }
+    QVERIFY(actionId > 0);
+    QVERIFY(standaloneId > 0);
+    QVERIFY(!m_tasks->createSubtask(goalId, QStringLiteral("Too deep"), actionId));
+    QVERIFY(m_tasks->updateSubtask(goalId, actionId, QStringLiteral("Read five papers")));
+    QVERIFY(m_tasks->toggleSubtask(goalId, actionId));
+    QCOMPARE(m_tasks->getTask(goalId).value(QStringLiteral("completed")).toBool(), false);
+    QVERIFY(m_tasks->toggleSubtask(goalId, standaloneId));
+    QCOMPARE(m_tasks->getTask(goalId).value(QStringLiteral("completed")).toBool(), true);
+    QCOMPARE(m_tasks->longTermTasks()->get(0).value(QStringLiteral("leafCount")).toInt(), 2);
+    QCOMPARE(m_tasks->longTermTasks()->get(0).value(QStringLiteral("completedLeafCount")).toInt(), 2);
+
+    const QJsonObject exported = m_database->exportObject();
+    bool foundLongTerm = false;
+    bool foundNestedNode = false;
+    for (const auto &value : exported.value(QStringLiteral("tasks")).toArray())
+        if (value.toObject().value(QStringLiteral("longTerm")).toBool()) foundLongTerm = true;
+    for (const auto &value : exported.value(QStringLiteral("subtasks")).toArray())
+        if (value.toObject().value(QStringLiteral("parentId")).toInteger() > 0) foundNestedNode = true;
+    QVERIFY(foundLongTerm);
+    QVERIFY(foundNestedNode);
+
+    QVERIFY(m_database->importObject(exported));
+    m_tasks->reload();
+    QCOMPARE(m_tasks->longTermTasks()->count(), 1);
+    const qint64 importedGoalId = m_tasks->longTermTasks()->get(0).value(QStringLiteral("taskId")).toLongLong();
+    const QVariantList importedNodes = m_tasks->getTask(importedGoalId).value(QStringLiteral("subtasks")).toList();
+    QCOMPARE(importedNodes.size(), 3);
+    QVERIFY(std::any_of(importedNodes.cbegin(), importedNodes.cend(), [](const QVariant &value) {
+        return value.toMap().value(QStringLiteral("parentId")).toLongLong() > 0;
+    }));
+
+    qint64 importedBranchId = 0;
+    for (const QVariant &value : importedNodes) {
+        const QVariantMap node = value.toMap();
+        if (node.value(QStringLiteral("title")).toString() == QStringLiteral("Research"))
+            importedBranchId = node.value(QStringLiteral("id")).toLongLong();
+    }
+    QVERIFY(importedBranchId > 0);
+    QVERIFY(m_tasks->deleteSubtask(importedGoalId, importedBranchId));
+    QCOMPARE(m_tasks->getTask(importedGoalId).value(QStringLiteral("subtasks")).toList().size(), 1);
 }
 
 void CoreTests::completeUserJourney()

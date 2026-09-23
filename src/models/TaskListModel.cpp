@@ -1,21 +1,24 @@
 #include "TaskListModel.h"
 
 #include <QDate>
+#include <QSet>
 #include <QVariantList>
 
 TaskListModel::TaskListModel(QObject *parent) : QAbstractListModel(parent) {}
 
 int TaskListModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : m_rows.size();
+    return parent.isValid() ? 0 : m_ids.size();
 }
 
-int TaskListModel::count() const { return m_rows.size(); }
+int TaskListModel::count() const { return m_ids.size(); }
 
 QVariant TaskListModel::data(const QModelIndex &index, const int role) const
 {
-    if (!m_tasks || !index.isValid() || index.row() < 0 || index.row() >= m_rows.size()) return {};
-    const Task &task = m_tasks->at(m_rows.at(index.row()));
+    if (!m_tasks || !index.isValid() || index.row() < 0 || index.row() >= m_ids.size()) return {};
+    const Task *taskPointer = taskById(m_ids.at(index.row()));
+    if (!taskPointer) return {};
+    const Task &task = *taskPointer;
     switch (role) {
     case IdRole: return task.id;
     case TitleRole: return task.title;
@@ -35,11 +38,26 @@ QVariant TaskListModel::data(const QModelIndex &index, const int role) const
         for (const auto &subtask : task.subtasks) if (subtask.completed) ++count;
         return count;
     }
+    case LongTermRole: return task.longTerm;
+    case LeafCountRole:
+    case CompletedLeafCountRole: {
+        QSet<qint64> parents;
+        for (const auto &subtask : task.subtasks) if (subtask.parentId > 0) parents.insert(subtask.parentId);
+        int leaves = 0;
+        int completedLeaves = 0;
+        for (const auto &subtask : task.subtasks) {
+            if (parents.contains(subtask.id)) continue;
+            ++leaves;
+            if (subtask.completed) ++completedLeaves;
+        }
+        return role == LeafCountRole ? leaves : completedLeaves;
+    }
     case SubtasksRole: {
         QVariantList list;
         for (const auto &subtask : task.subtasks) {
             list.append(QVariantMap{{"id", subtask.id}, {"taskId", subtask.taskId},
-                {"title", subtask.title}, {"completed", subtask.completed}});
+                {"title", subtask.title}, {"completed", subtask.completed},
+                {"parentId", subtask.parentId}});
         }
         return list;
     }
@@ -54,7 +72,8 @@ QHash<int, QByteArray> TaskListModel::roleNames() const
         {DueDateRole,"dueDate"}, {EstimatedMinutesRole,"estimatedMinutes"}, {CategoryRole,"category"},
         {CreatedAtRole,"createdAt"}, {UpdatedAtRole,"updatedAt"}, {CompletedAtRole,"completedAt"},
         {SubtasksRole,"subtasks"}, {SubtaskCountRole,"subtaskCount"},
-        {CompletedSubtaskCountRole,"completedSubtaskCount"}};
+        {CompletedSubtaskCountRole,"completedSubtaskCount"}, {LongTermRole,"longTerm"},
+        {LeafCountRole,"leafCount"}, {CompletedLeafCountRole,"completedLeafCount"}};
 }
 
 void TaskListModel::setSource(const QVector<Task> *tasks) { m_tasks = tasks; refresh(); }
@@ -66,25 +85,73 @@ void TaskListModel::setStatusFilter(const int status)
     refresh();
 }
 
+QVariantMap TaskListModel::get(const int row) const
+{
+    const Task *task = taskAt(row);
+    if (!task) return {};
+    QVariantMap result;
+    const auto names = roleNames();
+    const QModelIndex modelIndex = index(row, 0);
+    for (auto it = names.cbegin(); it != names.cend(); ++it)
+        result.insert(QString::fromUtf8(it.value()), data(modelIndex, it.key()));
+    return result;
+}
+
 void TaskListModel::refresh()
 {
-    beginResetModel();
-    m_rows.clear();
+    QVector<qint64> nextIds;
     if (m_tasks) {
-        for (int i = 0; i < m_tasks->size(); ++i) if (matches(m_tasks->at(i))) m_rows.append(i);
+        for (const Task &task : *m_tasks) if (matches(task)) nextIds.append(task.id);
     }
-    endResetModel();
-    emit countChanged();
+
+    const int previousCount = m_ids.size();
+    const QSet<qint64> nextSet(nextIds.cbegin(), nextIds.cend());
+    for (int row = m_ids.size() - 1; row >= 0; --row) {
+        if (nextSet.contains(m_ids.at(row))) continue;
+        beginRemoveRows({}, row, row);
+        m_ids.removeAt(row);
+        endRemoveRows();
+    }
+
+    for (int targetRow = 0; targetRow < nextIds.size(); ++targetRow) {
+        const qint64 id = nextIds.at(targetRow);
+        if (targetRow < m_ids.size() && m_ids.at(targetRow) == id) continue;
+        const int currentRow = m_ids.indexOf(id, targetRow + 1);
+        if (currentRow >= 0) {
+            beginMoveRows({}, currentRow, currentRow, {}, targetRow);
+            m_ids.move(currentRow, targetRow);
+            endMoveRows();
+        } else {
+            beginInsertRows({}, targetRow, targetRow);
+            m_ids.insert(targetRow, id);
+            endInsertRows();
+        }
+    }
+
+    if (!m_ids.isEmpty()) emit dataChanged(index(0), index(m_ids.size() - 1));
+    if (previousCount != m_ids.size()) emit countChanged();
 }
 
 const Task *TaskListModel::taskAt(const int row) const
 {
-    if (!m_tasks || row < 0 || row >= m_rows.size()) return nullptr;
-    return &m_tasks->at(m_rows.at(row));
+    if (!m_tasks || row < 0 || row >= m_ids.size()) return nullptr;
+    return taskById(m_ids.at(row));
+}
+
+const Task *TaskListModel::taskById(const qint64 id) const
+{
+    if (!m_tasks) return nullptr;
+    for (const Task &task : *m_tasks) if (task.id == id) return &task;
+    return nullptr;
 }
 
 bool TaskListModel::matches(const Task &task) const
 {
+    if (m_scope == Scope::LongTerm) {
+        if (!task.longTerm) return false;
+    } else if (task.longTerm) {
+        return false;
+    }
     if (m_status == Status::Active && task.completed) return false;
     if (m_status == Status::Completed && !task.completed) return false;
     const QDate today = QDate::currentDate();

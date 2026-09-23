@@ -11,7 +11,7 @@ Item {
         id: exportDialog; title: qsTr("Export TinyBloom data"); fileMode: FileDialog.SaveFile
         nameFilters: [qsTr("TinyBloom JSON (*.json)")]
         currentFile: "tinybloom-export.json"
-        onAccepted: dataService.exportData(selectedFile)
+        onAccepted: dataService.exportDataAsync(selectedFile)
     }
     FileDialog {
         id: importDialog; title: qsTr("Import TinyBloom data"); fileMode: FileDialog.OpenFile
@@ -98,6 +98,18 @@ Item {
                     RowLayout {
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
+                            Text { text: qsTr("Compatibility rendering"); color: theme.text; font.pixelSize: 14 }
+                            Text { text: qsTr("Use software rendering after restart if the graphics driver is unstable"); color: theme.muted; font.pixelSize: 12 }
+                        }
+                        Switch {
+                            Accessible.name: qsTr("Compatibility rendering")
+                            checked: settingsManager.compatibilityRendering
+                            onToggled: settingsManager.compatibilityRendering = checked
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        ColumnLayout { Layout.fillWidth: true; spacing: 2
                             Text { text: qsTr("Default task duration"); color: theme.text; font.pixelSize: 14 }
                             Text { text: qsTr("Used for new tasks"); color: theme.muted; font.pixelSize: 12 }
                         }
@@ -113,8 +125,14 @@ Item {
                     Text { text: qsTr("Data"); color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
                     Text { text: qsTr("Your data stays on this device unless you export it."); color: theme.muted; font.pixelSize: 12 }
                     RowLayout {
-                        AppButton { theme: page.theme; text: qsTr("Export Data"); primary: false; onClicked: exportDialog.open() }
-                        AppButton { theme: page.theme; text: qsTr("Import Data"); primary: false; onClicked: importDialog.open() }
+                        AppButton {
+                            theme: page.theme; text: dataService.busy ? qsTr("Working...") : qsTr("Export Data")
+                            primary: false; enabled: !dataService.busy; onClicked: exportDialog.open()
+                        }
+                        AppButton {
+                            theme: page.theme; text: qsTr("Import Data"); primary: false
+                            enabled: !dataService.busy; onClicked: importDialog.open()
+                        }
                     }
                 }
             }

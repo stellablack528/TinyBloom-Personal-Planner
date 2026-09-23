@@ -89,7 +89,8 @@ bool DatabaseManager::createTables()
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             completed_at TEXT,
-            experience_awarded INTEGER NOT NULL DEFAULT 0
+            experience_awarded INTEGER NOT NULL DEFAULT 0,
+            long_term INTEGER NOT NULL DEFAULT 0
         ))"))
         && execute(QStringLiteral(R"(
         CREATE TABLE IF NOT EXISTS subtasks (
@@ -99,6 +100,7 @@ bool DatabaseManager::createTables()
             completed INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
             experience_awarded INTEGER NOT NULL DEFAULT 0,
+            parent_id INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE
         ))"))
         && execute(QStringLiteral(R"(
@@ -122,7 +124,11 @@ bool DatabaseManager::createTables()
 
     return ensureColumn(QStringLiteral("tasks"), QStringLiteral("experience_awarded"),
                QStringLiteral("INTEGER NOT NULL DEFAULT 0"))
+        && ensureColumn(QStringLiteral("tasks"), QStringLiteral("long_term"),
+               QStringLiteral("INTEGER NOT NULL DEFAULT 0"))
         && ensureColumn(QStringLiteral("subtasks"), QStringLiteral("experience_awarded"),
+               QStringLiteral("INTEGER NOT NULL DEFAULT 0"))
+        && ensureColumn(QStringLiteral("subtasks"), QStringLiteral("parent_id"),
                QStringLiteral("INTEGER NOT NULL DEFAULT 0"));
 }
 
@@ -143,7 +149,7 @@ QVector<Task> DatabaseManager::loadTasks() const
 {
     QVector<Task> tasks;
     QSqlQuery query(m_database);
-    if (!query.exec(QStringLiteral("SELECT id,title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at,experience_awarded FROM tasks ORDER BY completed ASC, due_date IS NULL, due_date ASC, created_at DESC"))) {
+    if (!query.exec(QStringLiteral("SELECT id,title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at,experience_awarded,long_term FROM tasks ORDER BY completed ASC, due_date IS NULL, due_date ASC, created_at DESC"))) {
         setError(tr("Unable to load tasks."), query.lastError().text());
         return tasks;
     }
@@ -161,13 +167,14 @@ QVector<Task> DatabaseManager::loadTasks() const
         task.updatedAt = dateTime(query.value(9));
         task.completedAt = dateTime(query.value(10));
         task.experienceAwarded = query.value(11).toBool();
+        task.longTerm = query.value(12).toBool();
         tasks.append(task);
     }
 
     QHash<qint64, int> taskIndexes;
     for (int i = 0; i < tasks.size(); ++i) taskIndexes.insert(tasks[i].id, i);
     QSqlQuery subquery(m_database);
-    if (!subquery.exec(QStringLiteral("SELECT id,task_id,title,completed,created_at,experience_awarded FROM subtasks ORDER BY id ASC"))) {
+    if (!subquery.exec(QStringLiteral("SELECT id,task_id,title,completed,created_at,experience_awarded,parent_id FROM subtasks ORDER BY id ASC"))) {
         setError(tr("Unable to load subtasks."), subquery.lastError().text());
         return tasks;
     }
@@ -181,6 +188,7 @@ QVector<Task> DatabaseManager::loadTasks() const
         subtask.completed = subquery.value(3).toBool();
         subtask.createdAt = dateTime(subquery.value(4));
         subtask.experienceAwarded = subquery.value(5).toBool();
+        subtask.parentId = subquery.value(6).toLongLong();
         tasks[taskIndexes.value(taskId)].subtasks.append(subtask);
     }
     return tasks;
@@ -189,7 +197,7 @@ QVector<Task> DatabaseManager::loadTasks() const
 bool DatabaseManager::insertTask(Task &task)
 {
     QSqlQuery query(m_database);
-    query.prepare(QStringLiteral("INSERT INTO tasks(title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at,experience_awarded) VALUES(?,?,?,?,?,?,?,?,?,?,?)"));
+    query.prepare(QStringLiteral("INSERT INTO tasks(title,description,completed,priority,due_date,estimated_minutes,category,created_at,updated_at,completed_at,experience_awarded,long_term) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"));
     query.addBindValue(task.title);
     query.addBindValue(task.description.isNull() ? QStringLiteral("") : task.description);
     query.addBindValue(task.completed);
@@ -201,6 +209,7 @@ bool DatabaseManager::insertTask(Task &task)
     query.addBindValue(iso(task.updatedAt));
     query.addBindValue(task.completedAt.isValid() ? iso(task.completedAt) : QVariant{});
     query.addBindValue(task.experienceAwarded);
+    query.addBindValue(task.longTerm);
     if (!query.exec()) {
         setError(tr("Unable to save this task."), query.lastError().text());
         return false;
@@ -212,7 +221,7 @@ bool DatabaseManager::insertTask(Task &task)
 bool DatabaseManager::updateTask(const Task &task)
 {
     QSqlQuery query(m_database);
-    query.prepare(QStringLiteral("UPDATE tasks SET title=?,description=?,completed=?,priority=?,due_date=?,estimated_minutes=?,category=?,updated_at=?,completed_at=? WHERE id=?"));
+    query.prepare(QStringLiteral("UPDATE tasks SET title=?,description=?,completed=?,priority=?,due_date=?,estimated_minutes=?,category=?,updated_at=?,completed_at=?,long_term=? WHERE id=?"));
     query.addBindValue(task.title);
     query.addBindValue(task.description.isNull() ? QStringLiteral("") : task.description);
     query.addBindValue(task.completed);
@@ -222,6 +231,7 @@ bool DatabaseManager::updateTask(const Task &task)
     query.addBindValue(task.category.isNull() ? QStringLiteral("") : task.category);
     query.addBindValue(iso(task.updatedAt));
     query.addBindValue(task.completedAt.isValid() ? iso(task.completedAt) : QVariant{});
+    query.addBindValue(task.longTerm);
     query.addBindValue(task.id);
     if (!query.exec()) {
         setError(tr("Unable to update this task."), query.lastError().text());
@@ -245,12 +255,13 @@ bool DatabaseManager::deleteTask(const qint64 taskId)
 bool DatabaseManager::insertSubtask(Subtask &subtask)
 {
     QSqlQuery query(m_database);
-    query.prepare(QStringLiteral("INSERT INTO subtasks(task_id,title,completed,created_at,experience_awarded) VALUES(?,?,?,?,?)"));
+    query.prepare(QStringLiteral("INSERT INTO subtasks(task_id,title,completed,created_at,experience_awarded,parent_id) VALUES(?,?,?,?,?,?)"));
     query.addBindValue(subtask.taskId);
     query.addBindValue(subtask.title);
     query.addBindValue(subtask.completed);
     query.addBindValue(iso(subtask.createdAt));
     query.addBindValue(subtask.experienceAwarded);
+    query.addBindValue(subtask.parentId);
     if (!query.exec()) {
         setError(tr("Unable to save this small step."), query.lastError().text());
         return false;
@@ -316,11 +327,12 @@ QJsonObject DatabaseManager::exportObject() const
             {"completed", task.completed}, {"priority", static_cast<int>(task.priority)},
             {"dueDate", task.dueDate.toString(Qt::ISODate)}, {"estimatedMinutes", task.estimatedMinutes},
             {"category", task.category}, {"createdAt", iso(task.createdAt)}, {"updatedAt", iso(task.updatedAt)},
-            {"completedAt", iso(task.completedAt)}, {"experienceAwarded", task.experienceAwarded}});
+            {"completedAt", iso(task.completedAt)}, {"experienceAwarded", task.experienceAwarded},
+            {"longTerm", task.longTerm}});
         for (const Subtask &subtask : task.subtasks) {
             subtasksArray.append(QJsonObject{{"id", subtask.id}, {"taskId", subtask.taskId}, {"title", subtask.title},
                 {"completed", subtask.completed}, {"createdAt", iso(subtask.createdAt)},
-                {"experienceAwarded", subtask.experienceAwarded}});
+                {"experienceAwarded", subtask.experienceAwarded}, {"parentId", subtask.parentId}});
         }
     }
     QJsonObject settings;
@@ -333,7 +345,7 @@ QJsonObject DatabaseManager::exportObject() const
         {"todayXp", growth.todayXp}, {"lastProgressDate", growth.lastProgressDate.toString(Qt::ISODate)},
         {"vitality", growth.vitality}, {"vitalityUpdatedDate", growth.vitalityUpdatedDate.toString(Qt::ISODate)}};
     return QJsonObject{{"application", QStringLiteral("TinyBloom")},
-        {"platform", QStringLiteral("desktop")}, {"schemaVersion", 1},
+        {"platform", QStringLiteral("desktop")}, {"schemaVersion", 2},
         {"version", QStringLiteral("0.2.0")},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
         {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject}};
@@ -359,6 +371,7 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         taskIds.insert(taskId);
     }
     QSet<qint64> subtaskIds;
+    QHash<qint64, qint64> subtaskTaskIds;
     for (const auto &value : root.value("subtasks").toArray()) {
         const QJsonObject item = value.toObject();
         const qint64 subtaskId = item.value("id").toInteger();
@@ -369,6 +382,16 @@ bool DatabaseManager::importObject(const QJsonObject &root)
             return false;
         }
         subtaskIds.insert(subtaskId);
+        subtaskTaskIds.insert(subtaskId, parentId);
+    }
+    for (const auto &value : root.value("subtasks").toArray()) {
+        const QJsonObject item = value.toObject();
+        const qint64 parentNodeId = item.value("parentId").toInteger(0);
+        if (parentNodeId > 0 && (!subtaskIds.contains(parentNodeId)
+            || subtaskTaskIds.value(parentNodeId) != item.value("taskId").toInteger())) {
+            setError(tr("This file contains an invalid task tree."), QStringLiteral("Invalid subtask parent"));
+            return false;
+        }
     }
     if (!m_database.transaction()) {
         setError(tr("Unable to start data import."), m_database.lastError().text());
@@ -401,19 +424,29 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         if (!task.updatedAt.isValid()) task.updatedAt = task.createdAt;
         task.completedAt = QDateTime::fromString(item.value("completedAt").toString(), Qt::ISODateWithMs);
         task.experienceAwarded = item.value("experienceAwarded").toBool(false);
+        task.longTerm = item.value("longTerm").toBool(false);
         if (!insertTask(task)) return rollback(m_lastError);
         ids.insert(oldId, task.id);
     }
-    for (const auto &value : root.value("subtasks").toArray()) {
-        const QJsonObject item = value.toObject();
-        const qint64 parentId = ids.value(item.value("taskId").toInteger(), 0);
-        const QString title = item.value("title").toString().trimmed();
-        if (!value.isObject() || parentId == 0 || title.isEmpty()) return rollback(QStringLiteral("Invalid subtask"));
-        Subtask subtask{0, parentId, title.left(160), item.value("completed").toBool(),
-            QDateTime::fromString(item.value("createdAt").toString(), Qt::ISODateWithMs)};
-        subtask.experienceAwarded = item.value("experienceAwarded").toBool(false);
-        if (!subtask.createdAt.isValid()) subtask.createdAt = QDateTime::currentDateTimeUtc();
-        if (!insertSubtask(subtask)) return rollback(m_lastError);
+    QHash<qint64, qint64> subtaskIdMap;
+    const QJsonArray subtaskItems = root.value("subtasks").toArray();
+    for (int pass = 0; pass < 2; ++pass) {
+        for (const auto &value : subtaskItems) {
+            const QJsonObject item = value.toObject();
+            const qint64 oldParentNodeId = item.value("parentId").toInteger(0);
+            if ((pass == 0) != (oldParentNodeId == 0)) continue;
+            const qint64 parentTaskId = ids.value(item.value("taskId").toInteger(), 0);
+            const QString title = item.value("title").toString().trimmed();
+            if (!value.isObject() || parentTaskId == 0 || title.isEmpty()) return rollback(QStringLiteral("Invalid subtask"));
+            Subtask subtask{0, parentTaskId, title.left(160), item.value("completed").toBool(),
+                QDateTime::fromString(item.value("createdAt").toString(), Qt::ISODateWithMs)};
+            subtask.experienceAwarded = item.value("experienceAwarded").toBool(false);
+            subtask.parentId = oldParentNodeId > 0 ? subtaskIdMap.value(oldParentNodeId, 0) : 0;
+            if (oldParentNodeId > 0 && subtask.parentId == 0) return rollback(QStringLiteral("Invalid subtask parent"));
+            if (!subtask.createdAt.isValid()) subtask.createdAt = QDateTime::currentDateTimeUtc();
+            if (!insertSubtask(subtask)) return rollback(m_lastError);
+            subtaskIdMap.insert(item.value("id").toInteger(), subtask.id);
+        }
     }
     const QJsonObject settings = root.value("settings").toObject();
     for (auto it = settings.begin(); it != settings.end(); ++it) {

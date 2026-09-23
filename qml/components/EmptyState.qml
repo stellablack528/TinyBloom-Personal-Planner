@@ -5,6 +5,7 @@ ColumnLayout {
     property QtObject theme
     property string title
     property string description
+    property string actionText: qsTr("+ Create Task")
     signal actionRequested()
     spacing: 10
     Layout.alignment: Qt.AlignHCenter
@@ -19,7 +20,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap; Layout.maximumWidth: 340
     }
     AppButton {
-        theme: parent.theme; text: qsTr("+ Create Task"); Layout.alignment: Qt.AlignHCenter; Layout.topMargin: 8
+        theme: parent.theme; text: parent.actionText; Layout.alignment: Qt.AlignHCenter; Layout.topMargin: 8
         onClicked: parent.actionRequested()
     }
 }

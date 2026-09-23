@@ -14,11 +14,12 @@ public:
         IdRole = Qt::UserRole + 1, TitleRole, DescriptionRole, CompletedRole,
         PriorityRole, PriorityNameRole, DueDateRole, EstimatedMinutesRole,
         CategoryRole, CreatedAtRole, UpdatedAtRole, CompletedAtRole,
-        SubtasksRole, SubtaskCountRole, CompletedSubtaskCountRole
+        SubtasksRole, SubtaskCountRole, CompletedSubtaskCountRole,
+        LongTermRole, LeafCountRole, CompletedLeafCountRole
     };
     Q_ENUM(Role)
 
-    enum class Scope { All, Today, Tomorrow, Later };
+    enum class Scope { All, Today, Tomorrow, Later, LongTerm };
     enum class Status { Any, Active, Completed };
 
     explicit TaskListModel(QObject *parent = nullptr);
@@ -31,6 +32,7 @@ public:
     void setScope(Scope scope);
     Q_INVOKABLE void setSearchText(const QString &text);
     Q_INVOKABLE void setStatusFilter(int status);
+    Q_INVOKABLE QVariantMap get(int row) const;
     void refresh();
     [[nodiscard]] const Task *taskAt(int row) const;
 
@@ -39,9 +41,10 @@ signals:
 
 private:
     bool matches(const Task &task) const;
+    [[nodiscard]] const Task *taskById(qint64 id) const;
 
     const QVector<Task> *m_tasks = nullptr;
-    QVector<int> m_rows;
+    QVector<qint64> m_ids;
     Scope m_scope = Scope::All;
     Status m_status = Status::Any;
     QString m_searchText;

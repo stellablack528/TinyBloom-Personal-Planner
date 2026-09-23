@@ -11,4 +11,5 @@ struct Subtask
     bool completed = false;
     QDateTime createdAt;
     bool experienceAwarded = false;
+    qint64 parentId = 0;
 };

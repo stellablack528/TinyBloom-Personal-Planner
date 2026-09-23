@@ -49,14 +49,18 @@ qt_add_qml_module(TinyBloom
         qml/components/DatePickerPopup.qml
         qml/components/EmptyState.qml
         qml/components/ImportConfirmDialog.qml
+        qml/components/LongTermNodeDialog.qml
+        qml/components/LongTermTaskDialog.qml
         qml/components/GardenPlant.qml
         qml/components/GrowthSummaryCard.qml
         qml/components/ProgressCard.qml
+        qml/components/SeedPickerDialog.qml
         qml/components/Sidebar.qml
         qml/components/TaskCard.qml
         qml/components/TaskDialog.qml
         qml/components/XpToast.qml
         qml/pages/GardenPage.qml
+        qml/pages/LongTermPage.qml
         qml/pages/TodayPage.qml
         qml/pages/TasksPage.qml
         qml/pages/SettingsPage.qml
