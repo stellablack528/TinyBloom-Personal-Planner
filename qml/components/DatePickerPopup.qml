@@ -20,7 +20,7 @@ Popup {
     parent: Overlay.overlay
     x: Math.round((parent.width - width) / 2)
     y: Math.round((parent.height - height) / 2)
-    width: 340
+    width: Math.min(340, parent ? parent.width - 20 : 340)
     height: calendarColumn.implicitHeight + 28
     padding: 14
     modal: true

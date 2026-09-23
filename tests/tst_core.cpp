@@ -28,6 +28,7 @@ private slots:
     void subtasksAndCascadeDelete();
     void settingsPersistence();
     void jsonRoundTripAndInvalidImportSafety();
+    void exportMetadataIdentifiesMobileWithoutChangingSchema();
     void dataServiceImportCreatesSafetyBackup();
     void backgroundExportUsesThreadPoolAndCallback();
     void growthRewardsAreOneTimeAndPersistent();
@@ -142,6 +143,16 @@ void CoreTests::jsonRoundTripAndInvalidImportSafety()
     QVERIFY(m_database->importObject(exported));
     QCOMPARE(m_database->loadTasks().size(), 1);
     QCOMPARE(m_database->loadTasks().first().title, QStringLiteral("Export me"));
+}
+
+void CoreTests::exportMetadataIdentifiesMobileWithoutChangingSchema()
+{
+    m_database->setExportMetadata(QStringLiteral("android"), QStringLiteral("0.3.0-beta.1"));
+    const QJsonObject exported = m_database->exportObject();
+    QCOMPARE(exported.value(QStringLiteral("application")).toString(), QStringLiteral("TinyBloom"));
+    QCOMPARE(exported.value(QStringLiteral("platform")).toString(), QStringLiteral("android"));
+    QCOMPARE(exported.value(QStringLiteral("version")).toString(), QStringLiteral("0.3.0-beta.1"));
+    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 2);
 }
 
 void CoreTests::dataServiceImportCreatesSafetyBackup()

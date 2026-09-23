@@ -13,6 +13,20 @@
 #include <QSaveFile>
 #include <QThread>
 
+namespace {
+QString storagePath(const QUrl &url)
+{
+    if (url.isLocalFile()) return url.toLocalFile();
+
+    // Android's system picker returns content:// URIs. Qt's Android file
+    // engine can open these directly, as long as the URI is kept intact.
+    if (url.scheme().compare(QStringLiteral("content"), Qt::CaseInsensitive) == 0)
+        return url.toString(QUrl::FullyEncoded);
+
+    return {};
+}
+}
+
 DataService::DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings,
     GrowthManager *growth, QObject *parent)
     : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings), m_growth(growth)
@@ -31,8 +45,24 @@ bool DataService::busy() const { return m_busy; }
 
 bool DataService::exportData(const QUrl &fileUrl)
 {
-    const QString path = fileUrl.toLocalFile();
+    const QString path = storagePath(fileUrl);
     if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid save location.")); return false; }
+
+    if (!fileUrl.isLocalFile()) {
+        QFile file(path);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            emit operationFailed(tr("Unable to write the export file."));
+            return false;
+        }
+        const QByteArray payload = QJsonDocument(m_database->exportObject()).toJson(QJsonDocument::Indented);
+        if (file.write(payload) != payload.size() || !file.flush()) {
+            emit operationFailed(tr("Unable to finish writing the export file."));
+            return false;
+        }
+        emit operationSucceeded(tr("Your TinyBloom data was exported."));
+        return true;
+    }
+
     QSaveFile file(path);
     if (!file.open(QIODevice::WriteOnly)) { emit operationFailed(tr("Unable to write the export file.")); return false; }
     file.write(QJsonDocument(m_database->exportObject()).toJson(QJsonDocument::Indented));
@@ -43,9 +73,14 @@ bool DataService::exportData(const QUrl &fileUrl)
 
 bool DataService::exportDataAsync(const QUrl &fileUrl)
 {
-    const QString path = fileUrl.toLocalFile();
+    const QString path = storagePath(fileUrl);
     if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid save location.")); return false; }
     if (m_busy) { emit operationFailed(tr("A data operation is already in progress.")); return false; }
+
+    // Persistable access to a picker URI is scoped to the UI call on Android.
+    // Keep that small write synchronous; ordinary filesystem exports remain
+    // background operations below.
+    if (!fileUrl.isLocalFile()) return exportData(fileUrl);
 
     // SQLite remains on its owning (UI) thread. Only immutable JSON and file I/O
     // cross the thread boundary, so the render and database threads stay safe.
@@ -78,7 +113,9 @@ bool DataService::exportDataAsync(const QUrl &fileUrl)
 
 bool DataService::importData(const QUrl &fileUrl)
 {
-    QFile file(fileUrl.toLocalFile());
+    const QString path = storagePath(fileUrl);
+    if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid file.")); return false; }
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) { emit operationFailed(tr("Unable to read this file.")); return false; }
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);

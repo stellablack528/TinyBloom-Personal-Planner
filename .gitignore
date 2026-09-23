@@ -1,5 +1,8 @@
 /build*/
 /dist/
+/release-assets/
+/.cache/
+/.downloads/
 /translations/*.qm
 /.qt/
 /.qtc_clangd/

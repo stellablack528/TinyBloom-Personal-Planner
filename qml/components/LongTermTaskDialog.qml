@@ -17,8 +17,8 @@ Dialog {
 
     modal: true
     anchors.centerIn: parent
-    width: Math.min(540, parent ? parent.width - 40 : 540)
-    height: Math.min(520, parent ? parent.height - 40 : 520)
+    width: Math.min(540, parent ? parent.width - (mobilePlatform || mobilePreview ? 16 : 40) : 540)
+    height: Math.min(520, parent ? parent.height - (mobilePlatform || mobilePreview ? 16 : 40) : 520)
     padding: 0
     closePolicy: Popup.CloseOnEscape
     background: Rectangle { radius: 18; color: theme.card; border.color: theme.border }
@@ -54,7 +54,7 @@ Dialog {
 
     contentItem: ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 26
+        anchors.margins: dialog.width < 460 ? 16 : 26
         spacing: 15
 
         RowLayout {
@@ -63,9 +63,11 @@ Dialog {
                 spacing: 3
                 Text {
                     text: dialog.editing ? qsTr("Edit long-term task") : qsTr("Create a long-term task")
-                    color: theme.text; font.pixelSize: 23; font.weight: Font.Bold
+                    color: theme.text; font.pixelSize: dialog.width < 460 ? 20 : 23; font.weight: Font.Bold
+                    wrapMode: Text.WordWrap
                 }
                 Text {
+                    visible: dialog.width >= 440
                     text: qsTr("Turn a distant goal into a map you can act on.")
                     color: theme.muted; font.pixelSize: 13
                 }

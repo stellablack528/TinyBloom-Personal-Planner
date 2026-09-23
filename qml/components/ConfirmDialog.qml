@@ -7,7 +7,7 @@ Dialog {
     property QtObject theme
     property var targetId: -1
     signal confirmed(var id)
-    modal: true; anchors.centerIn: parent; width: 390
+    modal: true; anchors.centerIn: parent; width: Math.min(390, parent ? parent.width - 24 : 390)
     padding: 22; closePolicy: Popup.CloseOnEscape
     background: Rectangle { radius: 16; color: theme.card; border.color: theme.border }
     contentItem: ColumnLayout {

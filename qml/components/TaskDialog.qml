@@ -27,9 +27,9 @@ Dialog {
 
     modal: true
     anchors.centerIn: parent
-    width: Math.min(620, parent ? parent.width - 40 : 620)
+    width: Math.min(620, parent ? parent.width - (mobilePlatform || mobilePreview ? 16 : 40) : 620)
     height: Math.min(moreOptions.checked ? (editing ? 700 : 610) : 310,
-                     parent ? parent.height - 40 : 700)
+                     parent ? parent.height - (mobilePlatform || mobilePreview ? 16 : 40) : 700)
     padding: 0
     closePolicy: Popup.CloseOnEscape
     Behavior on height { NumberAnimation { duration: theme.animationDuration; easing.type: Easing.OutCubic } }
@@ -70,13 +70,13 @@ Dialog {
 
     contentItem: ColumnLayout {
         Accessible.name: dialog.editing ? qsTr("Edit task") : qsTr("Create task")
-        anchors.fill: parent; anchors.margins: 26; spacing: 16
+        anchors.fill: parent; anchors.margins: dialog.width < 480 ? 16 : 26; spacing: dialog.width < 480 ? 12 : 16
         RowLayout {
             Layout.fillWidth: true
             ColumnLayout {
                 spacing: 3
-                Text { text: dialog.editing ? qsTr("Edit task") : qsTr("Create a small step"); color: theme.text; font.pixelSize: 23; font.weight: Font.Bold }
-                Text { text: dialog.editing ? qsTr("Adjust what matters, and keep moving.") : qsTr("Keep it simple — you can add details later."); color: theme.muted; font.pixelSize: 13 }
+                Text { text: dialog.editing ? qsTr("Edit task") : qsTr("Create a small step"); color: theme.text; font.pixelSize: dialog.width < 480 ? 20 : 23; font.weight: Font.Bold }
+                Text { visible: dialog.width >= 440; text: dialog.editing ? qsTr("Adjust what matters, and keep moving.") : qsTr("Keep it simple — you can add details later."); color: theme.muted; font.pixelSize: 13 }
             }
             Item { Layout.fillWidth: true }
             RoundButton {

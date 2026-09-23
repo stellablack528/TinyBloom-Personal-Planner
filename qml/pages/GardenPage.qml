@@ -5,6 +5,7 @@ import QtQuick.Layouts
 Item {
     id: page
     property QtObject theme
+    readonly property bool compact: width < 600
     property int focusSeconds: 25 * 60
     property bool focusRunning: false
     signal focusSessionCompleted()
@@ -37,16 +38,22 @@ Item {
         anchors.fill: parent; contentWidth: width; contentHeight: content.implicitHeight + 80; clip: true
         ScrollBar.vertical: ScrollBar {}
         ColumnLayout {
-            id: content; x: 40; y: 36; width: parent.width - 80; spacing: 18
-            RowLayout {
+            id: content
+            x: page.compact ? 14 : 40
+            y: page.compact ? 16 : 36
+            width: parent.width - (page.compact ? 28 : 80)
+            spacing: page.compact ? 14 : 18
+            GridLayout {
                 Layout.fillWidth: true
+                columns: page.compact ? 1 : 2
                 ColumnLayout {
+                    Layout.fillWidth: true
                     spacing: 4
-                    Text { text: qsTr("Bloom Study Room"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-                    Text { text: qsTr("A quiet room where focused effort becomes something alive."); color: theme.muted; font.pixelSize: 14 }
+                    Text { text: qsTr("Bloom Study Room"); color: theme.text; font.pixelSize: page.compact ? 25 : 30; font.weight: Font.Bold }
+                    Text { Layout.fillWidth: true; text: qsTr("A quiet room where focused effort becomes something alive."); color: theme.muted; font.pixelSize: page.compact ? 12 : 14; wrapMode: Text.WordWrap }
                 }
-                Item { Layout.fillWidth: true }
                 Rectangle {
+                    Layout.alignment: page.compact ? Qt.AlignLeft : Qt.AlignRight
                     implicitWidth: levelRow.implicitWidth + 28; implicitHeight: 44; radius: 12; color: theme.primarySoft
                     RowLayout {
                         id: levelRow; anchors.centerIn: parent; spacing: 8
@@ -61,7 +68,7 @@ Item {
             Rectangle {
                 id: panorama
                 Layout.fillWidth: true; Layout.preferredHeight: page.width < 760 ? 760 : 510
-                radius: 24; clip: true; border.color: theme.border
+                radius: page.compact ? 18 : 24; clip: true; border.color: theme.border
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: theme.dark ? "#172A28" : "#DFF2ED" }
                     GradientStop { position: 0.58; color: theme.dark ? "#21332C" : "#F5EEDC" }
@@ -108,7 +115,7 @@ Item {
                 Rectangle {
                     id: focusPanel
                     anchors.horizontalCenter: parent.horizontalCenter; y: 20; z: 10
-                    width: 272; height: 104; radius: 17
+                    width: Math.min(272, parent.width - 24); height: 104; radius: 17
                     color: Qt.alpha(theme.card, theme.dark ? 0.84 : 0.9)
                     border.color: Qt.alpha(theme.primary, 0.24)
                     RowLayout {
@@ -231,8 +238,8 @@ Item {
                 }
             }
 
-            RowLayout {
-                Layout.fillWidth: true; spacing: 14
+            GridLayout {
+                Layout.fillWidth: true; columns: page.compact ? 1 : 3; columnSpacing: 14; rowSpacing: 10
                 Repeater {
                     model: [
                         {value: growthManager.vitality + "%", title: qsTr("Room vitality"), detail: growthManager.vitalityMessage},

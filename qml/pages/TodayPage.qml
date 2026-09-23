@@ -5,6 +5,7 @@ import QtQuick.Layouts
 Item {
     id: page
     property QtObject theme
+    readonly property bool compact: width < 600
     signal createRequested(string date)
     signal editRequested(var id)
     signal deleteRequested(var id)
@@ -16,13 +17,13 @@ Item {
     }
 
     ColumnLayout {
-        anchors.fill: parent; anchors.margins: 40; spacing: 22
+        anchors.fill: parent; anchors.margins: page.compact ? 16 : 40; spacing: page.compact ? 16 : 22
         RowLayout {
             Layout.fillWidth: true
             ColumnLayout {
                 spacing: 5
-                Text { text: page.greeting(); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-                Text { text: Qt.locale(settingsManager.language === "zh_CN" ? "zh_CN" : "en_US").toString(new Date(), "dddd, MMMM d"); color: theme.muted; font.pixelSize: 14 }
+                Text { text: page.greeting(); color: theme.text; font.pixelSize: page.compact ? 24 : 30; font.weight: Font.Bold }
+                Text { text: Qt.locale(settingsManager.language === "zh_CN" ? "zh_CN" : "en_US").toString(new Date(), "dddd, MMMM d"); color: theme.muted; font.pixelSize: page.compact ? 12 : 14 }
             }
             Item { Layout.fillWidth: true }
             AppButton { theme: page.theme; text: qsTr("+ Add Task"); onClicked: page.createRequested(Qt.formatDate(new Date(), "yyyy-MM-dd")) }
@@ -41,7 +42,7 @@ Item {
                 onGardenRequested: page.gardenRequested()
             }
         }
-        Text { text: qsTr("Today's Tasks"); color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
+        Text { text: qsTr("Today's Tasks"); color: theme.text; font.pixelSize: page.compact ? 17 : 19; font.weight: Font.DemiBold }
         StackLayout {
             Layout.fillWidth: true; Layout.fillHeight: true
             currentIndex: taskManager.todayCount === 0 ? 0 : 1

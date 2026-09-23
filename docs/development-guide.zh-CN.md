@@ -601,6 +601,7 @@ ctest --test-dir build-debug --output-on-failure
 | `TINYBLOOM_SCREENSHOT_SCENARIO` | 准备稳定的界面状态 |
 | `TINYBLOOM_SCREENSHOT_PATH` | 保存窗口截图后退出 |
 | `TINYBLOOM_SOFTWARE_RENDERING` | 强制软件渲染 |
+| `TINYBLOOM_MOBILE_PREVIEW` | 使用 390 × 844 窗口与移动端导航预览手机界面 |
 
 可用场景包括：
 
@@ -798,4 +799,3 @@ TinyBloom 当前是单用户、本地优先桌面应用。SQLite 更易安装、
 ---
 
 TinyBloom 的工程目标不是为了展示用了多少技术，而是让每项技术都解决一个真实问题：数据必须可靠、界面必须流畅、后台工作不能卡住用户、显卡异常必须有回退路径，而每一个完成的小步骤都应该让用户感受到进展。
-

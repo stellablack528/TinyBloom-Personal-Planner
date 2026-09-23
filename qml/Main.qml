@@ -5,28 +5,46 @@ import TinyBloom
 
 ApplicationWindow {
     id: root
-    width: 1260; height: 760; minimumWidth: 900; minimumHeight: 580
-    visible: true; title: "TinyBloom Desktop — " + qsTr("Small Steps, Real Progress.")
+    property bool compactMode: mobilePlatform || mobilePreview || width < 720
+    width: mobilePlatform || mobilePreview ? 390 : 1260
+    height: mobilePlatform || mobilePreview ? 844 : 760
+    minimumWidth: mobilePlatform || mobilePreview ? 320 : 900
+    minimumHeight: mobilePlatform || mobilePreview ? 560 : 580
+    visible: true
+    title: (mobilePlatform || mobilePreview ? "TinyBloom Mobile — " : "TinyBloom Desktop — ")
+        + qsTr("Small Steps, Real Progress.")
     color: theme.window
     property int currentPage: 0
+    readonly property QtObject appTheme: theme
 
     Theme { id: theme }
 
     Shortcut {
+        enabled: !root.compactMode
         sequence: "Ctrl+N"
-        onActivated: currentPage === 2 ? longTermPage.createNew()
+        onActivated: currentPage === 2 && longTermLoader.item ? longTermLoader.item.createNew()
             : taskDialog.openNew(currentPage === 0 ? Qt.formatDate(new Date(), "yyyy-MM-dd") : "")
     }
-    Shortcut { sequence: "Ctrl+F"; onActivated: { currentPage = 1; tasksPage.focusSearch() } }
+    Shortcut { enabled: !root.compactMode; sequence: "Ctrl+F"; onActivated: { currentPage = 1; tasksPage.focusSearch() } }
 
-    RowLayout {
-        anchors.fill: parent; spacing: 0
+    Item {
+        anchors.fill: parent
         Sidebar {
-            theme: theme; currentIndex: root.currentPage; Layout.fillHeight: true; Layout.preferredWidth: 230
+            id: sidebar
+            visible: !root.compactMode
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 230
+            theme: theme; currentIndex: root.currentPage
             onPageRequested: index => root.currentPage = index
         }
         StackLayout {
-            Layout.fillWidth: true; Layout.fillHeight: true; currentIndex: root.currentPage
+            anchors.left: root.compactMode ? parent.left : sidebar.right
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: root.compactMode ? mobileNavigation.top : parent.bottom
+            currentIndex: root.currentPage
             TodayPage {
                 theme: theme
                 onCreateRequested: date => taskDialog.openNew(date)
@@ -40,7 +58,10 @@ ApplicationWindow {
                 onEditRequested: id => taskDialog.openEdit(id)
                 onDeleteRequested: id => { confirmDialog.targetId = id; confirmDialog.open() }
             }
-            LongTermPage { id: longTermPage; theme: theme }
+            Loader {
+                id: longTermLoader
+                sourceComponent: root.compactMode ? mobileLongTermComponent : desktopLongTermComponent
+            }
             GardenPage {
                 id: gardenPage; theme: theme
                 onSeedPlanted: flowerName => toast.show(qsTr("%1 seed planted. Let your next small step help it grow.").arg(flowerName))
@@ -48,7 +69,21 @@ ApplicationWindow {
             }
             SettingsPage { theme: theme }
         }
+        MobileNavigationBar {
+            id: mobileNavigation
+            visible: root.compactMode
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            height: 70
+            theme: theme
+            currentIndex: root.currentPage
+            onPageRequested: index => root.currentPage = index
+        }
     }
+
+    Component { id: desktopLongTermComponent; LongTermPage { theme: root.appTheme } }
+    Component { id: mobileLongTermComponent; MobileLongTermPage { theme: root.appTheme } }
 
     TaskDialog {
         id: taskDialog; theme: theme
@@ -61,8 +96,9 @@ ApplicationWindow {
     XpToast { id: xpToast; theme: theme }
     Popup {
         id: toast; property string message
-        x: root.width - width - 24; y: root.height - height - 24
-        width: Math.min(460, root.width - 48)
+        x: root.width - width - (root.compactMode ? 12 : 24)
+        y: root.height - height - (root.compactMode ? mobileNavigation.height + 12 : 24)
+        width: Math.min(460, root.width - (root.compactMode ? 24 : 48))
         height: Math.max(52, toastText.implicitHeight + 24); padding: 0
         closePolicy: Popup.NoAutoClose
         background: Rectangle { radius: 12; color: theme.text }

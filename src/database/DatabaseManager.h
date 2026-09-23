@@ -25,6 +25,7 @@ public:
 
     bool initializeDatabase(const QString &overridePath = {});
     void closeDatabase();
+    void setExportMetadata(const QString &platform, const QString &version);
     [[nodiscard]] bool isOpen() const;
     [[nodiscard]] QString databasePath() const;
     [[nodiscard]] QString lastError() const;
@@ -60,4 +61,6 @@ private:
     QString m_databasePath;
     QSqlDatabase m_database;
     mutable QString m_lastError;
+    QString m_exportPlatform = QStringLiteral("desktop");
+    QString m_exportVersion = QStringLiteral("0.3.0-beta.1");
 };

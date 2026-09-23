@@ -6,11 +6,11 @@ import QtQuick.Layouts
 Item {
     id: page
     property QtObject theme
+    readonly property bool compact: width < 600
 
     FileDialog {
         id: exportDialog; title: qsTr("Export TinyBloom data"); fileMode: FileDialog.SaveFile
         nameFilters: [qsTr("TinyBloom JSON (*.json)")]
-        currentFile: "tinybloom-export.json"
         onAccepted: dataService.exportDataAsync(selectedFile)
     }
     FileDialog {
@@ -29,20 +29,27 @@ Item {
     Flickable {
         anchors.fill: parent; contentHeight: content.implicitHeight + 80; clip: true
         ColumnLayout {
-            id: content; x: 40; y: 40; width: Math.min(parent.width - 80, 780); spacing: 20
-            Text { text: qsTr("Settings"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-            Text { text: qsTr("Make TinyBloom feel comfortable for you."); color: theme.muted; font.pixelSize: 14; Layout.bottomMargin: 6 }
+            id: content
+            x: page.compact ? 16 : 40
+            y: page.compact ? 16 : 40
+            width: Math.min(parent.width - (page.compact ? 32 : 80), 780)
+            spacing: page.compact ? 14 : 20
+            Text { text: qsTr("Settings"); color: theme.text; font.pixelSize: page.compact ? 25 : 30; font.weight: Font.Bold }
+            Text { text: qsTr("Make TinyBloom feel comfortable for you."); color: theme.muted; font.pixelSize: page.compact ? 12 : 14; Layout.bottomMargin: 6 }
             Rectangle {
                 Layout.fillWidth: true; implicitHeight: languageRow.implicitHeight + 32; radius: theme.radius; color: theme.card; border.color: theme.border
-                RowLayout {
-                    id: languageRow; anchors.fill: parent; anchors.margins: 16; spacing: 16
+                GridLayout {
+                    id: languageRow; anchors.fill: parent; anchors.margins: 16
+                    columnSpacing: 16; rowSpacing: 10
+                    columns: page.compact ? 1 : 2
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 3
                         Text { text: qsTr("Language"); color: theme.text; font.pixelSize: 15; font.weight: Font.DemiBold }
-                        Text { text: qsTr("Choose the language used throughout TinyBloom"); color: theme.muted; font.pixelSize: 12 }
+                        Text { Layout.fillWidth: true; text: qsTr("Choose the language used throughout TinyBloom"); color: theme.muted; font.pixelSize: 12; wrapMode: Text.WordWrap }
                     }
                     ComboBox {
                         id: languageBox; model: [qsTr("简体中文"), qsTr("English")]
+                        Layout.fillWidth: page.compact
                         Accessible.name: qsTr("Language")
                         currentIndex: settingsManager.language === "zh_CN" ? 0 : 1
                         onActivated: settingsManager.language = currentIndex === 0 ? "zh_CN" : "en"
@@ -96,6 +103,7 @@ Item {
                         Switch { Accessible.name: qsTr("Reduce animations"); checked: settingsManager.reduceAnimations; onToggled: settingsManager.reduceAnimations = checked }
                     }
                     RowLayout {
+                        visible: !(mobilePlatform || mobilePreview)
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
                             Text { text: qsTr("Compatibility rendering"); color: theme.text; font.pixelSize: 14 }
@@ -123,7 +131,7 @@ Item {
                 ColumnLayout {
                     id: dataColumn; anchors.fill: parent; anchors.margins: 16; spacing: 12
                     Text { text: qsTr("Data"); color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
-                    Text { text: qsTr("Your data stays on this device unless you export it."); color: theme.muted; font.pixelSize: 12 }
+                    Text { Layout.fillWidth: true; text: qsTr("Your data stays on this device unless you export it."); color: theme.muted; font.pixelSize: 12; wrapMode: Text.WordWrap }
                     RowLayout {
                         AppButton {
                             theme: page.theme; text: dataService.busy ? qsTr("Working...") : qsTr("Export Data")
@@ -140,8 +148,16 @@ Item {
                 Layout.fillWidth: true; implicitHeight: aboutColumn.implicitHeight + 32; radius: theme.radius; color: theme.card; border.color: theme.border
                 ColumnLayout {
                     id: aboutColumn; anchors.fill: parent; anchors.margins: 16; spacing: 5
-                    Text { text: "TinyBloom Desktop"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
-                    Text { text: qsTr("Windows desktop · Version %1").arg(Qt.application.version); color: theme.muted; font.pixelSize: 12 }
+                    Text { text: mobilePlatform || mobilePreview ? "TinyBloom Mobile" : "TinyBloom Desktop"; color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
+                    Text {
+                        text: mobilePlatform
+                            ? qsTr("%1 mobile · Version %2").arg(platformLabel).arg(Qt.application.version)
+                            : (mobilePreview
+                                ? qsTr("Mobile preview · Version %1").arg(Qt.application.version)
+                                : qsTr("Windows desktop · Version %1").arg(Qt.application.version))
+                        color: theme.muted
+                        font.pixelSize: 12
+                    }
                     Text { text: qsTr("Small Steps, Real Progress."); color: theme.primary; font.pixelSize: 13; font.weight: Font.DemiBold; Layout.topMargin: 4 }
                     Text { text: qsTr("Free & Open Source · MIT License"); color: theme.muted; font.pixelSize: 12 }
                 }

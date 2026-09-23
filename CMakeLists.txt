@@ -9,6 +9,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Qml Sql QuickControls2 LinguistTools)
 qt_standard_project_setup(REQUIRES 6.5)
+qt_policy(SET QTP0002 NEW)
 qt_policy(SET QTP0004 NEW)
 
 set(TINYBLOOM_SOURCES
@@ -56,11 +57,13 @@ qt_add_qml_module(TinyBloom
         qml/components/ProgressCard.qml
         qml/components/SeedPickerDialog.qml
         qml/components/Sidebar.qml
+        qml/components/MobileNavigationBar.qml
         qml/components/TaskCard.qml
         qml/components/TaskDialog.qml
         qml/components/XpToast.qml
         qml/pages/GardenPage.qml
         qml/pages/LongTermPage.qml
+        qml/pages/MobileLongTermPage.qml
         qml/pages/TodayPage.qml
         qml/pages/TasksPage.qml
         qml/pages/SettingsPage.qml
@@ -78,13 +81,35 @@ target_link_libraries(TinyBloom PRIVATE
     Qt6::Quick Qt6::Qml Qt6::Sql Qt6::QuickControls2
 )
 
+if(ANDROID)
+    set_target_properties(TinyBloom PROPERTIES
+        QT_ANDROID_PACKAGE_NAME "app.tinybloom.mobile"
+        QT_ANDROID_APP_NAME "TinyBloom"
+        QT_ANDROID_APP_ICON "@drawable/icon"
+        QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packaging/android"
+        QT_ANDROID_VERSION_CODE 30001
+        QT_ANDROID_VERSION_NAME "0.3.0-beta.1"
+        QT_ANDROID_MIN_SDK_VERSION 28
+        QT_ANDROID_TARGET_SDK_VERSION 36
+    )
+endif()
+
+if(IOS)
+    set_target_properties(TinyBloom PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER "app.tinybloom.mobile"
+        MACOSX_BUNDLE_BUNDLE_VERSION "30001"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.0"
+    )
+endif()
+
 if(WIN32)
     target_sources(TinyBloom PRIVATE resources/tinybloom.rc)
     set_target_properties(TinyBloom PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 include(CTest)
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT ANDROID AND NOT IOS)
     find_package(Qt6 6.5 REQUIRED COMPONENTS Test)
     qt_add_executable(TinyBloomTests
         tests/tst_core.cpp

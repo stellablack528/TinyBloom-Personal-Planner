@@ -145,6 +145,14 @@ bool DatabaseManager::isOpen() const { return m_database.isOpen(); }
 QString DatabaseManager::databasePath() const { return m_databasePath; }
 QString DatabaseManager::lastError() const { return m_lastError; }
 
+void DatabaseManager::setExportMetadata(const QString &platform, const QString &version)
+{
+    const QString normalizedPlatform = platform.trimmed().toLower();
+    const QString normalizedVersion = version.trimmed();
+    m_exportPlatform = normalizedPlatform.isEmpty() ? QStringLiteral("desktop") : normalizedPlatform.left(32);
+    m_exportVersion = normalizedVersion.isEmpty() ? QStringLiteral("0.3.0-beta.1") : normalizedVersion.left(64);
+}
+
 QVector<Task> DatabaseManager::loadTasks() const
 {
     QVector<Task> tasks;
@@ -345,8 +353,8 @@ QJsonObject DatabaseManager::exportObject() const
         {"todayXp", growth.todayXp}, {"lastProgressDate", growth.lastProgressDate.toString(Qt::ISODate)},
         {"vitality", growth.vitality}, {"vitalityUpdatedDate", growth.vitalityUpdatedDate.toString(Qt::ISODate)}};
     return QJsonObject{{"application", QStringLiteral("TinyBloom")},
-        {"platform", QStringLiteral("desktop")}, {"schemaVersion", 2},
-        {"version", QStringLiteral("0.3.0-beta.1")},
+        {"platform", m_exportPlatform}, {"schemaVersion", 2},
+        {"version", m_exportVersion},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
         {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject}};
 }

@@ -13,7 +13,7 @@ Dialog {
 
     modal: true
     anchors.centerIn: parent
-    width: Math.min(430, parent ? parent.width - 40 : 430)
+    width: Math.min(430, parent ? parent.width - (mobilePlatform || mobilePreview ? 16 : 40) : 430)
     height: 245
     padding: 0
     closePolicy: Popup.CloseOnEscape
@@ -39,7 +39,7 @@ Dialog {
     }
 
     contentItem: ColumnLayout {
-        anchors.fill: parent; anchors.margins: 24; spacing: 13
+        anchors.fill: parent; anchors.margins: dialog.width < 400 ? 16 : 24; spacing: 13
         Text {
             text: dialog.editing
                 ? (dialog.branch ? qsTr("Edit stage") : qsTr("Edit action step"))

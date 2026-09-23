@@ -9,13 +9,14 @@ Dialog {
     property bool replanting: false
     signal seedSelected(int slot, string species)
     modal: true; anchors.centerIn: parent
-    width: Math.min(560, parent ? parent.width - 48 : 560)
+    width: Math.min(560, parent ? parent.width - (mobilePlatform || mobilePreview ? 16 : 48) : 560)
     padding: 22; closePolicy: Popup.CloseOnEscape
     background: Rectangle { radius: 18; color: theme.card; border.color: theme.border }
 
     contentItem: ColumnLayout {
         spacing: 16
         Text {
+            Layout.fillWidth: true; wrapMode: Text.WordWrap
             text: dialog.replanting ? qsTr("Choose a new seed for flower pot %1").arg(dialog.slot + 1)
                 : qsTr("Choose a seed for flower pot %1").arg(dialog.slot + 1)
             color: theme.text; font.pixelSize: 21; font.weight: Font.Bold

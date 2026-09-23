@@ -1,6 +1,6 @@
 # TinyBloom 🌱
 
-一个免费、开源、注重真实使用体验的个人计划管理应用。当前发布的是 **TinyBloom Desktop（Windows 桌面版）**，帮助用户把复杂目标拆分成更容易开始的小步骤。
+一个免费、开源、注重真实使用体验的个人计划管理应用。当前公开发布的是 **TinyBloom Desktop（Windows 桌面版）**，源码中已包含与桌面端 v0.3.0 Beta 1 同步的移动端第一版界面与数据兼容层，帮助用户把复杂目标拆分成更容易开始的小步骤。
 
 > **Small Steps, Real Progress.**
 
@@ -22,6 +22,18 @@
 下面的构建说明主要提供给开发者。
 
 📘 参与开发前请阅读：[TinyBloom Desktop 中文开发文档](docs/development-guide.zh-CN.md)。
+
+## 📱 移动端第一版（开发中）
+
+移动端与桌面端共享同一套 C++ 业务逻辑、SQLite 数据结构和 `schemaVersion: 2` JSON 备份格式，版本统一为 `0.3.0-beta.1`。目前已经完成：
+
+- Today、任务、大任务、花园自习室和设置五个手机端页面
+- 适合触控和窄屏的底部导航、纵向目标地图与响应式弹窗
+- 简体中文 / English、Mint Garden / Midnight 主题
+- Android 系统文件选择器的 JSON 导入与导出兼容
+- Android / iOS 构建元数据和桌面端手机尺寸预览模式
+
+在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1` 即可用 `390 × 844` 的窗口预览移动端界面。生成 Android 安装包还需要安装 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包需要在 macOS 与 Xcode 环境中构建。
 
 ## 📖 项目简介
 

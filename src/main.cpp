@@ -17,22 +17,39 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    const QString applicationVersion = QStringLiteral("0.3.0-beta.1");
+    const bool mobilePreview = qEnvironmentVariableIntValue("TINYBLOOM_MOBILE_PREVIEW") == 1;
+#if defined(Q_OS_ANDROID)
+    const bool mobilePlatform = true;
+    const QString platformId = QStringLiteral("android");
+    const QString platformLabel = QStringLiteral("Android");
+#elif defined(Q_OS_IOS)
+    const bool mobilePlatform = true;
+    const QString platformId = QStringLiteral("ios");
+    const QString platformLabel = QStringLiteral("iOS");
+#else
+    const bool mobilePlatform = false;
+    const QString platformId = QStringLiteral("desktop");
+    const QString platformLabel = QStringLiteral("Windows");
+#endif
     QCoreApplication::setOrganizationName(QStringLiteral("TinyBloom"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("tinybloom.app"));
     QCoreApplication::setApplicationName(QStringLiteral("TinyBloom"));
-    QGuiApplication::setApplicationDisplayName(QStringLiteral("TinyBloom Desktop"));
-    QCoreApplication::setApplicationVersion(QStringLiteral("0.3.0-beta.1"));
+    QGuiApplication::setApplicationDisplayName(mobilePlatform
+        ? QStringLiteral("TinyBloom Mobile") : QStringLiteral("TinyBloom Desktop"));
+    QCoreApplication::setApplicationVersion(applicationVersion);
     QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/resources/icons/app-icon.svg")));
     QQuickStyle::setStyle(QStringLiteral("Basic"));
 
     DatabaseManager database;
+    database.setExportMetadata(platformId, applicationVersion);
     const QString databaseOverride = qEnvironmentVariable("TINYBLOOM_DATABASE_PATH");
     if (!database.initializeDatabase(databaseOverride)) qCritical().noquote() << database.lastError();
     TaskManager taskManager(&database);
     SettingsManager settingsManager(&database);
     settingsManager.load();
-    if (settingsManager.compatibilityRendering()
-        || qEnvironmentVariableIntValue("TINYBLOOM_SOFTWARE_RENDERING") == 1) {
+    if (!mobilePlatform && (settingsManager.compatibilityRendering()
+        || qEnvironmentVariableIntValue("TINYBLOOM_SOFTWARE_RENDERING") == 1)) {
         QQuickWindow::setGraphicsApi(QSGRendererInterface::Software);
     }
     GrowthManager growthManager(&database);
@@ -70,6 +87,10 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("growthManager"), &growthManager);
     engine.rootContext()->setContextProperty(QStringLiteral("dataService"), &dataService);
     engine.rootContext()->setContextProperty(QStringLiteral("databaseReady"), database.isOpen());
+    engine.rootContext()->setContextProperty(QStringLiteral("mobilePlatform"), mobilePlatform);
+    engine.rootContext()->setContextProperty(QStringLiteral("mobilePreview"), mobilePreview);
+    engine.rootContext()->setContextProperty(QStringLiteral("platformId"), platformId);
+    engine.rootContext()->setContextProperty(QStringLiteral("platformLabel"), platformLabel);
     engine.rootContext()->setContextProperty(QStringLiteral("screenshotScenario"),
         qEnvironmentVariable("TINYBLOOM_SCREENSHOT_SCENARIO"));
     engine.loadFromModule(QStringLiteral("TinyBloom"), QStringLiteral("Main"));

@@ -32,65 +32,73 @@
 <context>
     <name>DataService</name>
     <message>
-        <location filename="../src/services/DataService.cpp" line="35"/>
-        <location filename="../src/services/DataService.cpp" line="47"/>
+        <location filename="../src/services/DataService.cpp" line="49"/>
+        <location filename="../src/services/DataService.cpp" line="77"/>
         <source>Please choose a valid save location.</source>
         <translation>请选择有效的保存位置。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="37"/>
-        <location filename="../src/services/DataService.cpp" line="72"/>
+        <location filename="../src/services/DataService.cpp" line="54"/>
+        <location filename="../src/services/DataService.cpp" line="67"/>
+        <location filename="../src/services/DataService.cpp" line="107"/>
         <source>Unable to write the export file.</source>
         <translation>无法写入导出文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="39"/>
-        <location filename="../src/services/DataService.cpp" line="73"/>
+        <location filename="../src/services/DataService.cpp" line="59"/>
+        <location filename="../src/services/DataService.cpp" line="69"/>
+        <location filename="../src/services/DataService.cpp" line="108"/>
         <source>Unable to finish writing the export file.</source>
         <translation>无法完成导出文件的写入。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="40"/>
+        <location filename="../src/services/DataService.cpp" line="62"/>
+        <location filename="../src/services/DataService.cpp" line="70"/>
         <source>Your TinyBloom data was exported.</source>
         <translation>TinyBloom 数据已成功导出。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="48"/>
+        <location filename="../src/services/DataService.cpp" line="78"/>
         <source>A data operation is already in progress.</source>
         <translation>已有一项数据操作正在进行。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="71"/>
+        <location filename="../src/services/DataService.cpp" line="106"/>
         <source>Your TinyBloom data was exported in the background.</source>
         <translation>TinyBloom 数据已在后台导出完成。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="82"/>
+        <location filename="../src/services/DataService.cpp" line="117"/>
+        <source>Please choose a valid file.</source>
+        <translation>请选择有效的文件。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/DataService.cpp" line="119"/>
         <source>Unable to read this file.</source>
         <translation>无法读取此文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="86"/>
+        <location filename="../src/services/DataService.cpp" line="123"/>
         <source>This file does not contain valid JSON.</source>
         <translation>此文件不是有效的 JSON 文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="95"/>
+        <location filename="../src/services/DataService.cpp" line="132"/>
         <source>Your TinyBloom data was imported. Backup saved to %1</source>
         <translation>TinyBloom 数据已成功导入。安全备份已保存到 %1</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="104"/>
+        <location filename="../src/services/DataService.cpp" line="141"/>
         <source>Unable to find the TinyBloom data folder.</source>
         <translation>无法找到 TinyBloom 数据文件夹。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="112"/>
+        <location filename="../src/services/DataService.cpp" line="149"/>
         <source>Unable to create a safety backup. Import was cancelled.</source>
         <translation>无法创建安全备份，导入已取消。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="117"/>
+        <location filename="../src/services/DataService.cpp" line="154"/>
         <source>Unable to finish the safety backup. Import was cancelled.</source>
         <translation>无法完成安全备份，导入已取消。</translation>
     </message>
@@ -118,100 +126,100 @@
         <translation>无法启用数据库完整性检查。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="153"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="161"/>
         <source>Unable to load tasks.</source>
         <translation>无法加载任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="178"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="186"/>
         <source>Unable to load subtasks.</source>
         <translation>无法加载小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="214"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="222"/>
         <source>Unable to save this task.</source>
         <translation>无法保存此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="237"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="245"/>
         <source>Unable to update this task.</source>
         <translation>无法更新此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="249"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="257"/>
         <source>Unable to delete this task.</source>
         <translation>无法删除此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="266"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="274"/>
         <source>Unable to save this small step.</source>
         <translation>无法保存此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="281"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="289"/>
         <source>Unable to update this small step.</source>
         <translation>无法更新此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="293"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="301"/>
         <source>Unable to delete this small step.</source>
         <translation>无法删除此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="315"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="323"/>
         <source>Unable to save settings.</source>
         <translation>无法保存设置。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="358"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="366"/>
         <source>This file is not a valid TinyBloom export.</source>
         <translation>此文件不是有效的 TinyBloom 导出文件。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="368"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="376"/>
         <source>This file contains an invalid task.</source>
         <translation>此文件包含无效任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="381"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="389"/>
         <source>This file contains an invalid small step.</source>
         <translation>此文件包含无效的小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="392"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="400"/>
         <source>This file contains an invalid task tree.</source>
         <translation>该文件包含无效的任务树。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="397"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="405"/>
         <source>Unable to start data import.</source>
         <translation>无法开始导入数据。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="402"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="410"/>
         <source>Unable to import data. Your existing data is unchanged.</source>
         <translation>无法导入数据，现有数据未被修改。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="482"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="490"/>
         <source>Unable to load your garden.</source>
         <translation>无法读取你的花园。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="510"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="515"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="534"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="539"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="569"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="587"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="596"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="612"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="518"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="523"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="542"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="547"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="577"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="595"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="604"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="620"/>
         <source>Unable to update your garden.</source>
         <translation>暂时无法更新你的花园。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="620"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="631"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="628"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="639"/>
         <source>Unable to initialize local storage.</source>
         <translation>无法初始化本地存储。</translation>
     </message>
@@ -263,12 +271,12 @@
         <translation type="vanished">用心照料的会生长，放着不管的也会枯萎。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="53"/>
+        <location filename="../qml/pages/GardenPage.qml" line="60"/>
         <source>Level %1</source>
         <translation>等级 %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="55"/>
+        <location filename="../qml/pages/GardenPage.qml" line="62"/>
         <source>%1 XP</source>
         <translation>%1 XP</translation>
     </message>
@@ -281,92 +289,92 @@
         <translation type="vanished">达到 %1 XP 后继续生长 · 还差 %2 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="24"/>
+        <location filename="../qml/pages/GardenPage.qml" line="25"/>
         <source>Sunflower</source>
         <translation>向日葵</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="25"/>
+        <location filename="../qml/pages/GardenPage.qml" line="26"/>
         <source>Tulip</source>
         <translation>郁金香</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="26"/>
+        <location filename="../qml/pages/GardenPage.qml" line="27"/>
         <source>Rose</source>
         <translation>玫瑰</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="27"/>
+        <location filename="../qml/pages/GardenPage.qml" line="28"/>
         <source>Pink blossom</source>
         <translation>小粉花</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="45"/>
+        <location filename="../qml/pages/GardenPage.qml" line="52"/>
         <source>Bloom Study Room</source>
         <translation>花园自习室</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="46"/>
+        <location filename="../qml/pages/GardenPage.qml" line="53"/>
         <source>A quiet room where focused effort becomes something alive.</source>
         <translation>在安静的房间里，让每一次专注都长成真实的生命。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="128"/>
+        <location filename="../qml/pages/GardenPage.qml" line="135"/>
         <source>Focus session</source>
         <translation>专注自习</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="136"/>
+        <location filename="../qml/pages/GardenPage.qml" line="143"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="136"/>
+        <location filename="../qml/pages/GardenPage.qml" line="143"/>
         <source>Start</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="141"/>
+        <location filename="../qml/pages/GardenPage.qml" line="148"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="178"/>
+        <location filename="../qml/pages/GardenPage.qml" line="185"/>
         <source>Flower pot %1</source>
         <translation>第 %1 个花位</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="186"/>
+        <location filename="../qml/pages/GardenPage.qml" line="193"/>
         <source>Replant</source>
         <translation>重新播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="206"/>
+        <location filename="../qml/pages/GardenPage.qml" line="213"/>
         <source>Choose a seed and plant</source>
         <translation>选择种子并播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="223"/>
+        <location filename="../qml/pages/GardenPage.qml" line="230"/>
         <source>%1 XP since planting</source>
         <translation>播种后获得 %1 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="238"/>
+        <location filename="../qml/pages/GardenPage.qml" line="245"/>
         <source>Room vitality</source>
         <translation>自习室活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="239"/>
+        <location filename="../qml/pages/GardenPage.qml" line="246"/>
         <source>+20 XP</source>
         <translation>+20 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="239"/>
+        <location filename="../qml/pages/GardenPage.qml" line="246"/>
         <source>Complete a task</source>
         <translation>完成一个任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="239"/>
+        <location filename="../qml/pages/GardenPage.qml" line="246"/>
         <source>Restores 28 vitality</source>
         <translation>恢复 28 点活力</translation>
     </message>
@@ -383,12 +391,12 @@
         <translation type="vanished">恢复 10 点活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="240"/>
+        <location filename="../qml/pages/GardenPage.qml" line="247"/>
         <source>Days with progress</source>
         <translation>有进步的天数</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="240"/>
+        <location filename="../qml/pages/GardenPage.qml" line="247"/>
         <source>A quiet day costs 15 vitality</source>
         <translation>每休息一天会消耗 15 点活力</translation>
     </message>
@@ -624,107 +632,129 @@
     <name>LongTermPage</name>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="79"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="87"/>
         <source>Delete this long-term task?</source>
         <translation>删除这个长期任务吗？</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="79"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="87"/>
         <source>Delete this branch?</source>
         <translation>删除这个分支吗？</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="85"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="93"/>
         <source>The goal map and every step inside it will be removed.</source>
         <translation>目标地图及其中的所有步骤都会被删除。</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="86"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="94"/>
         <source>Any action steps under this branch will also be removed.</source>
         <translation>这个分支下的行动步骤也会一并删除。</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="91"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="99"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="93"/>
         <location filename="../qml/pages/LongTermPage.qml" line="218"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="101"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="246"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="110"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="132"/>
         <source>Long-term Tasks</source>
         <translation>长期任务</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="111"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="135"/>
         <source>See the whole path, then take the next small step.</source>
         <translation>先看清完整路径，再走好眼前的一小步。</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="114"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="139"/>
         <source>+ New Big Task</source>
         <translation>+ 新建大任务</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="127"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="144"/>
         <source>My big tasks</source>
         <translation>我的大任务</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="170"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="197"/>
         <source>%1 / %2 steps</source>
         <translation>步骤 %1 / %2</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="171"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="198"/>
         <source>Waiting to be broken down</source>
         <translation>等待拆解</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="192"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="212"/>
         <source>No long-term tasks yet.</source>
         <translation>还没有长期任务。</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="193"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="213"/>
         <source>Create a big task, then turn it into a clear goal map.</source>
         <translation>新建一个大任务，再把它变成清晰的目标地图。</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="194"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="214"/>
         <source>Create a big task</source>
         <translation>新建大任务</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="212"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="252"/>
         <source>Add a short vision to remind yourself why this matters.</source>
         <translation>写下一句愿景，提醒自己这件事为什么重要。</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="216"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="241"/>
         <source>Edit goal</source>
         <translation>编辑目标</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="235"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="267"/>
         <source>%1% complete</source>
         <translation>已完成 %1%</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="235"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="267"/>
         <source>Start by adding a stage</source>
         <translation>先添加一个阶段</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="240"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="273"/>
         <source>Target %1</source>
         <translation>目标日期 %1</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="252"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="281"/>
         <source>Goal map</source>
         <translation>目标地图</translation>
     </message>
@@ -735,6 +765,8 @@
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="255"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="284"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="384"/>
         <source>+ Add Stage</source>
         <translation>+ 添加阶段</translation>
     </message>
@@ -756,47 +788,57 @@
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="305"/>
         <location filename="../qml/pages/LongTermPage.qml" line="353"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="307"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="344"/>
         <source>Complete %1</source>
         <translation>完成“%1”</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="319"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="321"/>
         <source>%1 / %2 actions</source>
         <translation>行动 %1 / %2</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="325"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="327"/>
         <source>Edit stage</source>
         <translation>编辑阶段</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="330"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="332"/>
         <source>Delete stage</source>
         <translation>删除阶段</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="363"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="355"/>
         <source>Edit action step</source>
         <translation>编辑行动步骤</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="368"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="360"/>
         <source>Delete action step</source>
         <translation>删除行动步骤</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="377"/>
         <location filename="../qml/pages/LongTermPage.qml" line="378"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="367"/>
         <source>Add action step</source>
         <translation>添加行动步骤</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="390"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="382"/>
         <source>What are the main stages?</source>
         <translation>主要分为哪些阶段？</translation>
     </message>
     <message>
         <location filename="../qml/pages/LongTermPage.qml" line="391"/>
+        <location filename="../qml/pages/MobileLongTermPage.qml" line="383"/>
         <source>Add 3–5 stages to sketch the route.</source>
         <translation>添加 3–5 个阶段，勾勒出实现路径。</translation>
     </message>
@@ -814,68 +856,68 @@
         <translation>新建长期任务</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="69"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="71"/>
         <source>Turn a distant goal into a map you can act on.</source>
         <translation>把遥远的目标变成一张可以行动的地图。</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="76"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="78"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="81"/>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="85"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="83"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="87"/>
         <source>Goal name</source>
         <translation>目标名称</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="84"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="86"/>
         <source>e.g. Finish my graduation project</source>
         <translation>例如：完成我的毕业设计</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="87"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="89"/>
         <source>Why this matters</source>
         <translation>为什么这件事重要</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="93"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="95"/>
         <source>Write down the result you want and the reason behind it.</source>
         <translation>写下你想得到的结果，以及背后的原因。</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="97"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="99"/>
         <source>Target date (optional)</source>
         <translation>目标日期（可选）</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="100"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="102"/>
         <source>YYYY-MM-DD</source>
         <translation>年-月-日</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="101"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="103"/>
         <source>Target date</source>
         <translation>目标日期</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="105"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="107"/>
         <source>Use a valid date in YYYY-MM-DD format.</source>
         <translation>请输入有效的日期，格式为 年-月-日。</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="112"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="114"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="115"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="117"/>
         <source>Save changes</source>
         <translation>保存更改</translation>
     </message>
     <message>
-        <location filename="../qml/components/LongTermTaskDialog.qml" line="115"/>
+        <location filename="../qml/components/LongTermTaskDialog.qml" line="117"/>
         <source>Create map</source>
         <translation>创建目标地图</translation>
     </message>
@@ -887,22 +929,22 @@
         <translation type="vanished">TinyBloom — 小步开始，真实进步。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="9"/>
+        <location filename="../qml/Main.qml" line="15"/>
         <source>Small Steps, Real Progress.</source>
         <translation>小步开始，真实进步。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="46"/>
+        <location filename="../qml/Main.qml" line="67"/>
         <source>%1 seed planted. Let your next small step help it grow.</source>
         <translation>已经种下%1。让下一个小步骤陪它一起长大吧。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="47"/>
+        <location filename="../qml/Main.qml" line="68"/>
         <source>Focus session complete. Take a breath, then mark the progress you made.</source>
         <translation>完成了一次专注自习。先喘口气，再记下刚才取得的进展吧。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="89"/>
+        <location filename="../qml/Main.qml" line="125"/>
         <source>Local storage could not be opened. Changes may not be saved.</source>
         <translation>无法打开本地存储，更改可能不会被保存。</translation>
     </message>
@@ -957,67 +999,67 @@
 <context>
     <name>SeedPickerDialog</name>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="19"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="20"/>
         <source>Choose a new seed for flower pot %1</source>
         <translation>为第 %1 个花位重新选择种子</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="20"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="21"/>
         <source>Choose a seed for flower pot %1</source>
         <translation>为第 %1 个花位选择种子</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="25"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="26"/>
         <source>Replanting resets this flower&apos;s growth progress.</source>
         <translation>重新播种会重置这株花当前的成长进度。</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="26"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="27"/>
         <source>Each flower grows from the progress you make after planting it.</source>
         <translation>每朵花都会从播种之后的新进步中慢慢长大。</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="33"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="34"/>
         <source>Pink blossom</source>
         <translation>小粉花</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="33"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="34"/>
         <source>Soft and quietly hopeful</source>
         <translation>温柔，也藏着安静的希望</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="34"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="35"/>
         <source>Sunflower</source>
         <translation>向日葵</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="34"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="35"/>
         <source>Bright and full of energy</source>
         <translation>明亮，充满向前的能量</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="35"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="36"/>
         <source>Tulip</source>
         <translation>郁金香</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="35"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="36"/>
         <source>Simple and determined</source>
         <translation>简单，但坚定地生长</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="36"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="37"/>
         <source>Rose</source>
         <translation>玫瑰</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="36"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="37"/>
         <source>Warm and resilient</source>
         <translation>热烈，也有重新盛放的韧性</translation>
     </message>
     <message>
-        <location filename="../qml/components/SeedPickerDialog.qml" line="67"/>
+        <location filename="../qml/components/SeedPickerDialog.qml" line="68"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -1025,12 +1067,12 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="11"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="12"/>
         <source>Export TinyBloom data</source>
         <translation>导出 TinyBloom 数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="12"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="13"/>
         <location filename="../qml/pages/SettingsPage.qml" line="18"/>
         <source>TinyBloom JSON (*.json)</source>
         <translation>TinyBloom JSON 文件 (*.json)</translation>
@@ -1041,130 +1083,140 @@
         <translation>导入 TinyBloom 数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="33"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="37"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="34"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="38"/>
         <source>Make TinyBloom feel comfortable for you.</source>
         <translation>把 TinyBloom 调整成你喜欢的样子。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="41"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="46"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="47"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="53"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="42"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="48"/>
         <source>Choose the language used throughout TinyBloom</source>
         <translation>选择 TinyBloom 的界面语言</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="45"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
         <source>简体中文</source>
         <translation>简体中文</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="45"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="56"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
         <source>Mint Garden</source>
         <translation>薄荷花园</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="56"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
         <source>Light, fresh and calm</source>
         <translation>明亮、清新而舒缓</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="57"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="64"/>
         <source>Midnight</source>
         <translation>静谧午夜</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="57"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="64"/>
         <source>Soft contrast for darker rooms</source>
         <translation>适合昏暗环境的柔和对比</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="89"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="96"/>
         <source>Preferences</source>
         <translation>偏好设置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="93"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="96"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="100"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="103"/>
         <source>Reduce animations</source>
         <translation>减少动画</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="94"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="101"/>
         <source>Use fewer motion effects throughout the app</source>
         <translation>减少应用中的动态效果</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="101"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="105"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="109"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="113"/>
         <source>Compatibility rendering</source>
         <translation>兼容渲染模式</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="102"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
         <source>Use software rendering after restart if the graphics driver is unstable</source>
         <translation>显卡驱动不稳定时，重启后改用软件渲染</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="113"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="121"/>
         <source>Default task duration</source>
         <translation>默认任务时长</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="114"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="122"/>
         <source>Used for new tasks</source>
         <translation>用于新建任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="116"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="124"/>
         <source>Default task duration in minutes</source>
         <translation>默认任务时长（分钟）</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="117"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="125"/>
         <source>minutes</source>
         <translation>分钟</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="125"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="133"/>
         <source>Data</source>
         <translation>数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="126"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="134"/>
         <source>Your data stays on this device unless you export it.</source>
         <translation>除非主动导出，否则你的数据只保存在本设备。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="129"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="137"/>
         <source>Export Data</source>
         <translation>导出数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="129"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="137"/>
         <source>Working...</source>
         <translation>处理中...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="133"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="141"/>
         <source>Import Data</source>
         <translation>导入数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="144"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="154"/>
+        <source>%1 mobile · Version %2</source>
+        <translation>%1 移动版 · 版本 %2</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="156"/>
+        <source>Mobile preview · Version %1</source>
+        <translation>移动端预览 · 版本 %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="157"/>
         <source>Windows desktop · Version %1</source>
         <translation>Windows 桌面版 · 版本 %1</translation>
     </message>
@@ -1185,12 +1237,12 @@
         <translation type="vanished">版本 0.1.0</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="145"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="161"/>
         <source>Small Steps, Real Progress.</source>
         <translation>小步开始，真实进步。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="146"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="162"/>
         <source>Free &amp; Open Source · MIT License</source>
         <translation>免费且开源 · MIT 许可证</translation>
     </message>
@@ -1198,21 +1250,25 @@
 <context>
     <name>Sidebar</name>
     <message>
+        <location filename="../qml/components/MobileNavigationBar.qml" line="25"/>
         <location filename="../qml/components/Sidebar.qml" line="25"/>
         <source>Today</source>
         <translation>今天</translation>
     </message>
     <message>
+        <location filename="../qml/components/MobileNavigationBar.qml" line="26"/>
         <location filename="../qml/components/Sidebar.qml" line="26"/>
         <source>Tasks</source>
         <translation>任务</translation>
     </message>
     <message>
+        <location filename="../qml/components/MobileNavigationBar.qml" line="27"/>
         <location filename="../qml/components/Sidebar.qml" line="27"/>
         <source>Big Tasks</source>
         <translation>大任务</translation>
     </message>
     <message>
+        <location filename="../qml/components/MobileNavigationBar.qml" line="28"/>
         <location filename="../qml/components/Sidebar.qml" line="28"/>
         <source>Study Room</source>
         <translation>自习室</translation>
@@ -1222,6 +1278,7 @@
         <translation type="vanished">花园</translation>
     </message>
     <message>
+        <location filename="../qml/components/MobileNavigationBar.qml" line="29"/>
         <location filename="../qml/components/Sidebar.qml" line="29"/>
         <source>Settings</source>
         <translation>设置</translation>
@@ -1560,52 +1617,51 @@ Real Progress.</source>
 <context>
     <name>TasksPage</name>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="25"/>
+        <location filename="../qml/pages/TasksPage.qml" line="26"/>
         <source>Tasks</source>
         <translation>任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="26"/>
+        <location filename="../qml/pages/TasksPage.qml" line="27"/>
         <source>All your small steps, in one calm place.</source>
         <translation>在一个安静的地方，整理所有小步骤。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="29"/>
+        <location filename="../qml/pages/TasksPage.qml" line="30"/>
         <source>+ Add Task</source>
         <translation>+ 添加任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="32"/>
+        <location filename="../qml/pages/TasksPage.qml" line="33"/>
         <source>Search tasks...</source>
         <translation>搜索任务…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="33"/>
+        <location filename="../qml/pages/TasksPage.qml" line="34"/>
         <source>Search tasks</source>
         <translation>搜索任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="38"/>
         <source>Task view</source>
-        <translation>任务视图</translation>
+        <translation type="vanished">任务视图</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="45"/>
+        <location filename="../qml/pages/TasksPage.qml" line="51"/>
         <source>All</source>
         <translation>全部</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="45"/>
+        <location filename="../qml/pages/TasksPage.qml" line="51"/>
         <source>Active</source>
         <translation>进行中</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="45"/>
+        <location filename="../qml/pages/TasksPage.qml" line="51"/>
         <source>Completed</source>
         <translation>已完成</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="50"/>
+        <location filename="../qml/pages/TasksPage.qml" line="56"/>
         <source>Show %1 tasks</source>
         <translation>显示%1任务</translation>
     </message>
@@ -1614,17 +1670,17 @@ Real Progress.</source>
         <translation type="vanished">查看</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="45"/>
+        <location filename="../qml/pages/TasksPage.qml" line="51"/>
         <source>Today</source>
         <translation>今天</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="45"/>
+        <location filename="../qml/pages/TasksPage.qml" line="51"/>
         <source>Tomorrow</source>
         <translation>明天</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="45"/>
+        <location filename="../qml/pages/TasksPage.qml" line="51"/>
         <source>Later</source>
         <translation>稍后</translation>
     </message>
@@ -1633,22 +1689,22 @@ Real Progress.</source>
         <translation type="vanished">显示%1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="73"/>
+        <location filename="../qml/pages/TasksPage.qml" line="78"/>
         <source>No matching tasks.</source>
         <translation>没有匹配的任务。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="73"/>
+        <location filename="../qml/pages/TasksPage.qml" line="78"/>
         <source>No tasks yet.</source>
         <translation>还没有任务。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="74"/>
+        <location filename="../qml/pages/TasksPage.qml" line="79"/>
         <source>Try a different search.</source>
         <translation>试试其他搜索内容。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TasksPage.qml" line="74"/>
+        <location filename="../qml/pages/TasksPage.qml" line="79"/>
         <source>Your first small step can start here.</source>
         <translation>你的第一个小步骤可以从这里开始。</translation>
     </message>
@@ -1656,37 +1712,37 @@ Real Progress.</source>
 <context>
     <name>TodayPage</name>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="15"/>
+        <location filename="../qml/pages/TodayPage.qml" line="16"/>
         <source>Good morning 🌱</source>
         <translation>早上好 🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="15"/>
+        <location filename="../qml/pages/TodayPage.qml" line="16"/>
         <source>Good afternoon 🌱</source>
         <translation>下午好 🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="15"/>
+        <location filename="../qml/pages/TodayPage.qml" line="16"/>
         <source>Good evening 🌱</source>
         <translation>晚上好 🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="28"/>
+        <location filename="../qml/pages/TodayPage.qml" line="29"/>
         <source>+ Add Task</source>
         <translation>+ 添加任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="44"/>
+        <location filename="../qml/pages/TodayPage.qml" line="45"/>
         <source>Today&apos;s Tasks</source>
         <translation>今日任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="50"/>
+        <location filename="../qml/pages/TodayPage.qml" line="51"/>
         <source>Your day is clear. 🌱</source>
         <translation>今天很清爽。🌱</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TodayPage.qml" line="51"/>
+        <location filename="../qml/pages/TodayPage.qml" line="52"/>
         <source>Create a small task to get started.</source>
         <translation>创建一个小任务，轻松开始吧。</translation>
     </message>

@@ -6,6 +6,7 @@ Item {
     id: page
     property QtObject theme
     property int selectedView: 0
+    readonly property bool compact: width < 600
     signal createRequested(string date)
     signal editRequested(var id)
     signal deleteRequested(var id)
@@ -17,13 +18,13 @@ Item {
     }
 
     ColumnLayout {
-        anchors.fill: parent; anchors.margins: 40; spacing: 20
+        anchors.fill: parent; anchors.margins: page.compact ? 16 : 40; spacing: page.compact ? 14 : 20
         RowLayout {
             Layout.fillWidth: true
             ColumnLayout {
                 spacing: 4
-                Text { text: qsTr("Tasks"); color: theme.text; font.pixelSize: 30; font.weight: Font.Bold }
-                Text { text: qsTr("All your small steps, in one calm place."); color: theme.muted; font.pixelSize: 14 }
+                Text { text: qsTr("Tasks"); color: theme.text; font.pixelSize: page.compact ? 25 : 30; font.weight: Font.Bold }
+                Text { text: qsTr("All your small steps, in one calm place."); color: theme.muted; font.pixelSize: page.compact ? 12 : 14 }
             }
             Item { Layout.fillWidth: true }
             AppButton { theme: page.theme; text: qsTr("+ Add Task"); onClicked: page.createRequested("") }
@@ -33,11 +34,16 @@ Item {
             Accessible.name: qsTr("Search tasks")
             onTextChanged: taskManager.searchTasks(text)
         }
-        RowLayout {
-            Layout.fillWidth: true; spacing: 10
-            Text { text: qsTr("Task view"); color: theme.muted; font.pixelSize: 12; Layout.preferredWidth: 62 }
+        Flickable {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 42
+            contentWidth: viewChrome.width
+            contentHeight: height
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
             Rectangle {
-                implicitWidth: viewRow.implicitWidth + 8; implicitHeight: 42; radius: 11
+                id: viewChrome
+                width: viewRow.implicitWidth + 8; height: 42; radius: 11
                 color: theme.input; border.color: theme.border
                 RowLayout {
                     id: viewRow; anchors.centerIn: parent; spacing: 2
@@ -63,7 +69,6 @@ Item {
                     }
                 }
             }
-            Item { Layout.fillWidth: true }
         }
         StackLayout {
             Layout.fillWidth: true; Layout.fillHeight: true
