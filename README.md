@@ -6,7 +6,7 @@
 
 ## 🧪 最新测试版下载
 
-当前桌面端和 Android 移动端均为 **v0.3.0 Beta 1**。它们包含长期任务目标地图、花园自习室、多花种、任务交互修复和本地数据备份。
+当前 Android 移动端为 **v0.3.1 Beta 1**，Windows 桌面端为 **v0.3.0 Beta 1**。它们包含长期任务目标地图、花园自习室、多花种、任务交互修复和本地数据备份。
 
 > 这是 Pre-release，适合愿意帮助测试和反馈问题的用户。升级前建议先在“设置 → 数据”中导出一份 JSON 备份。
 
@@ -14,11 +14,10 @@
 
 普通用户不需要下载源码：直接点击下面的 APK，下载完成后打开文件并按手机提示安装即可。
 
-- 📱 [一键下载 Android APK（试运行版）](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.3.0-mobile-beta.1/TinyBloom-Mobile-v0.3.0-beta.1-Android-arm64-Test.apk)
-- 🇨🇳 [Gitee 版本说明与更新记录](https://gitee.com/stella-green/TinyBloom/releases/tag/v0.3.0-mobile-beta.1)
-- 🔐 [Android APK SHA-256 校验文件](https://gitee.com/stella-green/TinyBloom/releases/download/v0.3.0-mobile-beta.1/TinyBloom-Mobile-v0.3.0-beta.1-Android-arm64-SHA256.txt)
+- 📱 [下载 Android v0.3.1 Beta 1 兼容性修复版](https://gitee.com/stella-green/TinyBloom/releases/tag/v0.3.1-mobile-beta.1)
+- 🔐 [Android APK SHA-256 校验文件](https://gitee.com/stella-green/TinyBloom/releases/download/v0.3.1-mobile-beta.1/TinyBloom-Mobile-v0.3.1-beta.1-Android-arm64-SHA256.txt)
 
-适用于 **Android 9 及以上的 ARM64 手机**。这是使用测试签名的试运行包，系统可能提示“未知来源应用”；请只从本项目 GitHub 或 Gitee Release 下载。未来更换正式签名时，可能需要先导出 JSON 备份、卸载测试版，再安装正式版。
+适用于 **Android 9 及以上的 ARM64 手机**，并针对 iQOO Neo10 Pro+ / OriginOS 6 与 Android 16 KiB 内存页要求进行了兼容性修复。系统可能提示“未知来源应用”，请只从本项目 Gitee Release 下载。由于 v0.3.0 使用测试证书，而 v0.3.1 已切换到长期发布证书，升级时需要先备份数据、卸载旧版，再安装新版。
 
 ### 🖥️ Windows 桌面端（试运行）
 
@@ -37,7 +36,7 @@
 
 ## 📱 移动端第一版（试运行）
 
-移动端与桌面端共享同一套 C++ 业务逻辑、SQLite 数据结构和 `schemaVersion: 2` JSON 备份格式，版本统一为 `0.3.0-beta.1`。目前已经完成：
+移动端与桌面端共享同一套 C++ 业务逻辑、SQLite 数据结构和 `schemaVersion: 2` JSON 备份格式。当前移动端版本为 `0.3.1-beta.1`。目前已经完成：
 
 - Today、任务、大任务、花园自习室和设置五个手机端页面
 - 适合触控和窄屏的底部导航、纵向目标地图与响应式弹窗
@@ -45,7 +44,7 @@
 - Android 系统文件选择器的 JSON 导入与导出兼容
 - Android / iOS 构建元数据和桌面端手机尺寸预览模式
 
-Android ARM64 测试 APK 已在 GitHub Release 开放下载，并在 Gitee README 与 Release 页面提供一键下载入口。在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1`，还可以用 `390 × 844` 的窗口预览移动端界面。自行构建 Android 安装包需要 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包仍需要在 macOS 与 Xcode 环境中构建。
+Android ARM64 测试 APK 已在 Gitee Release 提供下载。在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1`，还可以用 `390 × 844` 的窗口预览移动端界面。自行构建 Android 安装包需要 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包仍需要在 macOS 与 Xcode 环境中构建。
 
 ## 📖 项目简介
 

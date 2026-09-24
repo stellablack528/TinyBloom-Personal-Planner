@@ -1,6 +1,7 @@
 /build*/
 /dist/
 /release-assets/
+/.signing/
 /.cache/
 /.downloads/
 /translations/*.qm

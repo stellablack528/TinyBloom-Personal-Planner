@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(TinyBloom VERSION 0.3.0 LANGUAGES CXX)
+project(TinyBloom VERSION 0.3.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -82,13 +82,19 @@ target_link_libraries(TinyBloom PRIVATE
 )
 
 if(ANDROID)
+    # NDK r27 needs these flags explicitly for native libraries to run on
+    # Android devices that use a 16 KiB memory page size.
+    target_link_options(TinyBloom PRIVATE
+        "-Wl,-z,max-page-size=16384"
+        "-Wl,-z,common-page-size=16384"
+    )
     set_target_properties(TinyBloom PROPERTIES
         QT_ANDROID_PACKAGE_NAME "app.tinybloom.mobile"
         QT_ANDROID_APP_NAME "TinyBloom"
         QT_ANDROID_APP_ICON "@drawable/icon"
         QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packaging/android"
-        QT_ANDROID_VERSION_CODE 30001
-        QT_ANDROID_VERSION_NAME "0.3.0-beta.1"
+        QT_ANDROID_VERSION_CODE 30101
+        QT_ANDROID_VERSION_NAME "0.3.1-beta.1"
         QT_ANDROID_MIN_SDK_VERSION 28
         QT_ANDROID_TARGET_SDK_VERSION 36
     )
@@ -98,8 +104,8 @@ if(IOS)
     set_target_properties(TinyBloom PROPERTIES
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_GUI_IDENTIFIER "app.tinybloom.mobile"
-        MACOSX_BUNDLE_BUNDLE_VERSION "30001"
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.0"
+        MACOSX_BUNDLE_BUNDLE_VERSION "30101"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.1"
     )
 endif()
 

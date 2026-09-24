@@ -150,7 +150,7 @@ void DatabaseManager::setExportMetadata(const QString &platform, const QString &
     const QString normalizedPlatform = platform.trimmed().toLower();
     const QString normalizedVersion = version.trimmed();
     m_exportPlatform = normalizedPlatform.isEmpty() ? QStringLiteral("desktop") : normalizedPlatform.left(32);
-    m_exportVersion = normalizedVersion.isEmpty() ? QStringLiteral("0.3.0-beta.1") : normalizedVersion.left(64);
+    m_exportVersion = normalizedVersion.isEmpty() ? QStringLiteral("0.3.1-beta.1") : normalizedVersion.left(64);
 }
 
 QVector<Task> DatabaseManager::loadTasks() const
