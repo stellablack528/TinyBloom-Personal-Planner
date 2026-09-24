@@ -17,7 +17,7 @@
 - 📱 [下载 Android v0.3.1 Beta 1 兼容性修复版](https://gitee.com/stella-green/TinyBloom/releases/tag/v0.3.1-mobile-beta.1)
 - 🔐 [Android APK SHA-256 校验文件](https://gitee.com/stella-green/TinyBloom/releases/download/v0.3.1-mobile-beta.1/TinyBloom-Mobile-v0.3.1-beta.1-Android-arm64-SHA256.txt)
 
-适用于 **Android 9 及以上的 ARM64 手机**，并针对 iQOO Neo10 Pro+ / OriginOS 6 与 Android 16 KiB 内存页要求进行了兼容性修复。系统可能提示“未知来源应用”，请只从本项目 Gitee Release 下载。由于 v0.3.0 使用测试证书，而 v0.3.1 已切换到长期发布证书，升级时需要先备份数据、卸载旧版，再安装新版。
+适用于 **Android 9 及以上的 ARM64 手机**，并针对 OriginOS 6 与 Android 16 KiB 内存页要求进行了兼容性修复。系统可能提示“未知来源应用”，请只从本项目 Gitee Release 下载。由于 v0.3.0 使用测试证书，而 v0.3.1 已切换到长期发布证书，升级时需要先备份数据、卸载旧版，再安装新版。
 
 ### 🖥️ Windows 桌面端（试运行）
 
