@@ -45,7 +45,7 @@
 - Android 系统文件选择器的 JSON 导入与导出兼容
 - Android / iOS 构建元数据和桌面端手机尺寸预览模式
 
-Android ARM64 测试 APK 已在 GitHub 与 Gitee Release 开放下载。在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1`，还可以用 `390 × 844` 的窗口预览移动端界面。自行构建 Android 安装包需要 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包仍需要在 macOS 与 Xcode 环境中构建。
+Android ARM64 测试 APK 已在 GitHub Release 开放下载，并在 Gitee README 与 Release 页面提供一键下载入口。在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1`，还可以用 `390 × 844` 的窗口预览移动端界面。自行构建 Android 安装包需要 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包仍需要在 macOS 与 Xcode 环境中构建。
 
 ## 📖 项目简介
 
