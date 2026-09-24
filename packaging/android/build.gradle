@@ -65,6 +65,21 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
+            // Android uses Material with Basic as its fallback. Desktop-only
+            // style plugins are runtime alternatives and are not needed here.
+            excludes += [
+                '**/*FluentWinUI3*.so',
+                '**/*Imagine*.so',
+                '**/*Universal*.so',
+                '**/*Fusion*.so'
+            ]
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
