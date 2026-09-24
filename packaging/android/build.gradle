@@ -65,13 +65,19 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
-            // Android uses Material with Basic as its fallback. Desktop-only
-            // style plugins are runtime alternatives and are not needed here.
+            // Android explicitly uses Material (see main.cpp). Alternative
+            // control styles, release-unused QML debugging helpers, and the
+            // JPEG plugin (the project ships only PNG/SVG assets) are omitted
+            // to keep the directly downloadable APK compact.
             excludes += [
                 '**/*FluentWinUI3*.so',
                 '**/*Imagine*.so',
                 '**/*Universal*.so',
-                '**/*Fusion*.so'
+                '**/*Fusion*.so',
+                '**/*QuickControls2Basic*.so',
+                '**/*Controls_Basic*.so',
+                '**/*qmldbg*.so',
+                '**/*qjpeg*.so'
             ]
         }
     }

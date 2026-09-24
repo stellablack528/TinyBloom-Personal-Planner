@@ -39,7 +39,13 @@ int main(int argc, char *argv[])
         ? QStringLiteral("TinyBloom Mobile") : QStringLiteral("TinyBloom Desktop"));
     QCoreApplication::setApplicationVersion(applicationVersion);
     QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/resources/icons/app-icon.svg")));
+#if defined(Q_OS_ANDROID)
+    // Use the native-looking style already deployed by Qt on Android. Keeping
+    // Basic as a second full style adds noticeable size to the install APK.
+    QQuickStyle::setStyle(QStringLiteral("Material"));
+#else
     QQuickStyle::setStyle(QStringLiteral("Basic"));
+#endif
 
     DatabaseManager database;
     database.setExportMetadata(platformId, applicationVersion);

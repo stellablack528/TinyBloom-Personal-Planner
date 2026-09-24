@@ -14,8 +14,8 @@
 
 普通用户不需要下载源码：直接点击下面的 APK，下载完成后打开文件并按手机提示安装即可。
 
-- 🇨🇳 [推荐：从 Gitee 直接下载 Android APK](https://gitee.com/stella-green/TinyBloom/releases/download/v0.3.0-mobile-beta.1/TinyBloom-Mobile-v0.3.0-beta.1-Android-arm64-Test.apk)
-- 🌍 [GitHub 备用下载地址](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.3.0-mobile-beta.1/TinyBloom-Mobile-v0.3.0-beta.1-Android-arm64-Test.apk)
+- 📱 [一键下载 Android APK（试运行版）](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.3.0-mobile-beta.1/TinyBloom-Mobile-v0.3.0-beta.1-Android-arm64-Test.apk)
+- 🇨🇳 [Gitee 版本说明与更新记录](https://gitee.com/stella-green/TinyBloom/releases/tag/v0.3.0-mobile-beta.1)
 - 🔐 [Android APK SHA-256 校验文件](https://gitee.com/stella-green/TinyBloom/releases/download/v0.3.0-mobile-beta.1/TinyBloom-Mobile-v0.3.0-beta.1-Android-arm64-SHA256.txt)
 
 适用于 **Android 9 及以上的 ARM64 手机**。这是使用测试签名的试运行包，系统可能提示“未知来源应用”；请只从本项目 GitHub 或 Gitee Release 下载。未来更换正式签名时，可能需要先导出 JSON 备份、卸载测试版，再安装正式版。
