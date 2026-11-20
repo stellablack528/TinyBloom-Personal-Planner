@@ -8,6 +8,15 @@ Rectangle {
     readonly property bool compact: width < 720
     property date visibleMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
     property string selectedDate: Qt.formatDate(new Date(), "yyyy-MM-dd")
+    property int historyRevision: focusManager.historyRevision
+    readonly property int monthSeconds: {
+        const ignored = historyRevision
+        return focusManager.focusSecondsForMonth(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1)
+    }
+    readonly property int monthDays: {
+        const ignored = historyRevision
+        return focusManager.focusDaysForMonth(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1)
+    }
 
     implicitHeight: compact ? 500 : 330
     radius: theme.radius
@@ -73,6 +82,25 @@ Rectangle {
                 Layout.fillWidth: true
                 text: qsTr("Tap a date to review that day's focused study time.")
                 color: theme.muted; font.pixelSize: 11; wrapMode: Text.WordWrap
+            }
+            Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: theme.border }
+            Text {
+                text: qsTr("This month")
+                color: theme.muted; font.pixelSize: 12; font.weight: Font.DemiBold
+            }
+            RowLayout {
+                Layout.fillWidth: true; spacing: 24
+                ColumnLayout {
+                    spacing: 1
+                    Text { text: card.durationText(card.monthSeconds); color: theme.primary; font.pixelSize: 19; font.weight: Font.Bold }
+                    Text { text: qsTr("Total focus"); color: theme.muted; font.pixelSize: 10 }
+                }
+                ColumnLayout {
+                    spacing: 1
+                    Text { text: qsTr("%1 days").arg(card.monthDays); color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
+                    Text { text: qsTr("Focused days"); color: theme.muted; font.pixelSize: 10 }
+                }
+                Item { Layout.fillWidth: true }
             }
         }
 

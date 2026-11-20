@@ -42,11 +42,24 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(applicationVersion);
     QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/resources/icons/app-icon.svg")));
     QQuickStyle::setStyle(QStringLiteral("Basic"));
+    const QString screenshotScenario = qEnvironmentVariable("TINYBLOOM_SCREENSHOT_SCENARIO");
 
     DatabaseManager database;
     database.setExportMetadata(platformId, applicationVersion);
     const QString databaseOverride = qEnvironmentVariable("TINYBLOOM_DATABASE_PATH");
     if (!database.initializeDatabase(databaseOverride)) qCritical().noquote() << database.lastError();
+    if (screenshotScenario == QStringLiteral("focus-month-demo")) {
+        const QDate today = QDate::currentDate();
+        const QDate firstDay(today.year(), today.month(), 1);
+        const int dailyMinutes[] = {25, 50, 75, 40, 0, 90, 110, 0, 25, 60,
+            120, 45, 80, 150, 0, 55, 100, 35, 130, 105};
+        const int daysToSeed = qMin(today.day(), static_cast<int>(std::size(dailyMinutes)));
+        for (int index = 0; index < daysToSeed; ++index) {
+            const QDate date = firstDay.addDays(index);
+            if (dailyMinutes[index] > 0 && database.focusSecondsForDate(date) == 0)
+                database.addFocusSeconds(date, dailyMinutes[index] * 60);
+        }
+    }
     TaskManager taskManager(&database);
     SettingsManager settingsManager(&database);
     settingsManager.load();
@@ -97,8 +110,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("mobilePreview"), mobilePreview);
     engine.rootContext()->setContextProperty(QStringLiteral("platformId"), platformId);
     engine.rootContext()->setContextProperty(QStringLiteral("platformLabel"), platformLabel);
-    engine.rootContext()->setContextProperty(QStringLiteral("screenshotScenario"),
-        qEnvironmentVariable("TINYBLOOM_SCREENSHOT_SCENARIO"));
+    engine.rootContext()->setContextProperty(QStringLiteral("screenshotScenario"), screenshotScenario);
     engine.loadFromModule(QStringLiteral("TinyBloom"), QStringLiteral("Main"));
     if (engine.rootObjects().isEmpty()) return -1;
     const QString screenshotPath = qEnvironmentVariable("TINYBLOOM_SCREENSHOT_PATH");

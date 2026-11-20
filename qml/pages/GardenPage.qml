@@ -6,6 +6,7 @@ Item {
     id: page
     property QtObject theme
     readonly property bool compact: width < 600
+    readonly property bool focusHistoryShowcase: screenshotScenario === "focus-month-demo"
     signal focusSessionCompleted()
     signal seedPlanted(string flowerName)
 
@@ -31,7 +32,10 @@ Item {
         seedPicker.open()
     }
     function showFocusHistory() {
-        studyScroll.contentY = Math.max(0, panorama.y + panorama.height - 30)
+        Qt.callLater(() => {
+            const targetY = Math.max(0, panorama.y + panorama.height + content.spacing - 18)
+            studyScroll.contentY = Math.min(targetY, Math.max(0, studyScroll.contentHeight - studyScroll.height))
+        })
     }
 
     Flickable {
@@ -58,9 +62,12 @@ Item {
                     implicitWidth: levelRow.implicitWidth + 28; implicitHeight: 44; radius: 12; color: theme.primarySoft
                     RowLayout {
                         id: levelRow; anchors.centerIn: parent; spacing: 8
-                        Text { text: qsTr("Level %1").arg(growthManager.level); color: theme.primary; font.pixelSize: 14; font.weight: Font.Bold }
-                        Text { text: "·"; color: theme.muted }
-                        Text { text: qsTr("%1 XP").arg(growthManager.totalXp); color: theme.text; font.pixelSize: 13 }
+                        Text {
+                            text: page.focusHistoryShowcase ? qsTr("Demo data") : qsTr("Level %1").arg(growthManager.level)
+                            color: theme.primary; font.pixelSize: 14; font.weight: Font.Bold
+                        }
+                        Text { visible: !page.focusHistoryShowcase; text: "·"; color: theme.muted }
+                        Text { visible: !page.focusHistoryShowcase; text: qsTr("%1 XP").arg(growthManager.totalXp); color: theme.text; font.pixelSize: 13 }
                     }
                 }
 
@@ -68,6 +75,7 @@ Item {
 
             Rectangle {
                 id: panorama
+                visible: !page.focusHistoryShowcase
                 Layout.fillWidth: true; Layout.preferredHeight: page.width < 760 ? 760 : 510
                 radius: page.compact ? 18 : 24; clip: true; border.color: theme.border
                 gradient: Gradient {
@@ -240,6 +248,7 @@ Item {
             }
 
             FocusCalendar {
+                id: focusCalendar
                 Layout.fillWidth: true
                 theme: page.theme
             }

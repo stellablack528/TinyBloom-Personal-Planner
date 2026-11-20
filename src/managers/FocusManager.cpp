@@ -71,6 +71,28 @@ int FocusManager::focusSecondsForDate(const QString &isoDate) const
     return m_database->focusSecondsForDate(date) + m_pendingByDate.value(date, 0);
 }
 
+int FocusManager::focusSecondsForMonth(const int year, const int month) const
+{
+    const QDate firstDay(year, month, 1);
+    if (!firstDay.isValid()) return 0;
+    int totalSeconds = 0;
+    for (int day = 1; day <= firstDay.daysInMonth(); ++day)
+        totalSeconds += focusSecondsForDate(QDate(year, month, day).toString(Qt::ISODate));
+    return totalSeconds;
+}
+
+int FocusManager::focusDaysForMonth(const int year, const int month) const
+{
+    const QDate firstDay(year, month, 1);
+    if (!firstDay.isValid()) return 0;
+    int focusedDays = 0;
+    for (int day = 1; day <= firstDay.daysInMonth(); ++day) {
+        if (focusSecondsForDate(QDate(year, month, day).toString(Qt::ISODate)) > 0)
+            ++focusedDays;
+    }
+    return focusedDays;
+}
+
 void FocusManager::reload()
 {
     m_pendingByDate.clear();

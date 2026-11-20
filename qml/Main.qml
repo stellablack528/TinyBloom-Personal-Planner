@@ -130,6 +130,11 @@ ApplicationWindow {
         target: updateManager
         function onUpdateAvailableDetected() { updateDialog.open() }
     }
+    Timer {
+        id: focusHistoryScreenshotTimer
+        interval: 350; repeat: false
+        onTriggered: gardenPage.showFocusHistory()
+    }
     Component.onCompleted: {
         if (screenshotScenario.length === 0)
             Qt.callLater(() => updateManager.checkForUpdates(false))
@@ -165,9 +170,9 @@ ApplicationWindow {
             currentPage = 2
         }
         else if (screenshotScenario === "garden") currentPage = 3
-        else if (screenshotScenario === "focus-history") {
+        else if (screenshotScenario === "focus-history" || screenshotScenario === "focus-month-demo") {
             currentPage = 3
-            Qt.callLater(() => gardenPage.showFocusHistory())
+            focusHistoryScreenshotTimer.start()
         }
         else if (screenshotScenario === "garden-showcase") {
             if (taskManager.totalCount === 0 && growthManager.totalXp === 0) {

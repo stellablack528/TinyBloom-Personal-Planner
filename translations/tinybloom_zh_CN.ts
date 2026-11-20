@@ -278,62 +278,82 @@
 <context>
     <name>FocusCalendar</name>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="21"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="30"/>
         <source>%1 h %2 min</source>
         <translation>%1 小时 %2 分钟</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="22"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="31"/>
         <source>%1 h</source>
         <translation>%1 小时</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="23"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="32"/>
         <source>%1 min</source>
         <translation>%1 分钟</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="27"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="36"/>
         <source>No focus time yet today. Start with one small session.</source>
         <translation>今天还没有专注记录，先从一小段自习开始吧。</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="28"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="37"/>
         <source>You have started. A few focused minutes still count.</source>
         <translation>已经迈出第一步，哪怕几分钟的认真专注也算数。</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="29"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="38"/>
         <source>One solid session finished. Your attention is taking root.</source>
         <translation>完成了一段扎实的专注，你的注意力正在慢慢扎根。</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="30"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="39"/>
         <source>More than an hour of focus today. Your rhythm is becoming steady.</source>
         <translation>今天已经专注超过一小时，你正在建立稳定的节奏。</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="31"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="40"/>
         <source>Deep focus today. Remember to rest your eyes and body, too.</source>
         <translation>今天完成了深度专注，也别忘了让眼睛和身体休息一下。</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="46"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="55"/>
         <source>Today&apos;s focus</source>
         <translation>今日专注</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="74"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="83"/>
         <source>Tap a date to review that day&apos;s focused study time.</source>
         <translation>点击日期，查看当天累计的专注时长。</translation>
     </message>
     <message>
         <location filename="../qml/components/FocusCalendar.qml" line="88"/>
+        <source>This month</source>
+        <translation>本月概览</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="96"/>
+        <source>Total focus</source>
+        <translation>累计专注</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="100"/>
+        <source>%1 days</source>
+        <translation>%1 天</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="101"/>
+        <source>Focused days</source>
+        <translation>专注天数</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="116"/>
         <source>Previous month</source>
         <translation>上个月</translation>
     </message>
     <message>
-        <location filename="../qml/components/FocusCalendar.qml" line="101"/>
+        <location filename="../qml/components/FocusCalendar.qml" line="129"/>
         <source>Next month</source>
         <translation>下个月</translation>
     </message>
@@ -349,12 +369,12 @@
         <translation type="vanished">用心照料的会生长，放着不管的也会枯萎。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="61"/>
+        <location filename="../qml/pages/GardenPage.qml" line="66"/>
         <source>Level %1</source>
         <translation>等级 %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="63"/>
+        <location filename="../qml/pages/GardenPage.qml" line="70"/>
         <source>%1 XP</source>
         <translation>%1 XP</translation>
     </message>
@@ -367,92 +387,97 @@
         <translation type="vanished">达到 %1 XP 后继续生长 · 还差 %2 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="22"/>
+        <location filename="../qml/pages/GardenPage.qml" line="23"/>
         <source>Sunflower</source>
         <translation>向日葵</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="23"/>
+        <location filename="../qml/pages/GardenPage.qml" line="24"/>
         <source>Tulip</source>
         <translation>郁金香</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="24"/>
+        <location filename="../qml/pages/GardenPage.qml" line="25"/>
         <source>Rose</source>
         <translation>玫瑰</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="25"/>
+        <location filename="../qml/pages/GardenPage.qml" line="26"/>
         <source>Pink blossom</source>
         <translation>小粉花</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="53"/>
+        <location filename="../qml/pages/GardenPage.qml" line="57"/>
         <source>Bloom Study Room</source>
         <translation>花园自习室</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="54"/>
+        <location filename="../qml/pages/GardenPage.qml" line="58"/>
         <source>A quiet room where focused effort becomes something alive.</source>
         <translation>在安静的房间里，让每一次专注都长成真实的生命。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="136"/>
+        <location filename="../qml/pages/GardenPage.qml" line="66"/>
+        <source>Demo data</source>
+        <translation>演示数据</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/GardenPage.qml" line="144"/>
         <source>Focus session</source>
         <translation>专注自习</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="144"/>
+        <location filename="../qml/pages/GardenPage.qml" line="152"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="144"/>
+        <location filename="../qml/pages/GardenPage.qml" line="152"/>
         <source>Start</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="149"/>
+        <location filename="../qml/pages/GardenPage.qml" line="157"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="186"/>
+        <location filename="../qml/pages/GardenPage.qml" line="194"/>
         <source>Flower pot %1</source>
         <translation>第 %1 个花位</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="194"/>
+        <location filename="../qml/pages/GardenPage.qml" line="202"/>
         <source>Replant</source>
         <translation>重新播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="214"/>
+        <location filename="../qml/pages/GardenPage.qml" line="222"/>
         <source>Choose a seed and plant</source>
         <translation>选择种子并播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="231"/>
+        <location filename="../qml/pages/GardenPage.qml" line="239"/>
         <source>%1 XP since planting</source>
         <translation>播种后获得 %1 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="251"/>
+        <location filename="../qml/pages/GardenPage.qml" line="260"/>
         <source>Room vitality</source>
         <translation>自习室活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="252"/>
+        <location filename="../qml/pages/GardenPage.qml" line="261"/>
         <source>+20 XP</source>
         <translation>+20 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="252"/>
+        <location filename="../qml/pages/GardenPage.qml" line="261"/>
         <source>Complete a task</source>
         <translation>完成一个任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="252"/>
+        <location filename="../qml/pages/GardenPage.qml" line="261"/>
         <source>Restores 28 vitality</source>
         <translation>恢复 28 点活力</translation>
     </message>
@@ -469,12 +494,12 @@
         <translation type="vanished">恢复 10 点活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="253"/>
+        <location filename="../qml/pages/GardenPage.qml" line="262"/>
         <source>Days with progress</source>
         <translation>有进步的天数</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="253"/>
+        <location filename="../qml/pages/GardenPage.qml" line="262"/>
         <source>A quiet day costs 15 vitality</source>
         <translation>每休息一天会消耗 15 点活力</translation>
     </message>
@@ -1022,7 +1047,7 @@
         <translation>完成了一次专注自习。先喘口气，再记下刚才取得的进展吧。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="136"/>
+        <location filename="../qml/Main.qml" line="141"/>
         <source>Local storage could not be opened. Changes may not be saved.</source>
         <translation>无法打开本地存储，更改可能不会被保存。</translation>
     </message>

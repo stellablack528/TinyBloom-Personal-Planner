@@ -320,6 +320,14 @@ void CoreTests::focusHistoryPersistsAndRoundTrips()
     QVERIFY(m_database->importObject(exported));
     QCOMPARE(m_database->focusSecondsForDate(today), 25 * 60);
     QCOMPARE(m_database->focusSecondsForDate(yesterday), 42 * 60);
+
+    QVERIFY(m_database->addFocusSeconds(QDate(2026, 3, 3), 30 * 60));
+    QVERIFY(m_database->addFocusSeconds(QDate(2026, 3, 8), 45 * 60));
+    FocusManager focus(m_database.get());
+    QCOMPARE(focus.focusSecondsForMonth(2026, 3), 75 * 60);
+    QCOMPARE(focus.focusDaysForMonth(2026, 3), 2);
+    QCOMPARE(focus.focusSecondsForMonth(2026, 13), 0);
+    QCOMPARE(focus.focusDaysForMonth(0, 0), 0);
 }
 
 void CoreTests::focusTimerTracksAndFlushes()

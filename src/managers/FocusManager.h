@@ -28,6 +28,8 @@ public:
     Q_INVOKABLE void pause();
     Q_INVOKABLE void reset();
     Q_INVOKABLE int focusSecondsForDate(const QString &isoDate) const;
+    Q_INVOKABLE int focusSecondsForMonth(int year, int month) const;
+    Q_INVOKABLE int focusDaysForMonth(int year, int month) const;
     void flushPending();
     void reload();
 
