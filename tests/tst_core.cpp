@@ -4,6 +4,7 @@
 #include "managers/GrowthManager.h"
 #include "managers/FocusManager.h"
 #include "services/DataService.h"
+#include "services/UpdateManager.h"
 
 #include <QDir>
 #include <QFile>
@@ -37,6 +38,7 @@ private slots:
     void gardenSeedsPersistAndGrowIndependently();
     void focusHistoryPersistsAndRoundTrips();
     void focusTimerTracksAndFlushes();
+    void semanticUpdateVersionComparison();
     void legacyDatabaseMigratesToGrowthSchema();
     void classificationSearchAndValidation();
     void incrementalTaskModelUpdates();
@@ -335,6 +337,15 @@ void CoreTests::focusTimerTracksAndFlushes()
     QCOMPARE(m_database->focusSecondsForDate(QDate::currentDate()), focus.todaySeconds());
     focus.reset();
     QCOMPARE(focus.remainingSeconds(), 25 * 60);
+}
+
+void CoreTests::semanticUpdateVersionComparison()
+{
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("v0.4.0-beta.2"), QStringLiteral("0.4.0-beta.1")));
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("0.4.0"), QStringLiteral("0.4.0-beta.9")));
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("0.5.0-alpha.1"), QStringLiteral("0.4.9")));
+    QVERIFY(!UpdateManager::isNewerVersion(QStringLiteral("v0.4.0-beta.1"), QStringLiteral("0.4.0-beta.1")));
+    QVERIFY(!UpdateManager::isNewerVersion(QStringLiteral("0.3.9"), QStringLiteral("0.4.0-beta.1")));
 }
 
 void CoreTests::legacyDatabaseMigratesToGrowthSchema()

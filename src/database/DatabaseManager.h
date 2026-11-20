@@ -64,5 +64,5 @@ private:
     QSqlDatabase m_database;
     mutable QString m_lastError;
     QString m_exportPlatform = QStringLiteral("desktop");
-    QString m_exportVersion = QStringLiteral("0.3.1-beta.1");
+    QString m_exportVersion = QStringLiteral("0.4.0-beta.1");
 };

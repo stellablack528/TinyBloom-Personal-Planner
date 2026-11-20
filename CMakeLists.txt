@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(TinyBloom VERSION 0.3.1 LANGUAGES CXX)
+project(TinyBloom VERSION 0.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Qml Sql QuickControls2 LinguistTools)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Qml Sql Network QuickControls2 LinguistTools)
 qt_standard_project_setup(REQUIRES 6.5)
 qt_policy(SET QTP0002 NEW)
 qt_policy(SET QTP0004 NEW)
@@ -30,6 +30,8 @@ set(TINYBLOOM_SOURCES
     src/models/Subtask.h
     src/services/DataService.cpp
     src/services/DataService.h
+    src/services/UpdateManager.cpp
+    src/services/UpdateManager.h
 )
 
 qt_add_executable(TinyBloom src/main.cpp ${TINYBLOOM_SOURCES})
@@ -64,6 +66,7 @@ qt_add_qml_module(TinyBloom
         qml/components/TaskCard.qml
         qml/components/TaskDialog.qml
         qml/components/XpToast.qml
+        qml/components/UpdateDialog.qml
         qml/pages/GardenPage.qml
         qml/pages/LongTermPage.qml
         qml/pages/MobileLongTermPage.qml
@@ -81,7 +84,7 @@ qt_add_translations(TinyBloom
 
 target_include_directories(TinyBloom PRIVATE src)
 target_link_libraries(TinyBloom PRIVATE
-    Qt6::Quick Qt6::Qml Qt6::Sql Qt6::QuickControls2
+    Qt6::Quick Qt6::Qml Qt6::Sql Qt6::Network Qt6::QuickControls2
 )
 
 if(ANDROID)
@@ -96,8 +99,8 @@ if(ANDROID)
         QT_ANDROID_APP_NAME "TinyBloom"
         QT_ANDROID_APP_ICON "@drawable/icon"
         QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packaging/android"
-        QT_ANDROID_VERSION_CODE 30101
-        QT_ANDROID_VERSION_NAME "0.3.1-beta.1"
+        QT_ANDROID_VERSION_CODE 40001
+        QT_ANDROID_VERSION_NAME "0.4.0-beta.1"
         QT_ANDROID_MIN_SDK_VERSION 28
         QT_ANDROID_TARGET_SDK_VERSION 36
     )
@@ -107,8 +110,8 @@ if(IOS)
     set_target_properties(TinyBloom PROPERTIES
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_GUI_IDENTIFIER "app.tinybloom.mobile"
-        MACOSX_BUNDLE_BUNDLE_VERSION "30101"
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.1"
+        MACOSX_BUNDLE_BUNDLE_VERSION "40001"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.4.0"
     )
 endif()
 
@@ -125,6 +128,6 @@ if(BUILD_TESTING AND NOT ANDROID AND NOT IOS)
         ${TINYBLOOM_SOURCES}
     )
     target_include_directories(TinyBloomTests PRIVATE src)
-    target_link_libraries(TinyBloomTests PRIVATE Qt6::Test Qt6::Sql Qt6::Core)
+    target_link_libraries(TinyBloomTests PRIVATE Qt6::Test Qt6::Sql Qt6::Network Qt6::Gui Qt6::Core)
     add_test(NAME TinyBloomCore COMMAND TinyBloomTests)
 endif()

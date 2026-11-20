@@ -4,6 +4,7 @@
 #include "managers/GrowthManager.h"
 #include "managers/FocusManager.h"
 #include "services/DataService.h"
+#include "services/UpdateManager.h"
 
 #include <QGuiApplication>
 #include <QIcon>
@@ -18,7 +19,7 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    const QString applicationVersion = QStringLiteral("0.3.1-beta.1");
+    const QString applicationVersion = QStringLiteral("0.4.0-beta.1");
     const bool mobilePreview = qEnvironmentVariableIntValue("TINYBLOOM_MOBILE_PREVIEW") == 1;
 #if defined(Q_OS_ANDROID)
     const bool mobilePlatform = true;
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
     const QString languageOverride = qEnvironmentVariable("TINYBLOOM_LANGUAGE_OVERRIDE");
     if (!languageOverride.isEmpty()) settingsManager.setLanguage(languageOverride);
     DataService dataService(&database, &taskManager, &settingsManager, &growthManager, &focusManager);
+    UpdateManager updateManager(&database, applicationVersion);
     QObject::connect(&taskManager, &TaskManager::taskCompleted,
         &growthManager, &GrowthManager::recordTaskCompleted);
     QObject::connect(&taskManager, &TaskManager::subtaskCompleted,
@@ -89,6 +91,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("growthManager"), &growthManager);
     engine.rootContext()->setContextProperty(QStringLiteral("focusManager"), &focusManager);
     engine.rootContext()->setContextProperty(QStringLiteral("dataService"), &dataService);
+    engine.rootContext()->setContextProperty(QStringLiteral("updateManager"), &updateManager);
     engine.rootContext()->setContextProperty(QStringLiteral("databaseReady"), database.isOpen());
     engine.rootContext()->setContextProperty(QStringLiteral("mobilePlatform"), mobilePlatform);
     engine.rootContext()->setContextProperty(QStringLiteral("mobilePreview"), mobilePreview);

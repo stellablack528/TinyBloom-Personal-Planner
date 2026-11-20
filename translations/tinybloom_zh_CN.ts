@@ -349,12 +349,12 @@
         <translation type="vanished">用心照料的会生长，放着不管的也会枯萎。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="57"/>
+        <location filename="../qml/pages/GardenPage.qml" line="61"/>
         <source>Level %1</source>
         <translation>等级 %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="59"/>
+        <location filename="../qml/pages/GardenPage.qml" line="63"/>
         <source>%1 XP</source>
         <translation>%1 XP</translation>
     </message>
@@ -387,72 +387,72 @@
         <translation>小粉花</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="49"/>
+        <location filename="../qml/pages/GardenPage.qml" line="53"/>
         <source>Bloom Study Room</source>
         <translation>花园自习室</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="50"/>
+        <location filename="../qml/pages/GardenPage.qml" line="54"/>
         <source>A quiet room where focused effort becomes something alive.</source>
         <translation>在安静的房间里，让每一次专注都长成真实的生命。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="132"/>
+        <location filename="../qml/pages/GardenPage.qml" line="136"/>
         <source>Focus session</source>
         <translation>专注自习</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="140"/>
+        <location filename="../qml/pages/GardenPage.qml" line="144"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="140"/>
+        <location filename="../qml/pages/GardenPage.qml" line="144"/>
         <source>Start</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="145"/>
+        <location filename="../qml/pages/GardenPage.qml" line="149"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="182"/>
+        <location filename="../qml/pages/GardenPage.qml" line="186"/>
         <source>Flower pot %1</source>
         <translation>第 %1 个花位</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="190"/>
+        <location filename="../qml/pages/GardenPage.qml" line="194"/>
         <source>Replant</source>
         <translation>重新播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="210"/>
+        <location filename="../qml/pages/GardenPage.qml" line="214"/>
         <source>Choose a seed and plant</source>
         <translation>选择种子并播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="227"/>
+        <location filename="../qml/pages/GardenPage.qml" line="231"/>
         <source>%1 XP since planting</source>
         <translation>播种后获得 %1 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="247"/>
+        <location filename="../qml/pages/GardenPage.qml" line="251"/>
         <source>Room vitality</source>
         <translation>自习室活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="248"/>
+        <location filename="../qml/pages/GardenPage.qml" line="252"/>
         <source>+20 XP</source>
         <translation>+20 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="248"/>
+        <location filename="../qml/pages/GardenPage.qml" line="252"/>
         <source>Complete a task</source>
         <translation>完成一个任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="248"/>
+        <location filename="../qml/pages/GardenPage.qml" line="252"/>
         <source>Restores 28 vitality</source>
         <translation>恢复 28 点活力</translation>
     </message>
@@ -469,12 +469,12 @@
         <translation type="vanished">恢复 10 点活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="249"/>
+        <location filename="../qml/pages/GardenPage.qml" line="253"/>
         <source>Days with progress</source>
         <translation>有进步的天数</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="249"/>
+        <location filename="../qml/pages/GardenPage.qml" line="253"/>
         <source>A quiet day costs 15 vitality</source>
         <translation>每休息一天会消耗 15 点活力</translation>
     </message>
@@ -1022,7 +1022,7 @@
         <translation>完成了一次专注自习。先喘口气，再记下刚才取得的进展吧。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="125"/>
+        <location filename="../qml/Main.qml" line="136"/>
         <source>Local storage could not be opened. Changes may not be saved.</source>
         <translation>无法打开本地存储，更改可能不会被保存。</translation>
     </message>
@@ -1145,156 +1145,211 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="12"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="13"/>
         <source>Export TinyBloom data</source>
         <translation>导出 TinyBloom 数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="13"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="18"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="14"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="19"/>
         <source>TinyBloom JSON (*.json)</source>
         <translation>TinyBloom JSON 文件 (*.json)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="17"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="18"/>
         <source>Import TinyBloom data</source>
         <translation>导入 TinyBloom 数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="37"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="38"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="38"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="39"/>
         <source>Make TinyBloom feel comfortable for you.</source>
         <translation>把 TinyBloom 调整成你喜欢的样子。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="47"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="53"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="48"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="54"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="48"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="49"/>
         <source>Choose the language used throughout TinyBloom</source>
         <translation>选择 TinyBloom 的界面语言</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="52"/>
         <source>简体中文</source>
         <translation>简体中文</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="52"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="64"/>
         <source>Mint Garden</source>
         <translation>薄荷花园</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="64"/>
         <source>Light, fresh and calm</source>
         <translation>明亮、清新而舒缓</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="64"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="65"/>
         <source>Midnight</source>
         <translation>静谧午夜</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="64"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="65"/>
         <source>Soft contrast for darker rooms</source>
         <translation>适合昏暗环境的柔和对比</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="96"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="97"/>
         <source>Preferences</source>
         <translation>偏好设置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="100"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="103"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="101"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="104"/>
         <source>Reduce animations</source>
         <translation>减少动画</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="101"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="102"/>
         <source>Use fewer motion effects throughout the app</source>
         <translation>减少应用中的动态效果</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="109"/>
-        <location filename="../qml/pages/SettingsPage.qml" line="113"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="114"/>
         <source>Compatibility rendering</source>
         <translation>兼容渲染模式</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="111"/>
         <source>Use software rendering after restart if the graphics driver is unstable</source>
         <translation>显卡驱动不稳定时，重启后改用软件渲染</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="121"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="122"/>
         <source>Default task duration</source>
         <translation>默认任务时长</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="122"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="123"/>
         <source>Used for new tasks</source>
         <translation>用于新建任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="124"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="125"/>
         <source>Default task duration in minutes</source>
         <translation>默认任务时长（分钟）</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="125"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="126"/>
         <source>minutes</source>
         <translation>分钟</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="133"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="139"/>
+        <source>Software updates</source>
+        <translation>软件更新</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="142"/>
+        <source>Current version: %1</source>
+        <translation>当前版本：%1</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="150"/>
+        <source>New %1</source>
+        <translation>新版本 %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="155"/>
+        <source>Checking GitHub for updates...</source>
+        <translation>正在通过 GitHub 检查更新……</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="157"/>
+        <source>A new version is ready. Open the update announcement to see what changed.</source>
+        <translation>已有新版本，打开更新公告即可查看本次变化。</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="158"/>
+        <source>You are using the latest published version.</source>
+        <translation>你正在使用最新发布版本。</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="159"/>
+        <source>TinyBloom can check GitHub Releases and choose the correct download for this device.</source>
+        <translation>TinyBloom 可以检查 GitHub Release，并为当前设备选择正确的安装包。</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="166"/>
+        <source>Checking...</source>
+        <translation>正在检查……</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="167"/>
+        <source>View update</source>
+        <translation>查看更新</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="167"/>
+        <source>Check for updates</source>
+        <translation>检查更新</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="173"/>
+        <source>Release page</source>
+        <translation>发布页面</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="183"/>
         <source>Data</source>
         <translation>数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="134"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="184"/>
         <source>Your data stays on this device unless you export it.</source>
         <translation>除非主动导出，否则你的数据只保存在本设备。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="137"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="187"/>
         <source>Export Data</source>
         <translation>导出数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="137"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="187"/>
         <source>Working...</source>
         <translation>处理中...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="141"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="191"/>
         <source>Import Data</source>
         <translation>导入数据</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="154"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="204"/>
         <source>%1 mobile · Version %2</source>
         <translation>%1 移动版 · 版本 %2</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="156"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="206"/>
         <source>Mobile preview · Version %1</source>
         <translation>移动端预览 · 版本 %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="157"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="207"/>
         <source>Windows desktop · Version %1</source>
         <translation>Windows 桌面版 · 版本 %1</translation>
     </message>
@@ -1315,12 +1370,12 @@
         <translation type="vanished">版本 0.1.0</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="161"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="211"/>
         <source>Small Steps, Real Progress.</source>
         <translation>小步开始，真实进步。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="162"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="212"/>
         <source>Free &amp; Open Source · MIT License</source>
         <translation>免费且开源 · MIT 许可证</translation>
     </message>
@@ -1823,6 +1878,77 @@ Real Progress.</source>
         <location filename="../qml/pages/TodayPage.qml" line="52"/>
         <source>Create a small task to get started.</source>
         <translation>创建一个小任务，轻松开始吧。</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateDialog</name>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="14"/>
+        <source>A new TinyBloom version is available</source>
+        <translation>发现 TinyBloom 新版本</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="29"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="46"/>
+        <source>TinyBloom %1</source>
+        <translation>TinyBloom %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="50"/>
+        <source>Current %1  →  New %2</source>
+        <translation>当前 %1  →  新版 %2</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="60"/>
+        <source>Update announcement</source>
+        <translation>更新公告</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="69"/>
+        <source>This update contains new features and reliability improvements.</source>
+        <translation>本次更新包含新功能与可靠性改进。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="84"/>
+        <source>Ignore this version</source>
+        <translation>忽略此版本</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="89"/>
+        <source>Later</source>
+        <translation>稍后</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="91"/>
+        <source>Download APK</source>
+        <translation>下载 APK</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/UpdateDialog.qml" line="91"/>
+        <source>Download update</source>
+        <translation>下载更新</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateManager</name>
+    <message>
+        <location filename="../src/services/UpdateManager.cpp" line="95"/>
+        <source>Unable to check for updates. Please check your network connection.</source>
+        <translation>暂时无法检查更新，请检查网络连接。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/UpdateManager.cpp" line="104"/>
+        <source>The update service returned an invalid response.</source>
+        <translation>更新服务返回了无效响应。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/UpdateManager.cpp" line="117"/>
+        <source>No published release was found.</source>
+        <translation>暂未找到已发布版本。</translation>
     </message>
 </context>
 <context>

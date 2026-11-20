@@ -67,7 +67,7 @@ ApplicationWindow {
                 onSeedPlanted: flowerName => toast.show(qsTr("%1 seed planted. Let your next small step help it grow.").arg(flowerName))
                 onFocusSessionCompleted: toast.show(qsTr("Focus session complete. Take a breath, then mark the progress you made."))
             }
-            SettingsPage { theme: theme }
+            SettingsPage { theme: theme; onUpdateRequested: updateDialog.open() }
         }
         MobileNavigationBar {
             id: mobileNavigation
@@ -94,6 +94,7 @@ ApplicationWindow {
         onConfirmed: id => taskManager.deleteTask(id)
     }
     XpToast { id: xpToast; theme: theme }
+    UpdateDialog { id: updateDialog; theme: theme }
     Popup {
         id: toast; property string message
         x: root.width - width - (root.compactMode ? 12 : 24)
@@ -125,7 +126,13 @@ ApplicationWindow {
         function onOperationSucceeded(message) { toast.show(message) }
         function onOperationFailed(message) { toast.show(message) }
     }
+    Connections {
+        target: updateManager
+        function onUpdateAvailableDetected() { updateDialog.open() }
+    }
     Component.onCompleted: {
+        if (screenshotScenario.length === 0)
+            Qt.callLater(() => updateManager.checkForUpdates(false))
         if (!databaseReady) toast.show(qsTr("Local storage could not be opened. Changes may not be saved."))
         if (screenshotScenario === "tasks") currentPage = 1
         else if (screenshotScenario === "tasks-demo") {

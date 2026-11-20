@@ -7,6 +7,7 @@ Item {
     id: page
     property QtObject theme
     readonly property bool compact: width < 600
+    signal updateRequested()
 
     FileDialog {
         id: exportDialog; title: qsTr("Export TinyBloom data"); fileMode: FileDialog.SaveFile
@@ -123,6 +124,55 @@ Item {
                         }
                         SpinBox { Accessible.name: qsTr("Default task duration in minutes"); from: 0; to: 480; editable: true; value: settingsManager.defaultTaskDuration; onValueModified: settingsManager.defaultTaskDuration = value }
                         Text { text: qsTr("minutes"); color: theme.muted; font.pixelSize: 12 }
+                    }
+                }
+            }
+            Rectangle {
+                Layout.fillWidth: true; implicitHeight: updateColumn.implicitHeight + 32
+                radius: theme.radius; color: theme.card; border.color: theme.border
+                ColumnLayout {
+                    id: updateColumn; anchors.fill: parent; anchors.margins: 16; spacing: 10
+                    RowLayout {
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 3
+                            Text { text: qsTr("Software updates"); color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold }
+                            Text {
+                                Layout.fillWidth: true
+                                text: qsTr("Current version: %1").arg(updateManager.currentVersion)
+                                color: theme.muted; font.pixelSize: 12; wrapMode: Text.WordWrap
+                            }
+                        }
+                        Rectangle {
+                            visible: updateManager.updateAvailable
+                            implicitWidth: updateBadge.implicitWidth + 20; implicitHeight: 28
+                            radius: 14; color: theme.primarySoft
+                            Text { id: updateBadge; anchors.centerIn: parent; text: qsTr("New %1").arg(updateManager.latestVersion); color: theme.primary; font.pixelSize: 11; font.weight: Font.Bold }
+                        }
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: updateManager.checking ? qsTr("Checking GitHub for updates...")
+                            : updateManager.errorMessage.length > 0 ? updateManager.errorMessage
+                            : updateManager.updateAvailable ? qsTr("A new version is ready. Open the update announcement to see what changed.")
+                            : updateManager.checked ? qsTr("You are using the latest published version.")
+                            : qsTr("TinyBloom can check GitHub Releases and choose the correct download for this device.")
+                        color: updateManager.errorMessage.length > 0 ? theme.danger : theme.muted
+                        font.pixelSize: 12; wrapMode: Text.WordWrap
+                    }
+                    RowLayout {
+                        AppButton {
+                            theme: page.theme; primary: updateManager.updateAvailable
+                            text: updateManager.checking ? qsTr("Checking...")
+                                : updateManager.updateAvailable ? qsTr("View update") : qsTr("Check for updates")
+                            enabled: !updateManager.checking
+                            onClicked: updateManager.updateAvailable ? page.updateRequested() : updateManager.checkForUpdates(true)
+                        }
+                        AppButton {
+                            visible: updateManager.checked && updateManager.latestVersion.length > 0
+                            theme: page.theme; primary: false; text: qsTr("Release page")
+                            onClicked: updateManager.openReleasePage()
+                        }
                     }
                 }
             }
