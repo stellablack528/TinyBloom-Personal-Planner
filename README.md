@@ -4,6 +4,37 @@
 
 > **Small Steps, Real Progress.**
 
+## 📸 产品预览
+
+### 🌱 把每天的专注变成看得见的积累
+
+TinyBloom 会记录每天的专注时长，并通过日历颜色深浅展示投入程度。点击任意日期可以回顾当天记录，同时查看本月累计时长和专注天数。
+
+![TinyBloom 桌面端月度专注日历](docs/screenshots/focus-month-desktop.png)
+
+> 截图使用隔离的演示数据，不包含开发者或用户的真实记录。月度汇总界面目前位于 `main` 分支，将随下一测试版发布。
+
+<p align="center">
+  <img src="docs/screenshots/focus-month-mobile.png" width="360" alt="TinyBloom Android 移动端月度专注日历">
+</p>
+
+<p align="center"><em>同一套专注记录同时适配 Windows 桌面端与 Android 移动端。</em></p>
+
+### 🗺️ 用目标地图拆解长期任务
+
+![TinyBloom 长期任务目标地图](docs/screenshots/long-term-goal-map.png)
+
+### 🌻 在花园自习室里创造正反馈
+
+![TinyBloom 花园自习室](docs/screenshots/garden-study-room.png)
+
+<details>
+<summary><strong>查看 Midnight 深色主题与软件更新界面</strong></summary>
+
+![TinyBloom Midnight 深色主题设置页](docs/screenshots/settings-midnight.png)
+
+</details>
+
 ## 🧪 最新测试版下载
 
 当前 Android 移动端与 Windows 桌面端统一为 **v0.4.0 Beta 1**。本版新增每日专注统计、历史日历、专注反馈和应用内更新公告，并继续提供长期任务目标地图、花园自习室与本地数据备份。
