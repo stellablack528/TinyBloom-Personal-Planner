@@ -38,7 +38,9 @@ UninstallDisplayName={#AppName}
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-Compression=lzma2/ultra64
+; Keep installation responsive on everyday laptops. ultra64 saves only a few
+; megabytes but needs a much larger dictionary and causes visible CPU/disk spikes.
+Compression=lzma2/normal
 SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
