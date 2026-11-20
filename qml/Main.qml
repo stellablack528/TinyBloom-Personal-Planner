@@ -117,6 +117,10 @@ ApplicationWindow {
         function onErrorOccurred(message) { toast.show(message) }
     }
     Connections {
+        target: focusManager
+        function onErrorOccurred(message) { toast.show(message) }
+    }
+    Connections {
         target: dataService
         function onOperationSucceeded(message) { toast.show(message) }
         function onOperationFailed(message) { toast.show(message) }
@@ -154,6 +158,10 @@ ApplicationWindow {
             currentPage = 2
         }
         else if (screenshotScenario === "garden") currentPage = 3
+        else if (screenshotScenario === "focus-history") {
+            currentPage = 3
+            Qt.callLater(() => gardenPage.showFocusHistory())
+        }
         else if (screenshotScenario === "garden-showcase") {
             if (taskManager.totalCount === 0 && growthManager.totalXp === 0) {
                 growthManager.plantSeed(0, "sunflower")

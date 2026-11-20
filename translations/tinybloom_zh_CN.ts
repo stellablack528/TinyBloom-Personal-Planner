@@ -32,73 +32,73 @@
 <context>
     <name>DataService</name>
     <message>
-        <location filename="../src/services/DataService.cpp" line="49"/>
-        <location filename="../src/services/DataService.cpp" line="77"/>
+        <location filename="../src/services/DataService.cpp" line="52"/>
+        <location filename="../src/services/DataService.cpp" line="81"/>
         <source>Please choose a valid save location.</source>
         <translation>请选择有效的保存位置。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="54"/>
-        <location filename="../src/services/DataService.cpp" line="67"/>
-        <location filename="../src/services/DataService.cpp" line="107"/>
+        <location filename="../src/services/DataService.cpp" line="57"/>
+        <location filename="../src/services/DataService.cpp" line="70"/>
+        <location filename="../src/services/DataService.cpp" line="111"/>
         <source>Unable to write the export file.</source>
         <translation>无法写入导出文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="59"/>
-        <location filename="../src/services/DataService.cpp" line="69"/>
-        <location filename="../src/services/DataService.cpp" line="108"/>
+        <location filename="../src/services/DataService.cpp" line="62"/>
+        <location filename="../src/services/DataService.cpp" line="72"/>
+        <location filename="../src/services/DataService.cpp" line="112"/>
         <source>Unable to finish writing the export file.</source>
         <translation>无法完成导出文件的写入。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="62"/>
-        <location filename="../src/services/DataService.cpp" line="70"/>
+        <location filename="../src/services/DataService.cpp" line="65"/>
+        <location filename="../src/services/DataService.cpp" line="73"/>
         <source>Your TinyBloom data was exported.</source>
         <translation>TinyBloom 数据已成功导出。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="78"/>
+        <location filename="../src/services/DataService.cpp" line="82"/>
         <source>A data operation is already in progress.</source>
         <translation>已有一项数据操作正在进行。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="106"/>
+        <location filename="../src/services/DataService.cpp" line="110"/>
         <source>Your TinyBloom data was exported in the background.</source>
         <translation>TinyBloom 数据已在后台导出完成。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="117"/>
+        <location filename="../src/services/DataService.cpp" line="122"/>
         <source>Please choose a valid file.</source>
         <translation>请选择有效的文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="119"/>
+        <location filename="../src/services/DataService.cpp" line="124"/>
         <source>Unable to read this file.</source>
         <translation>无法读取此文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="123"/>
+        <location filename="../src/services/DataService.cpp" line="128"/>
         <source>This file does not contain valid JSON.</source>
         <translation>此文件不是有效的 JSON 文件。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="132"/>
+        <location filename="../src/services/DataService.cpp" line="138"/>
         <source>Your TinyBloom data was imported. Backup saved to %1</source>
         <translation>TinyBloom 数据已成功导入。安全备份已保存到 %1</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="141"/>
+        <location filename="../src/services/DataService.cpp" line="147"/>
         <source>Unable to find the TinyBloom data folder.</source>
         <translation>无法找到 TinyBloom 数据文件夹。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="149"/>
+        <location filename="../src/services/DataService.cpp" line="155"/>
         <source>Unable to create a safety backup. Import was cancelled.</source>
         <translation>无法创建安全备份，导入已取消。</translation>
     </message>
     <message>
-        <location filename="../src/services/DataService.cpp" line="154"/>
+        <location filename="../src/services/DataService.cpp" line="160"/>
         <source>Unable to finish the safety backup. Import was cancelled.</source>
         <translation>无法完成安全备份，导入已取消。</translation>
     </message>
@@ -126,100 +126,115 @@
         <translation>无法启用数据库完整性检查。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="161"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="166"/>
         <source>Unable to load tasks.</source>
         <translation>无法加载任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="186"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="191"/>
         <source>Unable to load subtasks.</source>
         <translation>无法加载小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="222"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="227"/>
         <source>Unable to save this task.</source>
         <translation>无法保存此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="245"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="250"/>
         <source>Unable to update this task.</source>
         <translation>无法更新此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="257"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="262"/>
         <source>Unable to delete this task.</source>
         <translation>无法删除此任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="274"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="279"/>
         <source>Unable to save this small step.</source>
         <translation>无法保存此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="289"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="294"/>
         <source>Unable to update this small step.</source>
         <translation>无法更新此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="301"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="306"/>
         <source>Unable to delete this small step.</source>
         <translation>无法删除此小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="323"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="328"/>
         <source>Unable to save settings.</source>
         <translation>无法保存设置。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="366"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="345"/>
+        <source>Unable to save focus time.</source>
+        <translation>无法保存专注时长。</translation>
+    </message>
+    <message>
+        <location filename="../src/database/DatabaseManager.cpp" line="356"/>
+        <source>Unable to load focus history.</source>
+        <translation>无法读取专注记录。</translation>
+    </message>
+    <message>
+        <location filename="../src/database/DatabaseManager.cpp" line="405"/>
         <source>This file is not a valid TinyBloom export.</source>
         <translation>此文件不是有效的 TinyBloom 导出文件。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="376"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="415"/>
         <source>This file contains an invalid task.</source>
         <translation>此文件包含无效任务。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="389"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="428"/>
         <source>This file contains an invalid small step.</source>
         <translation>此文件包含无效的小步骤。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="400"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="442"/>
+        <source>This file contains invalid focus history.</source>
+        <translation>此文件包含无效的专注记录。</translation>
+    </message>
+    <message>
+        <location filename="../src/database/DatabaseManager.cpp" line="452"/>
         <source>This file contains an invalid task tree.</source>
         <translation>该文件包含无效的任务树。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="405"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="457"/>
         <source>Unable to start data import.</source>
         <translation>无法开始导入数据。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="410"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="462"/>
         <source>Unable to import data. Your existing data is unchanged.</source>
         <translation>无法导入数据，现有数据未被修改。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="490"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="551"/>
         <source>Unable to load your garden.</source>
         <translation>无法读取你的花园。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="518"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="523"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="542"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="547"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="577"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="595"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="604"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="620"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="579"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="584"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="603"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="608"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="638"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="656"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="665"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="681"/>
         <source>Unable to update your garden.</source>
         <translation>暂时无法更新你的花园。</translation>
     </message>
     <message>
-        <location filename="../src/database/DatabaseManager.cpp" line="628"/>
-        <location filename="../src/database/DatabaseManager.cpp" line="639"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="689"/>
+        <location filename="../src/database/DatabaseManager.cpp" line="700"/>
         <source>Unable to initialize local storage.</source>
         <translation>无法初始化本地存储。</translation>
     </message>
@@ -261,6 +276,69 @@
     </message>
 </context>
 <context>
+    <name>FocusCalendar</name>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="21"/>
+        <source>%1 h %2 min</source>
+        <translation>%1 小时 %2 分钟</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="22"/>
+        <source>%1 h</source>
+        <translation>%1 小时</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="23"/>
+        <source>%1 min</source>
+        <translation>%1 分钟</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="27"/>
+        <source>No focus time yet today. Start with one small session.</source>
+        <translation>今天还没有专注记录，先从一小段自习开始吧。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="28"/>
+        <source>You have started. A few focused minutes still count.</source>
+        <translation>已经迈出第一步，哪怕几分钟的认真专注也算数。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="29"/>
+        <source>One solid session finished. Your attention is taking root.</source>
+        <translation>完成了一段扎实的专注，你的注意力正在慢慢扎根。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="30"/>
+        <source>More than an hour of focus today. Your rhythm is becoming steady.</source>
+        <translation>今天已经专注超过一小时，你正在建立稳定的节奏。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="31"/>
+        <source>Deep focus today. Remember to rest your eyes and body, too.</source>
+        <translation>今天完成了深度专注，也别忘了让眼睛和身体休息一下。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="46"/>
+        <source>Today&apos;s focus</source>
+        <translation>今日专注</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="74"/>
+        <source>Tap a date to review that day&apos;s focused study time.</source>
+        <translation>点击日期，查看当天累计的专注时长。</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="88"/>
+        <source>Previous month</source>
+        <translation>上个月</translation>
+    </message>
+    <message>
+        <location filename="../qml/components/FocusCalendar.qml" line="101"/>
+        <source>Next month</source>
+        <translation>下个月</translation>
+    </message>
+</context>
+<context>
     <name>GardenPage</name>
     <message>
         <source>Your Garden</source>
@@ -271,12 +349,12 @@
         <translation type="vanished">用心照料的会生长，放着不管的也会枯萎。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="60"/>
+        <location filename="../qml/pages/GardenPage.qml" line="57"/>
         <source>Level %1</source>
         <translation>等级 %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="62"/>
+        <location filename="../qml/pages/GardenPage.qml" line="59"/>
         <source>%1 XP</source>
         <translation>%1 XP</translation>
     </message>
@@ -289,92 +367,92 @@
         <translation type="vanished">达到 %1 XP 后继续生长 · 还差 %2 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="25"/>
+        <location filename="../qml/pages/GardenPage.qml" line="22"/>
         <source>Sunflower</source>
         <translation>向日葵</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="26"/>
+        <location filename="../qml/pages/GardenPage.qml" line="23"/>
         <source>Tulip</source>
         <translation>郁金香</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="27"/>
+        <location filename="../qml/pages/GardenPage.qml" line="24"/>
         <source>Rose</source>
         <translation>玫瑰</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="28"/>
+        <location filename="../qml/pages/GardenPage.qml" line="25"/>
         <source>Pink blossom</source>
         <translation>小粉花</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="52"/>
+        <location filename="../qml/pages/GardenPage.qml" line="49"/>
         <source>Bloom Study Room</source>
         <translation>花园自习室</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="53"/>
+        <location filename="../qml/pages/GardenPage.qml" line="50"/>
         <source>A quiet room where focused effort becomes something alive.</source>
         <translation>在安静的房间里，让每一次专注都长成真实的生命。</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="135"/>
+        <location filename="../qml/pages/GardenPage.qml" line="132"/>
         <source>Focus session</source>
         <translation>专注自习</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="143"/>
+        <location filename="../qml/pages/GardenPage.qml" line="140"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="143"/>
+        <location filename="../qml/pages/GardenPage.qml" line="140"/>
         <source>Start</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="148"/>
+        <location filename="../qml/pages/GardenPage.qml" line="145"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="185"/>
+        <location filename="../qml/pages/GardenPage.qml" line="182"/>
         <source>Flower pot %1</source>
         <translation>第 %1 个花位</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="193"/>
+        <location filename="../qml/pages/GardenPage.qml" line="190"/>
         <source>Replant</source>
         <translation>重新播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="213"/>
+        <location filename="../qml/pages/GardenPage.qml" line="210"/>
         <source>Choose a seed and plant</source>
         <translation>选择种子并播种</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="230"/>
+        <location filename="../qml/pages/GardenPage.qml" line="227"/>
         <source>%1 XP since planting</source>
         <translation>播种后获得 %1 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="245"/>
+        <location filename="../qml/pages/GardenPage.qml" line="247"/>
         <source>Room vitality</source>
         <translation>自习室活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="246"/>
+        <location filename="../qml/pages/GardenPage.qml" line="248"/>
         <source>+20 XP</source>
         <translation>+20 XP</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="246"/>
+        <location filename="../qml/pages/GardenPage.qml" line="248"/>
         <source>Complete a task</source>
         <translation>完成一个任务</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="246"/>
+        <location filename="../qml/pages/GardenPage.qml" line="248"/>
         <source>Restores 28 vitality</source>
         <translation>恢复 28 点活力</translation>
     </message>
@@ -391,12 +469,12 @@
         <translation type="vanished">恢复 10 点活力</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="247"/>
+        <location filename="../qml/pages/GardenPage.qml" line="249"/>
         <source>Days with progress</source>
         <translation>有进步的天数</translation>
     </message>
     <message>
-        <location filename="../qml/pages/GardenPage.qml" line="247"/>
+        <location filename="../qml/pages/GardenPage.qml" line="249"/>
         <source>A quiet day costs 15 vitality</source>
         <translation>每休息一天会消耗 15 点活力</translation>
     </message>

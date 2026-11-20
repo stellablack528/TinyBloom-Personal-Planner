@@ -8,6 +8,7 @@
 class TaskManager;
 class SettingsManager;
 class GrowthManager;
+class FocusManager;
 
 class DataService final : public QObject
 {
@@ -15,7 +16,7 @@ class DataService final : public QObject
     Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
 public:
     DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings,
-        GrowthManager *growth = nullptr, QObject *parent = nullptr);
+        GrowthManager *growth = nullptr, FocusManager *focus = nullptr, QObject *parent = nullptr);
     ~DataService() override;
 
     Q_INVOKABLE bool exportData(const QUrl &fileUrl);
@@ -35,6 +36,7 @@ private:
     TaskManager *m_tasks;
     SettingsManager *m_settings;
     GrowthManager *m_growth;
+    FocusManager *m_focus;
     QThreadPool m_threadPool;
     bool m_busy = false;
 };

@@ -6,19 +6,16 @@ Item {
     id: page
     property QtObject theme
     readonly property bool compact: width < 600
-    property int focusSeconds: 25 * 60
-    property bool focusRunning: false
     signal focusSessionCompleted()
     signal seedPlanted(string flowerName)
 
     function focusTimeText() {
-        let minutes = Math.floor(focusSeconds / 60)
-        let seconds = focusSeconds % 60
+        let minutes = Math.floor(focusManager.remainingSeconds / 60)
+        let seconds = focusManager.remainingSeconds % 60
         return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
     }
     function resetFocus() {
-        focusRunning = false
-        focusSeconds = 25 * 60
+        focusManager.reset()
     }
 
     function speciesName(species) {
@@ -33,8 +30,12 @@ Item {
             : growthManager.secondPlantSpecies.length > 0
         seedPicker.open()
     }
+    function showFocusHistory() {
+        studyScroll.contentY = Math.max(0, panorama.y + panorama.height - 30)
+    }
 
     Flickable {
+        id: studyScroll
         anchors.fill: parent; contentWidth: width; contentHeight: content.implicitHeight + 80; clip: true
         ScrollBar.vertical: ScrollBar {}
         ColumnLayout {
@@ -122,10 +123,10 @@ Item {
                         anchors.fill: parent; anchors.margins: 14; spacing: 12
                         Rectangle {
                             Layout.preferredWidth: 12; Layout.preferredHeight: 12; radius: 6
-                            color: page.focusRunning ? theme.primary : theme.border
+                            color: focusManager.running ? theme.primary : theme.border
                             SequentialAnimation on scale {
                                 loops: Animation.Infinite
-                                running: page.focusRunning && theme.animationDuration > 0
+                                running: focusManager.running && theme.animationDuration > 0
                                 NumberAnimation { from: 0.75; to: 1.25; duration: 720; easing.type: Easing.InOutSine }
                                 NumberAnimation { from: 1.25; to: 0.75; duration: 720; easing.type: Easing.InOutSine }
                             }
@@ -140,8 +141,8 @@ Item {
                             spacing: 4
                             AppButton {
                                 theme: page.theme; implicitWidth: 76; implicitHeight: 34
-                                text: page.focusRunning ? qsTr("Pause") : qsTr("Start")
-                                onClicked: page.focusRunning = !page.focusRunning
+                                text: focusManager.running ? qsTr("Pause") : qsTr("Start")
+                                onClicked: focusManager.toggle()
                             }
                             AppButton {
                                 theme: page.theme; implicitWidth: 76; implicitHeight: 28
@@ -238,6 +239,11 @@ Item {
                 }
             }
 
+            FocusCalendar {
+                Layout.fillWidth: true
+                theme: page.theme
+            }
+
             GridLayout {
                 Layout.fillWidth: true; columns: page.compact ? 1 : 3; columnSpacing: 14; rowSpacing: 10
                 Repeater {
@@ -268,16 +274,8 @@ Item {
         }
     }
 
-    Timer {
-        interval: 1000; repeat: true; running: page.focusRunning
-        onTriggered: {
-            if (page.focusSeconds > 1) {
-                --page.focusSeconds
-            } else {
-                page.focusSeconds = 0
-                page.focusRunning = false
-                page.focusSessionCompleted()
-            }
-        }
+    Connections {
+        target: focusManager
+        function onSessionCompleted(focusedSeconds) { page.focusSessionCompleted() }
     }
 }

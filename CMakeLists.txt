@@ -19,6 +19,8 @@ set(TINYBLOOM_SOURCES
     src/managers/SettingsManager.h
     src/managers/GrowthManager.cpp
     src/managers/GrowthManager.h
+    src/managers/FocusManager.cpp
+    src/managers/FocusManager.h
     src/managers/TaskManager.cpp
     src/managers/TaskManager.h
     src/models/Task.cpp
@@ -54,6 +56,7 @@ qt_add_qml_module(TinyBloom
         qml/components/LongTermTaskDialog.qml
         qml/components/GardenPlant.qml
         qml/components/GrowthSummaryCard.qml
+        qml/components/FocusCalendar.qml
         qml/components/ProgressCard.qml
         qml/components/SeedPickerDialog.qml
         qml/components/Sidebar.qml

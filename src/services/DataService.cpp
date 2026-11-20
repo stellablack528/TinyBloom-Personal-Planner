@@ -2,6 +2,7 @@
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
 #include "managers/GrowthManager.h"
+#include "managers/FocusManager.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -28,8 +29,9 @@ QString storagePath(const QUrl &url)
 }
 
 DataService::DataService(DatabaseManager *database, TaskManager *tasks, SettingsManager *settings,
-    GrowthManager *growth, QObject *parent)
-    : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings), m_growth(growth)
+    GrowthManager *growth, FocusManager *focus, QObject *parent)
+    : QObject(parent), m_database(database), m_tasks(tasks), m_settings(settings), m_growth(growth),
+      m_focus(focus)
 {
     const int availableWorkers = qMax(1, QThread::idealThreadCount() - 1);
     m_threadPool.setMaxThreadCount(qMin(2, availableWorkers));
@@ -45,6 +47,7 @@ bool DataService::busy() const { return m_busy; }
 
 bool DataService::exportData(const QUrl &fileUrl)
 {
+    if (m_focus) m_focus->flushPending();
     const QString path = storagePath(fileUrl);
     if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid save location.")); return false; }
 
@@ -73,6 +76,7 @@ bool DataService::exportData(const QUrl &fileUrl)
 
 bool DataService::exportDataAsync(const QUrl &fileUrl)
 {
+    if (m_focus) m_focus->flushPending();
     const QString path = storagePath(fileUrl);
     if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid save location.")); return false; }
     if (m_busy) { emit operationFailed(tr("A data operation is already in progress.")); return false; }
@@ -113,6 +117,7 @@ bool DataService::exportDataAsync(const QUrl &fileUrl)
 
 bool DataService::importData(const QUrl &fileUrl)
 {
+    if (m_focus) m_focus->pause();
     const QString path = storagePath(fileUrl);
     if (path.isEmpty()) { emit operationFailed(tr("Please choose a valid file.")); return false; }
     QFile file(path);
@@ -129,6 +134,7 @@ bool DataService::importData(const QUrl &fileUrl)
     m_tasks->reload();
     m_settings->load();
     if (m_growth) m_growth->reload();
+    if (m_focus) m_focus->reload();
     emit operationSucceeded(tr("Your TinyBloom data was imported. Backup saved to %1")
         .arg(QDir::toNativeSeparators(backupPath)));
     return true;

@@ -40,6 +40,8 @@ public:
 
     [[nodiscard]] QString setting(const QString &key, const QString &fallback = {}) const;
     bool setSetting(const QString &key, const QString &value);
+    bool addFocusSeconds(const QDate &date, int seconds);
+    [[nodiscard]] int focusSecondsForDate(const QDate &date) const;
     [[nodiscard]] QJsonObject exportObject() const;
     bool importObject(const QJsonObject &root);
     [[nodiscard]] GrowthStats loadGrowthStats() const;

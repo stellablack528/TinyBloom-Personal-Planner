@@ -2,6 +2,7 @@
 #include "managers/SettingsManager.h"
 #include "managers/TaskManager.h"
 #include "managers/GrowthManager.h"
+#include "managers/FocusManager.h"
 #include "services/DataService.h"
 
 #include <QDir>
@@ -34,6 +35,8 @@ private slots:
     void growthRewardsAreOneTimeAndPersistent();
     void vitalityDecaysAfterInactiveDays();
     void gardenSeedsPersistAndGrowIndependently();
+    void focusHistoryPersistsAndRoundTrips();
+    void focusTimerTracksAndFlushes();
     void legacyDatabaseMigratesToGrowthSchema();
     void classificationSearchAndValidation();
     void incrementalTaskModelUpdates();
@@ -124,7 +127,7 @@ void CoreTests::jsonRoundTripAndInvalidImportSafety()
     QVERIFY(exported.value(QStringLiteral("version")).isString());
     QCOMPARE(exported.value(QStringLiteral("application")).toString(), QStringLiteral("TinyBloom"));
     QCOMPARE(exported.value(QStringLiteral("platform")).toString(), QStringLiteral("desktop"));
-    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 2);
+    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 3);
     QCOMPARE(exported.value(QStringLiteral("tasks")).toArray().size(), 1);
 
     QJsonObject invalid{{"version", "0.1.0"}, {"tasks", QJsonArray{QJsonObject{{"title", ""}}}},
@@ -152,7 +155,7 @@ void CoreTests::exportMetadataIdentifiesMobileWithoutChangingSchema()
     QCOMPARE(exported.value(QStringLiteral("application")).toString(), QStringLiteral("TinyBloom"));
     QCOMPARE(exported.value(QStringLiteral("platform")).toString(), QStringLiteral("android"));
     QCOMPARE(exported.value(QStringLiteral("version")).toString(), QStringLiteral("0.3.0-beta.1"));
-    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 2);
+    QCOMPARE(exported.value(QStringLiteral("schemaVersion")).toInt(), 3);
 }
 
 void CoreTests::dataServiceImportCreatesSafetyBackup()
@@ -296,6 +299,42 @@ void CoreTests::gardenSeedsPersistAndGrowIndependently()
     QCOMPARE(reopened.firstPlantSpecies(), QStringLiteral("tulip"));
     QCOMPARE(reopened.secondPlantSpecies(), QStringLiteral("rose"));
     QCOMPARE(reopened.plantStage(0), 0);
+}
+
+void CoreTests::focusHistoryPersistsAndRoundTrips()
+{
+    const QDate today = QDate::currentDate();
+    const QDate yesterday = today.addDays(-1);
+    QVERIFY(m_database->addFocusSeconds(today, 10 * 60));
+    QVERIFY(m_database->addFocusSeconds(today, 15 * 60));
+    QVERIFY(m_database->addFocusSeconds(yesterday, 42 * 60));
+    QCOMPARE(m_database->focusSecondsForDate(today), 25 * 60);
+    QCOMPARE(m_database->focusSecondsForDate(yesterday), 42 * 60);
+
+    const QJsonObject exported = m_database->exportObject();
+    QCOMPARE(exported.value(QStringLiteral("focusHistory")).toArray().size(), 2);
+    QVERIFY(m_database->addFocusSeconds(today, 5 * 60));
+    QCOMPARE(m_database->focusSecondsForDate(today), 30 * 60);
+    QVERIFY(m_database->importObject(exported));
+    QCOMPARE(m_database->focusSecondsForDate(today), 25 * 60);
+    QCOMPARE(m_database->focusSecondsForDate(yesterday), 42 * 60);
+}
+
+void CoreTests::focusTimerTracksAndFlushes()
+{
+    FocusManager focus(m_database.get());
+    QCOMPARE(focus.remainingSeconds(), 25 * 60);
+    QCOMPARE(focus.running(), false);
+    focus.toggle();
+    QVERIFY(focus.running());
+    QTest::qWait(2200);
+    focus.pause();
+    QVERIFY(!focus.running());
+    QVERIFY(focus.remainingSeconds() <= 25 * 60 - 2);
+    QVERIFY(focus.todaySeconds() >= 2);
+    QCOMPARE(m_database->focusSecondsForDate(QDate::currentDate()), focus.todaySeconds());
+    focus.reset();
+    QCOMPARE(focus.remainingSeconds(), 25 * 60);
 }
 
 void CoreTests::legacyDatabaseMigratesToGrowthSchema()

@@ -118,6 +118,11 @@ bool DatabaseManager::createTables()
             vitality INTEGER NOT NULL DEFAULT 100 CHECK(vitality BETWEEN 0 AND 100),
             vitality_updated_date TEXT NOT NULL DEFAULT ''
         ))"))
+        && execute(QStringLiteral(R"(
+        CREATE TABLE IF NOT EXISTS focus_daily (
+            date TEXT PRIMARY KEY,
+            focused_seconds INTEGER NOT NULL DEFAULT 0 CHECK(focused_seconds >= 0)
+        ))"))
         && execute(QStringLiteral("INSERT OR IGNORE INTO growth_profile(id,total_xp,progress_days,today_xp,last_progress_date,vitality,vitality_updated_date) VALUES(1,0,0,0,'',100,'')"))
         && execute(QStringLiteral("CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date)"))
         && execute(QStringLiteral("CREATE INDEX IF NOT EXISTS idx_subtasks_task_id ON subtasks(task_id)")))) return false;
@@ -326,6 +331,34 @@ bool DatabaseManager::setSetting(const QString &key, const QString &value)
     return true;
 }
 
+bool DatabaseManager::addFocusSeconds(const QDate &date, const int seconds)
+{
+    if (!date.isValid() || seconds <= 0) return false;
+    QSqlQuery query(m_database);
+    query.prepare(QStringLiteral(R"(
+        INSERT INTO focus_daily(date,focused_seconds) VALUES(?,?)
+        ON CONFLICT(date) DO UPDATE SET focused_seconds=focused_seconds+excluded.focused_seconds
+    )"));
+    query.addBindValue(date.toString(Qt::ISODate));
+    query.addBindValue(seconds);
+    if (query.exec()) return true;
+    setError(tr("Unable to save focus time."), query.lastError().text());
+    return false;
+}
+
+int DatabaseManager::focusSecondsForDate(const QDate &date) const
+{
+    if (!date.isValid()) return 0;
+    QSqlQuery query(m_database);
+    query.prepare(QStringLiteral("SELECT focused_seconds FROM focus_daily WHERE date=?"));
+    query.addBindValue(date.toString(Qt::ISODate));
+    if (!query.exec()) {
+        setError(tr("Unable to load focus history."), query.lastError().text());
+        return 0;
+    }
+    return query.next() ? qMax(0, query.value(0).toInt()) : 0;
+}
+
 QJsonObject DatabaseManager::exportObject() const
 {
     QJsonArray tasksArray;
@@ -352,11 +385,17 @@ QJsonObject DatabaseManager::exportObject() const
     const QJsonObject growthObject{{"totalXp", growth.totalXp}, {"progressDays", growth.progressDays},
         {"todayXp", growth.todayXp}, {"lastProgressDate", growth.lastProgressDate.toString(Qt::ISODate)},
         {"vitality", growth.vitality}, {"vitalityUpdatedDate", growth.vitalityUpdatedDate.toString(Qt::ISODate)}};
+    QJsonArray focusHistory;
+    if (query.exec(QStringLiteral("SELECT date,focused_seconds FROM focus_daily ORDER BY date"))) {
+        while (query.next()) focusHistory.append(QJsonObject{
+            {"date", query.value(0).toString()}, {"seconds", query.value(1).toInt()}});
+    }
     return QJsonObject{{"application", QStringLiteral("TinyBloom")},
-        {"platform", m_exportPlatform}, {"schemaVersion", 2},
+        {"platform", m_exportPlatform}, {"schemaVersion", 3},
         {"version", m_exportVersion},
         {"exportedAt", iso(QDateTime::currentDateTimeUtc())}, {"tasks", tasksArray},
-        {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject}};
+        {"subtasks", subtasksArray}, {"settings", settings}, {"growth", growthObject},
+        {"focusHistory", focusHistory}};
 }
 
 bool DatabaseManager::importObject(const QJsonObject &root)
@@ -392,6 +431,19 @@ bool DatabaseManager::importObject(const QJsonObject &root)
         subtaskIds.insert(subtaskId);
         subtaskTaskIds.insert(subtaskId, parentId);
     }
+    const QJsonArray focusHistory = root.value("focusHistory").toArray();
+    QSet<QString> focusDates;
+    for (const auto &value : focusHistory) {
+        const QJsonObject item = value.toObject();
+        const QString dateText = item.value("date").toString();
+        const int seconds = item.value("seconds").toInt(-1);
+        if (!value.isObject() || !QDate::fromString(dateText, Qt::ISODate).isValid()
+            || focusDates.contains(dateText) || seconds < 0 || seconds > 86400) {
+            setError(tr("This file contains invalid focus history."), QStringLiteral("Invalid focus history"));
+            return false;
+        }
+        focusDates.insert(dateText);
+    }
     for (const auto &value : root.value("subtasks").toArray()) {
         const QJsonObject item = value.toObject();
         const qint64 parentNodeId = item.value("parentId").toInteger(0);
@@ -412,7 +464,8 @@ bool DatabaseManager::importObject(const QJsonObject &root)
     };
     QSqlQuery query(m_database);
     if (!query.exec(QStringLiteral("DELETE FROM subtasks")) || !query.exec(QStringLiteral("DELETE FROM tasks"))
-        || !query.exec(QStringLiteral("DELETE FROM settings"))) return rollback(query.lastError().text());
+        || !query.exec(QStringLiteral("DELETE FROM settings"))
+        || !query.exec(QStringLiteral("DELETE FROM focus_daily"))) return rollback(query.lastError().text());
 
     QHash<qint64, qint64> ids;
     for (const auto &value : tasks) {
@@ -477,6 +530,14 @@ bool DatabaseManager::importObject(const QJsonObject &root)
     query.addBindValue(vitality);
     query.addBindValue((vitalityUpdatedDate.isValid() ? vitalityUpdatedDate : QDate::currentDate()).toString(Qt::ISODate));
     if (!query.exec()) return rollback(query.lastError().text());
+    query.prepare(QStringLiteral("INSERT INTO focus_daily(date,focused_seconds) VALUES(?,?)"));
+    for (const auto &value : focusHistory) {
+        const QJsonObject item = value.toObject();
+        query.bindValue(0, item.value("date").toString());
+        query.bindValue(1, item.value("seconds").toInt());
+        if (!query.exec()) return rollback(query.lastError().text());
+        query.finish();
+    }
     if (!m_database.commit()) return rollback(m_database.lastError().text());
     return true;
 }
