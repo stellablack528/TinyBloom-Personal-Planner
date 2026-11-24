@@ -1,10 +1,13 @@
 #include <windows.h>
+#include "DesktopVersion.h"
 
 IDI_ICON1 ICON "icons/app-icon.ico"
+FOCUSSOUND_WIND WAVE "sounds/focus-wind.wav"
+FOCUSSOUND_GLASS WAVE "sounds/focus-glass.wav"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,4,0,1
- PRODUCTVERSION 0,4,0,1
+ FILEVERSION TINYBLOOM_DESKTOP_FILE_VERSION
+ PRODUCTVERSION TINYBLOOM_DESKTOP_FILE_VERSION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS VS_FF_DEBUG
@@ -21,11 +24,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "TinyBloom Contributors\0"
             VALUE "FileDescription", "TinyBloom Desktop Personal Planner\0"
-            VALUE "FileVersion", "0.4.0-beta.1\0"
+            VALUE "FileVersion", TINYBLOOM_DESKTOP_VERSION
             VALUE "InternalName", "TinyBloom\0"
             VALUE "OriginalFilename", "TinyBloom.exe\0"
             VALUE "ProductName", "TinyBloom Desktop\0"
-            VALUE "ProductVersion", "0.4.0-beta.1\0"
+            VALUE "ProductVersion", TINYBLOOM_DESKTOP_VERSION
         END
     END
     BLOCK "VarFileInfo"

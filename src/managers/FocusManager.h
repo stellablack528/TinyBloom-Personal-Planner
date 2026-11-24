@@ -12,6 +12,7 @@ class FocusManager final : public QObject
     Q_OBJECT
     Q_PROPERTY(int remainingSeconds READ remainingSeconds NOTIFY timerChanged)
     Q_PROPERTY(bool running READ running NOTIFY timerChanged)
+    Q_PROPERTY(bool sessionInProgress READ sessionInProgress NOTIFY timerChanged)
     Q_PROPERTY(int todaySeconds READ todaySeconds NOTIFY historyChanged)
     Q_PROPERTY(int historyRevision READ historyRevision NOTIFY historyChanged)
 
@@ -21,6 +22,8 @@ public:
 
     int remainingSeconds() const;
     bool running() const;
+    bool sessionInProgress() const;
+    void setDurationMinutes(int minutes);
     int todaySeconds() const;
     int historyRevision() const;
 
@@ -51,10 +54,12 @@ private:
     QDateTime m_lastTick;
     QHash<QDate, int> m_pendingByDate;
     QDate m_todayDate;
-    int m_remainingSeconds = 25 * 60;
+    int m_durationMinutes;
+    int m_remainingSeconds;
     int m_sessionFocusedSeconds = 0;
     int m_todaySeconds = 0;
     int m_historyRevision = 0;
     bool m_running = false;
+    bool m_sessionInProgress = false;
     static constexpr int FlushIntervalSeconds = 15;
 };

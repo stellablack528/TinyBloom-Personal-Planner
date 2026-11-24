@@ -1,0 +1,14 @@
+TinyBloom focus sounds
+
+focus-wind.wav adapts "Wind Chime (G-003) +.wav" by GnoteSoundz.
+Original: https://freesound.org/people/GnoteSoundz/sounds/169855/
+License: CC0 1.0, https://creativecommons.org/publicdomain/zero/1.0/
+Stretchly source: https://github.com/hovancik/stretchly/blob/trunk/app/audio/wind-chime.wav
+
+focus-glass.wav adapts "Crystal glass" by mlteenie.
+Original: https://freesound.org/people/mlteenie/sounds/153101/
+License: CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+Stretchly source: https://github.com/hovancik/stretchly/blob/trunk/app/audio/crystal-glass.wav
+
+TinyBloom shortened both recordings, mixed them to mono at 22.05 kHz, applied
+a low-pass filter and fades, and reduced the peak levels.

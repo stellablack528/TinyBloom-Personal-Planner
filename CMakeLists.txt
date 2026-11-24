@@ -59,6 +59,7 @@ qt_add_qml_module(TinyBloom
         qml/components/GardenPlant.qml
         qml/components/GrowthSummaryCard.qml
         qml/components/FocusCalendar.qml
+        qml/components/DurationDialog.qml
         qml/components/ProgressCard.qml
         qml/components/SeedPickerDialog.qml
         qml/components/Sidebar.qml
@@ -116,7 +117,22 @@ if(IOS)
 endif()
 
 if(WIN32)
-    target_sources(TinyBloom PRIVATE resources/tinybloom.rc)
+    set(TINYBLOOM_DESKTOP_VERSION "0.4.0-beta.1" CACHE STRING "Windows application version")
+    set(TINYBLOOM_DESKTOP_FILE_VERSION "0,4,0,1" CACHE STRING "Windows numeric file version")
+    configure_file(resources/DesktopVersion.h.in generated/DesktopVersion.h @ONLY)
+    target_include_directories(TinyBloom PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set_property(SOURCE resources/tinybloom.rc APPEND PROPERTY OBJECT_DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/DesktopVersion.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/sounds/focus-wind.wav"
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/sounds/focus-glass.wav")
+    target_sources(TinyBloom PRIVATE
+        resources/tinybloom.rc
+        src/platform/windows/DesktopIntegration.cpp
+        src/platform/windows/DesktopIntegration.h
+        src/platform/windows/FocusClip.cpp
+        src/platform/windows/FocusClip.h
+    )
+    target_link_libraries(TinyBloom PRIVATE comctl32 shell32 user32 winmm ole32 mfuuid)
     set_target_properties(TinyBloom PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 

@@ -7,6 +7,8 @@
 #include "services/UpdateManager.h"
 
 #include <QGuiApplication>
+#include <QDir>
+#include <QFileInfo>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -16,10 +18,19 @@
 #include <QTimer>
 #include <QTranslator>
 
+#if defined(Q_OS_WIN)
+#include "DesktopVersion.h"
+#include "platform/windows/DesktopIntegration.h"
+#endif
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+#if defined(Q_OS_WIN)
+    const QString applicationVersion = QStringLiteral(TINYBLOOM_DESKTOP_VERSION);
+#else
     const QString applicationVersion = QStringLiteral("0.4.0-beta.1");
+#endif
     const bool mobilePreview = qEnvironmentVariableIntValue("TINYBLOOM_MOBILE_PREVIEW") == 1;
 #if defined(Q_OS_ANDROID)
     const bool mobilePlatform = true;
@@ -70,6 +81,11 @@ int main(int argc, char *argv[])
     GrowthManager growthManager(&database);
     growthManager.initialize();
     FocusManager focusManager(&database);
+    const auto applyFocusDuration = [&settingsManager, &focusManager] {
+        focusManager.setDurationMinutes(settingsManager.focusDurationMinutes());
+    };
+    applyFocusDuration();
+    QObject::connect(&settingsManager, &SettingsManager::focusDurationMinutesChanged, &focusManager, applyFocusDuration);
     const QString languageOverride = qEnvironmentVariable("TINYBLOOM_LANGUAGE_OVERRIDE");
     if (!languageOverride.isEmpty()) settingsManager.setLanguage(languageOverride);
     DataService dataService(&database, &taskManager, &settingsManager, &growthManager, &focusManager);
@@ -80,6 +96,18 @@ int main(int argc, char *argv[])
         &growthManager, &GrowthManager::recordSubtaskCompleted);
 
     QQmlApplicationEngine engine;
+#if defined(Q_OS_WIN)
+    const QString customSoundPath = database.isOpen()
+        ? QFileInfo(database.databasePath()).dir().filePath(QStringLiteral("focus-custom.wav")) : QString();
+    DesktopIntegration windowsDesktop(settingsManager, customSoundPath);
+    QObject *desktopIntegration = mobilePreview ? nullptr : &windowsDesktop;
+    QObject::connect(&windowsDesktop, &DesktopIntegration::exitRequested, &app, [&app, &focusManager] {
+        focusManager.pause();
+        app.quit();
+    });
+#else
+    QObject *desktopIntegration = nullptr;
+#endif
     QTranslator translator;
     const auto applyLanguage = [&app, &engine, &translator, &settingsManager, &taskManager, &growthManager](const bool retranslate) {
         app.removeTranslator(&translator);
@@ -103,6 +131,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("settingsManager"), &settingsManager);
     engine.rootContext()->setContextProperty(QStringLiteral("growthManager"), &growthManager);
     engine.rootContext()->setContextProperty(QStringLiteral("focusManager"), &focusManager);
+    engine.rootContext()->setContextProperty(QStringLiteral("desktopIntegration"), desktopIntegration);
     engine.rootContext()->setContextProperty(QStringLiteral("dataService"), &dataService);
     engine.rootContext()->setContextProperty(QStringLiteral("updateManager"), &updateManager);
     engine.rootContext()->setContextProperty(QStringLiteral("databaseReady"), database.isOpen());
@@ -113,6 +142,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("screenshotScenario"), screenshotScenario);
     engine.loadFromModule(QStringLiteral("TinyBloom"), QStringLiteral("Main"));
     if (engine.rootObjects().isEmpty()) return -1;
+#if defined(Q_OS_WIN)
+    if (desktopIntegration) windowsDesktop.setWindow(qobject_cast<QWindow *>(engine.rootObjects().constFirst()));
+#endif
     const QString screenshotPath = qEnvironmentVariable("TINYBLOOM_SCREENSHOT_PATH");
     if (!screenshotPath.isEmpty()) {
         QTimer::singleShot(1200, &app, [&app, &engine, screenshotPath] {

@@ -1,9 +1,11 @@
 #include "FocusManager.h"
+#include "SettingsManager.h"
 
 #include <QtGlobal>
 
 FocusManager::FocusManager(DatabaseManager *database, QObject *parent)
-    : QObject(parent), m_database(database)
+    : QObject(parent), m_database(database), m_durationMinutes(SettingsManager::DefaultFocusMinutes),
+      m_remainingSeconds(m_durationMinutes * 60)
 {
     m_timer.setInterval(1000);
     m_timer.setTimerType(Qt::PreciseTimer);
@@ -19,8 +21,20 @@ FocusManager::~FocusManager()
 
 int FocusManager::remainingSeconds() const { return m_remainingSeconds; }
 bool FocusManager::running() const { return m_running; }
+bool FocusManager::sessionInProgress() const { return m_sessionInProgress; }
 int FocusManager::todaySeconds() const { return m_todaySeconds; }
 int FocusManager::historyRevision() const { return m_historyRevision; }
+
+void FocusManager::setDurationMinutes(const int minutes)
+{
+    const int bounded = qBound(SettingsManager::MinimumFocusMinutes, minutes, SettingsManager::MaximumFocusMinutes);
+    if (m_durationMinutes == bounded) return;
+    m_durationMinutes = bounded;
+    if (!m_sessionInProgress) {
+        m_remainingSeconds = m_durationMinutes * 60;
+        emit timerChanged();
+    }
+}
 
 void FocusManager::toggle()
 {
@@ -37,9 +51,10 @@ void FocusManager::start()
         ++m_historyRevision;
         emit historyChanged();
     }
-    if (m_remainingSeconds <= 0) {
-        m_remainingSeconds = 25 * 60;
+    if (!m_sessionInProgress) {
+        m_remainingSeconds = m_durationMinutes * 60;
         m_sessionFocusedSeconds = 0;
+        m_sessionInProgress = true;
     }
     m_lastTick = QDateTime::currentDateTime();
     m_running = true;
@@ -60,8 +75,9 @@ void FocusManager::pause()
 void FocusManager::reset()
 {
     pause();
-    m_remainingSeconds = 25 * 60;
+    m_remainingSeconds = m_durationMinutes * 60;
     m_sessionFocusedSeconds = 0;
+    m_sessionInProgress = false;
     emit timerChanged();
 }
 
@@ -114,10 +130,9 @@ void FocusManager::updateTimer()
         m_todaySeconds = m_database->focusSecondsForDate(m_todayDate)
             + m_pendingByDate.value(m_todayDate, 0);
     }
-    const int elapsed = qMin<int>(m_remainingSeconds,
-        static_cast<int>(qMin<qint64>(wallSeconds, 25 * 60)));
+    const int elapsed = static_cast<int>(qMin<qint64>(m_remainingSeconds, wallSeconds));
     accumulate(m_lastTick, elapsed);
-    m_lastTick = now;
+    m_lastTick = m_lastTick.addSecs(elapsed);
     m_remainingSeconds -= elapsed;
     m_sessionFocusedSeconds += elapsed;
     emit timerChanged();
@@ -130,6 +145,7 @@ void FocusManager::updateTimer()
     if (m_remainingSeconds > 0) return;
     m_timer.stop();
     m_running = false;
+    m_sessionInProgress = false;
     flushPending();
     emit timerChanged();
     emit sessionCompleted(m_sessionFocusedSeconds);

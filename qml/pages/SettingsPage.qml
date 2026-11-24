@@ -9,6 +9,16 @@ Item {
     readonly property bool compact: width < 600
     signal updateRequested()
 
+    DurationDialog { id: durationDialog; theme: page.theme }
+
+    FileDialog {
+        id: focusSoundDialog
+        title: qsTr("Import a focus sound")
+        fileMode: FileDialog.OpenFile
+        nameFilters: [qsTr("Audio files (*.wav *.mp3)")]
+        onAccepted: desktopIntegration.importFocusSound(selectedFile)
+    }
+
     FileDialog {
         id: exportDialog; title: qsTr("Export TinyBloom data"); fileMode: FileDialog.SaveFile
         nameFilters: [qsTr("TinyBloom JSON (*.json)")]
@@ -99,16 +109,123 @@ Item {
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
                             Text { text: qsTr("Reduce animations"); color: theme.text; font.pixelSize: 14 }
-                            Text { text: qsTr("Use fewer motion effects throughout the app"); color: theme.muted; font.pixelSize: 12 }
+                            Text { Layout.fillWidth: true; wrapMode: Text.WordWrap; text: qsTr("Use fewer motion effects throughout the app"); color: theme.muted; font.pixelSize: 12 }
                         }
                         Switch { Accessible.name: qsTr("Reduce animations"); checked: settingsManager.reduceAnimations; onToggled: settingsManager.reduceAnimations = checked }
+                    }
+                    RowLayout {
+                        visible: !!desktopIntegration
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 2
+                            Text { text: qsTr("Focus end sound"); color: theme.text; font.pixelSize: 14 }
+                            Text {
+                                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                                text: qsTr("Play a short sound when a focus session ends")
+                                color: theme.muted; font.pixelSize: 12
+                            }
+                        }
+                        ComboBox {
+                            id: soundStyle
+                            model: {
+                                const options = [
+                                    {label: qsTr("Wind chime"), value: "wind"},
+                                    {label: qsTr("Soft glass"), value: "glass"}
+                                ]
+                                if (desktopIntegration && desktopIntegration.customFocusSoundAvailable)
+                                    options.push({label: qsTr("Custom"), value: "custom"})
+                                return options
+                            }
+                            textRole: "label"
+                            valueRole: "value"
+                            currentValue: settingsManager.focusEndSoundStyle === "custom"
+                                && !(desktopIntegration && desktopIntegration.customFocusSoundAvailable)
+                                ? "wind" : settingsManager.focusEndSoundStyle
+                            onActivated: settingsManager.focusEndSoundStyle = currentValue
+                            Accessible.name: qsTr("Focus sound style")
+                            Layout.preferredWidth: 142
+                            implicitHeight: 34
+                            palette.base: theme.card
+                            palette.window: theme.card
+                            palette.text: theme.text
+                            palette.dark: theme.muted
+                            palette.mid: theme.border
+                            palette.highlight: theme.primarySoft
+                            palette.highlightedText: theme.text
+                            contentItem: Text {
+                                text: soundStyle.displayText
+                                leftPadding: 12
+                                verticalAlignment: Text.AlignVCenter
+                                color: theme.text
+                            }
+                            background: Rectangle {
+                                radius: 10
+                                color: theme.input
+                                border.color: soundStyle.activeFocus ? theme.primary : theme.border
+                            }
+                        }
+                        AppButton {
+                            theme: page.theme
+                            primary: false
+                            text: qsTr("Preview")
+                            Accessible.name: qsTr("Preview focus end sound")
+                            implicitWidth: contentItem.implicitWidth + 24
+                            leftPadding: 12; rightPadding: 12
+                            implicitHeight: 34
+                            onClicked: desktopIntegration.playFocusEndSound()
+                        }
+                        Switch {
+                            Accessible.name: qsTr("Focus end sound")
+                            checked: settingsManager.focusEndSound
+                            onToggled: settingsManager.focusEndSound = checked
+                        }
+                    }
+                    RowLayout {
+                        visible: !!desktopIntegration
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 2
+                            Text { text: qsTr("Custom focus sound"); color: theme.text; font.pixelSize: 14 }
+                            Text {
+                                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                                text: qsTr("WAV or MP3 · Uses the first 5 seconds")
+                                color: theme.muted; font.pixelSize: 12
+                            }
+                        }
+                        AppButton {
+                            theme: page.theme
+                            primary: false
+                            implicitHeight: 34
+                            text: desktopIntegration && desktopIntegration.customSoundImporting
+                                ? qsTr("Importing…") : qsTr("Import…")
+                            enabled: !!desktopIntegration && !desktopIntegration.customSoundImporting
+                            onClicked: focusSoundDialog.open()
+                        }
+                    }
+                    RowLayout {
+                        visible: !!desktopIntegration
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 2
+                            Text { text: qsTr("Close to system tray"); color: theme.text; font.pixelSize: 14 }
+                            Text {
+                                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                                text: qsTr("Click × to hide the window and keep focusing. Reopen from the leaf near the clock.")
+                                color: theme.muted; font.pixelSize: 12
+                            }
+                        }
+                        Switch {
+                            Accessible.name: qsTr("Close to system tray")
+                            checked: settingsManager.closeToTray
+                            onToggled: settingsManager.closeToTray = checked
+                        }
                     }
                     RowLayout {
                         visible: !(mobilePlatform || mobilePreview)
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
                             Text { text: qsTr("Compatibility rendering"); color: theme.text; font.pixelSize: 14 }
-                            Text { text: qsTr("Use software rendering after restart if the graphics driver is unstable"); color: theme.muted; font.pixelSize: 12 }
+                            Text { Layout.fillWidth: true; wrapMode: Text.WordWrap; text: qsTr("Use software rendering after restart if the graphics driver is unstable"); color: theme.muted; font.pixelSize: 12 }
                         }
                         Switch {
                             Accessible.name: qsTr("Compatibility rendering")
@@ -119,11 +236,28 @@ Item {
                     RowLayout {
                         Layout.fillWidth: true
                         ColumnLayout { Layout.fillWidth: true; spacing: 2
-                            Text { text: qsTr("Default task duration"); color: theme.text; font.pixelSize: 14 }
-                            Text { text: qsTr("Used for new tasks"); color: theme.muted; font.pixelSize: 12 }
+                            Text { text: qsTr("Default task estimate"); color: theme.text; font.pixelSize: 14 }
+                            Text { Layout.fillWidth: true; wrapMode: Text.WordWrap; text: qsTr("Estimate for new tasks"); color: theme.muted; font.pixelSize: 12 }
                         }
-                        SpinBox { Accessible.name: qsTr("Default task duration in minutes"); from: 0; to: 480; editable: true; value: settingsManager.defaultTaskDuration; onValueModified: settingsManager.defaultTaskDuration = value }
-                        Text { text: qsTr("minutes"); color: theme.muted; font.pixelSize: 12 }
+                        AppButton {
+                            theme: page.theme; primary: false; implicitWidth: 106; implicitHeight: 36
+                            text: qsTr("%1 min").arg(settingsManager.defaultTaskDuration)
+                            Accessible.name: qsTr("Edit default task estimate")
+                            onClicked: durationDialog.edit(false)
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        ColumnLayout { Layout.fillWidth: true; spacing: 2
+                            Text { text: qsTr("Focus duration"); color: theme.text; font.pixelSize: 14 }
+                            Text { Layout.fillWidth: true; wrapMode: Text.WordWrap; text: qsTr("Shared with the Study Room timer"); color: theme.muted; font.pixelSize: 12 }
+                        }
+                        AppButton {
+                            theme: page.theme; primary: false; implicitWidth: 106; implicitHeight: 36
+                            text: qsTr("%1 min").arg(settingsManager.focusDurationMinutes)
+                            Accessible.name: qsTr("Edit focus duration")
+                            onClicked: durationDialog.edit(true)
+                        }
                     }
                 }
             }

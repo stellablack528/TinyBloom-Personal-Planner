@@ -7,8 +7,24 @@ Item {
     property QtObject theme
     readonly property bool compact: width < 600
     readonly property bool focusHistoryShowcase: screenshotScenario === "focus-month-demo"
-    signal focusSessionCompleted()
+    readonly property bool landscapePreview: screenshotScenario === "garden-day-preview"
+        || screenshotScenario === "garden-night-preview"
+    property int localHour: new Date().getHours()
+    readonly property bool nightGarden: landscapePreview ? screenshotScenario === "garden-night-preview"
+        : localHour < 6 || localHour >= 18
     signal seedPlanted(string flowerName)
+
+    onVisibleChanged: { if (visible) localHour = new Date().getHours() }
+    Timer {
+        running: page.visible && !page.landscapePreview
+        interval: 15000
+        repeat: true
+        onTriggered: page.localHour = new Date().getHours()
+    }
+    Connections {
+        target: Qt.application
+        function onStateChanged() { if (Qt.application.state === Qt.ApplicationActive) page.localHour = new Date().getHours() }
+    }
 
     function focusTimeText() {
         let minutes = Math.floor(focusManager.remainingSeconds / 60)
@@ -18,6 +34,7 @@ Item {
     function resetFocus() {
         focusManager.reset()
     }
+    function editFocusDuration() { focusDurationDialog.edit(true) }
 
     function speciesName(species) {
         if (species === "sunflower") return qsTr("Sunflower")
@@ -79,44 +96,104 @@ Item {
                 Layout.fillWidth: true; Layout.preferredHeight: page.width < 760 ? 760 : 510
                 radius: page.compact ? 18 : 24; clip: true; border.color: theme.border
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: theme.dark ? "#172A28" : "#DFF2ED" }
-                    GradientStop { position: 0.58; color: theme.dark ? "#21332C" : "#F5EEDC" }
-                    GradientStop { position: 1.0; color: theme.dark ? "#1A211C" : "#D9C2A3" }
+                    GradientStop { position: 0.0; color: page.nightGarden ? "#22394B" : "#DFEFE6" }
+                    GradientStop { position: 0.62; color: page.nightGarden ? "#354D56" : "#F3EBD3" }
+                    GradientStop { position: 1.0; color: page.nightGarden ? "#26323F" : "#C6A688" }
                 }
 
                 Rectangle {
-                    x: 26; y: 28; width: parent.width - 52; height: page.width < 760 ? 188 : 162
-                    radius: 18; color: theme.dark ? "#183D45" : "#C8E8F2"; border.color: Qt.alpha(theme.text, 0.1)
-                    Rectangle { x: parent.width / 2 - 3; width: 6; height: parent.height; color: Qt.alpha(theme.text, 0.1) }
-                    Rectangle { y: parent.height / 2 - 3; width: parent.width; height: 6; color: Qt.alpha(theme.text, 0.1) }
-                    Rectangle { x: parent.width - 76; y: 24; width: 34; height: 34; radius: 17; color: theme.dark ? "#F1D58A" : "#FFF1A8" }
+                    id: gardenWindow
+                    x: page.compact ? 14 : 22
+                    y: 22
+                    width: parent.width - 2 * x
+                    height: page.compact ? 176 : 226
+                    radius: 18
+                    clip: true
+                    border.width: 2
+                    border.color: page.nightGarden ? "#627887" : "#F2F8EB"
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: page.nightGarden ? "#14243F" : "#A4D5EC" }
+                        GradientStop { position: 0.56; color: page.nightGarden ? "#365674" : "#D1EDF1" }
+                        GradientStop { position: 1; color: page.nightGarden ? "#57787E" : "#FFF0C6" }
+                    }
+
                     Repeater {
-                        model: 3
+                        model: page.nightGarden ? 19 : 0
                         Rectangle {
                             required property int index
-                            x: 42 + index * 128; y: 42 + (index % 2) * 46
-                            width: 76 + index * 9; height: 18; radius: 9; color: Qt.alpha("white", theme.dark ? 0.14 : 0.62)
+                            x: (0.05 + ((index * 37) % 85) / 100) * gardenWindow.width
+                            y: 13 + (index * 17) % 82
+                            width: index % 4 === 0 ? 4 : 2
+                            height: width
+                            radius: width / 2
+                            color: index % 4 === 0 ? "#FFF3CE" : "#B8D1E6"
+                            opacity: 0.48 + (index % 5) * 0.10
+                        }
+                    }
+
+                    Rectangle {
+                        x: gardenWindow.width - width - (page.compact ? 18 : 48)
+                        y: 19
+                        width: page.compact ? 40 : 60
+                        height: width
+                        radius: width / 2
+                        color: Qt.alpha("#FFEDB5", page.nightGarden ? 0.14 : 0.35)
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: parent.width - 12; height: width; radius: width / 2
+                            color: page.nightGarden ? "#F3EDD4" : "#FFF3AD"
+                        }
+                    }
+
+                    Repeater {
+                        model: page.nightGarden ? 0 : (page.compact ? 1 : 3)
+                        Rectangle {
+                            required property int index
+                            readonly property real cloudX: gardenWindow.width * (0.08 + index * 0.24)
+                            x: cloudX
+                            y: 38 + (index % 2) * 30
+                            width: 58 + index * 10; height: 12; radius: 6
+                            color: Qt.alpha("white", 0.68)
                             SequentialAnimation on x {
-                                loops: Animation.Infinite; running: theme.animationDuration > 0
-                                NumberAnimation { from: 42 + index * 128; to: 72 + index * 128; duration: 5000 + index * 700; easing.type: Easing.InOutSine }
-                                NumberAnimation { from: 72 + index * 128; to: 42 + index * 128; duration: 5000 + index * 700; easing.type: Easing.InOutSine }
+                                loops: Animation.Infinite; running: page.visible && theme.animationDuration > 0
+                                NumberAnimation { from: cloudX; to: cloudX + 18; duration: 6400 + index * 850; easing.type: Easing.InOutSine }
+                                NumberAnimation { from: cloudX + 18; to: cloudX; duration: 6400 + index * 850; easing.type: Easing.InOutSine }
                             }
                         }
                     }
-                }
 
-                Repeater {
-                    model: 10
-                    Rectangle {
-                        required property int index
-                        x: 40 + (index * 83) % Math.max(120, panorama.width - 80)
-                        y: 105 + (index % 4) * 62
-                        width: 4 + index % 3; height: width; radius: width / 2
-                        color: Qt.alpha(theme.dark ? "#F4DA91" : "#FFFFFF", 0.55)
-                        SequentialAnimation on opacity {
-                            loops: Animation.Infinite; running: theme.animationDuration > 0
-                            NumberAnimation { from: 0.18; to: 0.78; duration: 1200 + index * 110 }
-                            NumberAnimation { from: 0.78; to: 0.18; duration: 1200 + index * 110 }
+                    Canvas {
+                        anchors.fill: parent
+                        anchors.margins: 2
+                        readonly property bool night: page.nightGarden
+                        onNightChanged: requestPaint()
+                        onWidthChanged: requestPaint()
+                        onHeightChanged: requestPaint()
+                        onPaint: {
+                            const brush = getContext("2d")
+                            const w = width
+                            const h = height
+                            brush.clearRect(0, 0, w, h)
+
+                            brush.beginPath()
+                            brush.moveTo(0, h * 0.62)
+                            brush.bezierCurveTo(w * 0.23, h * 0.28, w * 0.35, h * 0.68, w * 0.54, h * 0.55)
+                            brush.bezierCurveTo(w * 0.72, h * 0.47, w * 0.84, h * 0.30, w, h * 0.51)
+                            brush.lineTo(w, h)
+                            brush.lineTo(0, h)
+                            brush.closePath()
+                            brush.fillStyle = night ? "#426776" : "#AECEB4"
+                            brush.fill()
+
+                            brush.beginPath()
+                            brush.moveTo(0, h * 0.76)
+                            brush.bezierCurveTo(w * 0.17, h * 0.59, w * 0.28, h * 0.80, w * 0.45, h * 0.73)
+                            brush.bezierCurveTo(w * 0.68, h * 0.57, w * 0.84, h * 0.65, w, h * 0.82)
+                            brush.lineTo(w, h)
+                            brush.lineTo(0, h)
+                            brush.closePath()
+                            brush.fillStyle = night ? "#2E505C" : "#85B097"
+                            brush.fill()
                         }
                     }
                 }
@@ -128,7 +205,7 @@ Item {
                     color: Qt.alpha(theme.card, theme.dark ? 0.84 : 0.9)
                     border.color: Qt.alpha(theme.primary, 0.24)
                     RowLayout {
-                        anchors.fill: parent; anchors.margins: 14; spacing: 12
+                        anchors.fill: parent; anchors.margins: 12; spacing: 10
                         Rectangle {
                             Layout.preferredWidth: 12; Layout.preferredHeight: 12; radius: 6
                             color: focusManager.running ? theme.primary : theme.border
@@ -143,13 +220,20 @@ Item {
                             spacing: 1
                             Text { text: qsTr("Focus session"); color: theme.muted; font.pixelSize: 11; font.weight: Font.DemiBold }
                             Text { text: page.focusTimeText(); color: theme.text; font.pixelSize: 27; font.weight: Font.Bold }
+                            AppButton {
+                                theme: page.theme; primary: false; implicitHeight: 27
+                                implicitWidth: contentItem.implicitWidth + 18; leftPadding: 9; rightPadding: 9
+                                text: qsTr("Duration")
+                                Accessible.name: qsTr("Edit focus duration")
+                                onClicked: page.editFocusDuration()
+                            }
                         }
                         Item { Layout.fillWidth: true }
                         ColumnLayout {
                             spacing: 4
                             AppButton {
                                 theme: page.theme; implicitWidth: 76; implicitHeight: 34
-                                text: focusManager.running ? qsTr("Pause") : qsTr("Start")
+                                text: focusManager.running ? qsTr("Pause") : (focusManager.sessionInProgress ? qsTr("Resume") : qsTr("Start"))
                                 onClicked: focusManager.toggle()
                             }
                             AppButton {
@@ -163,18 +247,21 @@ Item {
 
                 Rectangle {
                     anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
-                    height: page.width < 760 ? 520 : 286; color: theme.dark ? "#202820" : "#CBB08C"
+                    height: page.width < 760 ? 520 : 258
+                    radius: 18
+                    color: page.nightGarden ? "#343740" : "#C8AA88"
                 }
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 34
                     width: parent.width - 74; height: page.width < 760 ? 500 : 232; radius: 18
-                    color: theme.dark ? "#26342B" : "#E8D4B7"; border.color: Qt.alpha(theme.text, 0.1)
+                    color: page.nightGarden ? "#4D5056" : "#E5CFB1"
+                    border.color: Qt.alpha(theme.text, 0.1)
                 }
 
                 GridLayout {
                     anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
                     anchors.leftMargin: 50; anchors.rightMargin: 50; anchors.bottomMargin: 44
-                    height: page.width < 760 ? 488 : 338
+                    height: page.width < 760 ? 488 : 300
                     columns: page.width < 760 ? 1 : 2; columnSpacing: 20; rowSpacing: 12
                     Repeater {
                         model: [
@@ -185,7 +272,7 @@ Item {
                             id: plantRoom
                             required property var modelData
                             Layout.fillWidth: true; Layout.fillHeight: true; radius: 18
-                            color: Qt.alpha(theme.card, theme.dark ? 0.68 : 0.78)
+                            color: Qt.alpha(theme.card, page.nightGarden ? 0.91 : 0.84)
                             border.color: Qt.alpha(theme.text, 0.1)
                             ColumnLayout {
                                 anchors.fill: parent; anchors.margins: 12; spacing: 0
@@ -276,6 +363,8 @@ Item {
         }
     }
 
+    DurationDialog { id: focusDurationDialog; theme: page.theme }
+
     SeedPickerDialog {
         id: seedPicker; theme: page.theme
         onSeedSelected: (slot, species) => {
@@ -283,8 +372,4 @@ Item {
         }
     }
 
-    Connections {
-        target: focusManager
-        function onSessionCompleted(focusedSeconds) { page.focusSessionCompleted() }
-    }
 }

@@ -38,6 +38,7 @@ private slots:
     void gardenSeedsPersistAndGrowIndependently();
     void focusHistoryPersistsAndRoundTrips();
     void focusTimerTracksAndFlushes();
+    void focusDurationPersistsAndRespectsSessionBoundaries();
     void semanticUpdateVersionComparison();
     void legacyDatabaseMigratesToGrowthSchema();
     void classificationSearchAndValidation();
@@ -108,10 +109,18 @@ void CoreTests::settingsPersistence()
     SettingsManager settings(m_database.get());
     settings.load();
     QCOMPARE(settings.language(), QStringLiteral("zh_CN"));
+    QVERIFY(settings.focusEndSound());
+    QCOMPARE(settings.focusEndSoundStyle(), QStringLiteral("wind"));
+    QVERIFY(!settings.closeToTray());
+    QVERIFY(!settings.closeToTrayHintShown());
     settings.setTheme(QStringLiteral("midnight"));
     settings.setLanguage(QStringLiteral("en"));
     settings.setReduceAnimations(true);
     settings.setCompatibilityRendering(true);
+    settings.setFocusEndSound(false);
+    settings.setFocusEndSoundStyle(QStringLiteral("glass"));
+    settings.setCloseToTray(true);
+    settings.markCloseToTrayHintShown();
     settings.setDefaultTaskDuration(40);
     SettingsManager reopened(m_database.get());
     reopened.load();
@@ -119,6 +128,30 @@ void CoreTests::settingsPersistence()
     QCOMPARE(reopened.language(), QStringLiteral("en"));
     QCOMPARE(reopened.reduceAnimations(), true);
     QCOMPARE(reopened.compatibilityRendering(), true);
+    QVERIFY(!reopened.focusEndSound());
+    QCOMPARE(reopened.focusEndSoundStyle(), QStringLiteral("glass"));
+    QVERIFY(reopened.closeToTray());
+    QVERIFY(reopened.closeToTrayHintShown());
+    QSignalSpy focusSoundChanged(&settings, &SettingsManager::focusEndSoundChanged);
+    QSignalSpy soundStyleChanged(&settings, &SettingsManager::focusEndSoundStyleChanged);
+    QSignalSpy closeToTrayChanged(&settings, &SettingsManager::closeToTrayChanged);
+    reopened.setFocusEndSound(true);
+    reopened.setFocusEndSoundStyle(QStringLiteral("custom"));
+    reopened.setCloseToTray(false);
+    settings.load();
+    QVERIFY(settings.focusEndSound());
+    QCOMPARE(focusSoundChanged.count(), 1);
+    QCOMPARE(settings.focusEndSoundStyle(), QStringLiteral("custom"));
+    QCOMPARE(soundStyleChanged.count(), 1);
+    settings.setFocusEndSoundStyle(QStringLiteral("unknown"));
+    QCOMPARE(settings.focusEndSoundStyle(), QStringLiteral("custom"));
+    QCOMPARE(soundStyleChanged.count(), 1);
+    QVERIFY(m_database->setSetting(QStringLiteral("focusEndSoundStyle"), QStringLiteral("tap")));
+    settings.load();
+    QCOMPARE(settings.focusEndSoundStyle(), QStringLiteral("wind"));
+    QCOMPARE(soundStyleChanged.count(), 2);
+    QVERIFY(!settings.closeToTray());
+    QCOMPARE(closeToTrayChanged.count(), 1);
     QCOMPARE(reopened.defaultTaskDuration(), 40);
 }
 
@@ -347,8 +380,50 @@ void CoreTests::focusTimerTracksAndFlushes()
     QCOMPARE(focus.remainingSeconds(), 25 * 60);
 }
 
+void CoreTests::focusDurationPersistsAndRespectsSessionBoundaries()
+{
+    SettingsManager settings(m_database.get());
+    settings.load();
+    FocusManager focus(m_database.get());
+    connect(&settings, &SettingsManager::focusDurationMinutesChanged, &focus, [&] {
+        focus.setDurationMinutes(settings.focusDurationMinutes());
+    });
+    QCOMPARE(settings.focusDurationMinutes(), 25);
+    QVERIFY(!settings.setFocusDurationMinutes(4));
+    QVERIFY(!settings.setFocusDurationMinutes(121));
+    QVERIFY(settings.setDefaultTaskDuration(3));
+    QCOMPARE(focus.remainingSeconds(), 25 * 60);
+
+    QVERIFY(settings.setFocusDurationMinutes(5));
+    QCOMPARE(focus.remainingSeconds(), 5 * 60);
+    focus.toggle();
+    QVERIFY(focus.sessionInProgress());
+    QVERIFY(settings.setFocusDurationMinutes(15));
+    QCOMPARE(focus.remainingSeconds(), 5 * 60);
+    focus.pause();
+    QVERIFY(focus.sessionInProgress());
+    QVERIFY(settings.setFocusDurationMinutes(45));
+    QCOMPARE(focus.remainingSeconds(), 5 * 60);
+    focus.toggle();
+    QCOMPARE(focus.remainingSeconds(), 5 * 60);
+
+    focus.reset();
+    QVERIFY(!focus.sessionInProgress());
+    QCOMPARE(focus.remainingSeconds(), 45 * 60);
+    SettingsManager reopened(m_database.get());
+    reopened.load();
+    QCOMPARE(reopened.focusDurationMinutes(), 45);
+    QCOMPARE(reopened.defaultTaskDuration(), 3);
+    QVERIFY(settings.setFocusDurationMinutes(120));
+    QCOMPARE(focus.remainingSeconds(), 120 * 60);
+}
+
 void CoreTests::semanticUpdateVersionComparison()
 {
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("v0.4.1-beta.1"), QStringLiteral("0.4.0-beta.1")));
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("v0.4.1-beta.1"), QStringLiteral("0.4.1-alpha.1")));
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("v0.4.1-beta.1"), QStringLiteral("0.4.1-alpha.2")));
+    QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("v0.4.1-beta.1"), QStringLiteral("0.4.1-alpha.3")));
     QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("v0.4.0-beta.2"), QStringLiteral("0.4.0-beta.1")));
     QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("0.4.0"), QStringLiteral("0.4.0-beta.9")));
     QVERIFY(UpdateManager::isNewerVersion(QStringLiteral("0.5.0-alpha.1"), QStringLiteral("0.4.9")));

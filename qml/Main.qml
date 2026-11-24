@@ -65,7 +65,6 @@ ApplicationWindow {
             GardenPage {
                 id: gardenPage; theme: theme
                 onSeedPlanted: flowerName => toast.show(qsTr("%1 seed planted. Let your next small step help it grow.").arg(flowerName))
-                onFocusSessionCompleted: toast.show(qsTr("Focus session complete. Take a breath, then mark the progress you made."))
             }
             SettingsPage { theme: theme; onUpdateRequested: updateDialog.open() }
         }
@@ -113,6 +112,12 @@ ApplicationWindow {
     Connections { target: taskManager; function onErrorOccurred(message) { toast.show(message) } }
     Connections { target: settingsManager; function onErrorOccurred(message) { toast.show(message) } }
     Connections {
+        target: desktopIntegration
+        function onTrayUnavailable(message) { toast.show(message) }
+        function onSoundUnavailable(message) { toast.show(message) }
+        function onCustomFocusSoundChanged() { toast.show(qsTr("Sound imported. Use Preview to listen.")) }
+    }
+    Connections {
         target: growthManager
         function onExperienceAwarded(amount, reason) { xpToast.showReward(amount, reason) }
         function onErrorOccurred(message) { toast.show(message) }
@@ -120,6 +125,19 @@ ApplicationWindow {
     Connections {
         target: focusManager
         function onErrorOccurred(message) { toast.show(message) }
+        function onSessionCompleted(focusedSeconds) {
+            if (!desktopIntegration) {
+                toast.show(qsTr("Focus session complete. Take a breath, then mark the progress you made."))
+                return
+            }
+            const title = qsTr("Focus session complete")
+            const duration = focusedSeconds >= 60 ? qsTr("%1 min").arg(Math.floor(focusedSeconds / 60))
+                                                  : qsTr("%1 sec").arg(focusedSeconds)
+            const summary = qsTr("Focus time: %1. Take a breath.").arg(duration)
+            if (desktopIntegration.notifyFocusEnd(title, summary))
+                return
+            toast.show(qsTr("%1 · %2").arg(title).arg(summary))
+        }
     }
     Connections {
         target: dataService
@@ -170,11 +188,15 @@ ApplicationWindow {
             currentPage = 2
         }
         else if (screenshotScenario === "garden") currentPage = 3
+        else if (screenshotScenario === "focus-duration") {
+            currentPage = 3
+            Qt.callLater(() => gardenPage.editFocusDuration())
+        }
         else if (screenshotScenario === "focus-history" || screenshotScenario === "focus-month-demo") {
             currentPage = 3
             focusHistoryScreenshotTimer.start()
         }
-        else if (screenshotScenario === "garden-showcase") {
+        else if (screenshotScenario === "garden-showcase" || gardenPage.landscapePreview) {
             if (taskManager.totalCount === 0 && growthManager.totalXp === 0) {
                 growthManager.plantSeed(0, "sunflower")
                 growthManager.plantSeed(1, "rose")

@@ -360,6 +360,9 @@
 </context>
 <context>
     <name>GardenPage</name>
+    <message><source>Duration</source><translation>调整时长</translation></message>
+    <message><source>Edit focus duration</source><translation>调整专注时长</translation></message>
+    <message><source>Resume</source><translation>继续</translation></message>
     <message>
         <source>Your Garden</source>
         <translation type="vanished">你的花园</translation>
@@ -1027,6 +1030,7 @@
 </context>
 <context>
     <name>Main</name>
+    <message><source>Sound imported. Use Preview to listen.</source><translation>提示音已导入，可以点「试听」听效果。</translation></message>
     <message>
         <source>TinyBloom — Small Steps, Real Progress.</source>
         <translation type="vanished">TinyBloom — 小步开始，真实进步。</translation>
@@ -1045,6 +1049,26 @@
         <location filename="../qml/Main.qml" line="68"/>
         <source>Focus session complete. Take a breath, then mark the progress you made.</source>
         <translation>完成了一次专注自习。先喘口气，再记下刚才取得的进展吧。</translation>
+    </message>
+    <message>
+        <source>Focus session complete</source>
+        <translation>本轮专注结束</translation>
+    </message>
+    <message>
+        <source>%1 min</source>
+        <translation>%1 分钟</translation>
+    </message>
+    <message>
+        <source>%1 sec</source>
+        <translation>%1 秒</translation>
+    </message>
+    <message>
+        <source>Focus time: %1. Take a breath.</source>
+        <translation>已专注 %1，休息一下吧。</translation>
+    </message>
+    <message>
+        <source>%1 · %2</source>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../qml/Main.qml" line="141"/>
@@ -1168,7 +1192,85 @@
     </message>
 </context>
 <context>
+    <name>DesktopIntegration</name>
+    <message><source>Choose a local WAV or MP3 file under 32 MB.</source><translation>请选择不超过 32 MB 的本地 WAV 或 MP3 文件。</translation></message>
+    <message><source>Couldn't read that audio. Try a WAV or MP3 with sound in the first five seconds.</source><translation>无法读取这段音频。请选择前 5 秒内有声音的 WAV 或 MP3 文件。</translation></message>
+    <message><source>Couldn't save the custom focus sound.</source><translation>无法保存自定义提示音。</translation></message>
+    <message>
+        <source>Couldn't play the focus sound. Check your audio output.</source>
+        <translation>无法播放专注提示音，请检查声音输出。</translation>
+    </message>
+    <message>
+        <source>The system tray is unavailable. TinyBloom stays open.</source>
+        <translation>系统托盘暂不可用，TinyBloom 窗口保持打开。</translation>
+    </message>
+    <message>
+        <source>Still running in the system tray. Click the leaf near the clock to reopen. It may be under the ^ arrow.</source>
+        <translation>TinyBloom 仍在托盘运行。点击时钟旁的小叶子即可打开，图标也可能在 ^ 箭头里。</translation>
+    </message>
+    <message>
+        <source>Open TinyBloom</source>
+        <translation>打开 TinyBloom</translation>
+    </message>
+    <message>
+        <source>Exit TinyBloom</source>
+        <translation>退出 TinyBloom</translation>
+    </message>
+</context>
+<context>
+    <name>DurationDialog</name>
+    <message><source>Focus duration</source><translation>专注时长</translation></message>
+    <message><source>Default task estimate</source><translation>默认任务预估时长</translation></message>
+    <message><source>Applies to the next session. This session continues as planned.</source><translation>新的时长从下一轮开始生效，本轮按原计划继续。</translation></message>
+    <message><source>Saved as your default for future focus sessions.</source><translation>保存后用作默认专注时长。</translation></message>
+    <message><source>Applies to new tasks. Enter 0 to leave the estimate empty.</source><translation>仅用于新建任务。填 0 表示不设置预估时长。</translation></message>
+    <message><source>%1 min</source><translation>%1 分钟</translation></message>
+    <message><source>Duration in minutes</source><translation>时长（分钟）</translation></message>
+    <message><source>min</source><translation>分钟</translation></message>
+    <message><source>Decrease by one minute</source><translation>减少一分钟</translation></message>
+    <message><source>Increase by one minute</source><translation>增加一分钟</translation></message>
+    <message><source>%1–%2 minutes</source><translation>%1–%2 分钟</translation></message>
+    <message><source>Couldn't save the duration. Please try again.</source><translation>未能保存时长，请重试。</translation></message>
+    <message><source>Cancel</source><translation>取消</translation></message>
+    <message><source>Save</source><translation>保存</translation></message>
+</context>
+<context>
     <name>SettingsPage</name>
+    <message><source>Default task estimate</source><translation>默认任务预估时长</translation></message>
+    <message><source>Estimate for new tasks</source><translation>仅用于新建任务</translation></message>
+    <message><source>%1 min</source><translation>%1 分钟</translation></message>
+    <message><source>Edit default task estimate</source><translation>修改默认任务预估时长</translation></message>
+    <message><source>Focus duration</source><translation>专注时长</translation></message>
+    <message><source>Shared with the Study Room timer</source><translation>与花园自习室的倒计时同步</translation></message>
+    <message><source>Edit focus duration</source><translation>修改专注时长</translation></message>
+    <message>
+        <source>Close to system tray</source>
+        <translation>关闭时收起到托盘</translation>
+    </message>
+    <message>
+        <source>Click × to hide the window and keep focusing. Reopen from the leaf near the clock.</source>
+        <translation>点击 × 收起窗口，专注计时继续。点击时钟旁的小叶子即可恢复。</translation>
+    </message>
+    <message>
+        <source>Focus end sound</source>
+        <translation>专注结束提示音</translation>
+    </message>
+    <message><source>Preview</source><translation>试听</translation></message>
+    <message><source>Preview focus end sound</source><translation>试听专注结束提示音</translation></message>
+    <message><source>Focus sound style</source><translation>专注提示音样式</translation></message>
+    <message><source>Wind chime</source><translation>风铃</translation></message>
+    <message><source>Soft glass</source><translation>玻璃轻响</translation></message>
+    <message><source>Custom</source><translation>自定义</translation></message>
+    <message><source>Custom focus sound</source><translation>自定义提示音</translation></message>
+    <message><source>Import a focus sound</source><translation>导入专注提示音</translation></message>
+    <message><source>Audio files (*.wav *.mp3)</source><translation>音频文件 (*.wav *.mp3)</translation></message>
+    <message><source>WAV or MP3 · Uses the first 5 seconds</source><translation>WAV 或 MP3 · 最多使用前 5 秒</translation></message>
+    <message><source>Importing…</source><translation>正在导入…</translation></message>
+    <message><source>Import…</source><translation>导入…</translation></message>
+    <message>
+        <source>Play a short sound when a focus session ends</source>
+        <translation>专注倒计时结束时播放一声短提示音</translation>
+    </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="13"/>
         <source>Export TinyBloom data</source>
