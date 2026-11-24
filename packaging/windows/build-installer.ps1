@@ -31,7 +31,20 @@ if (-not $iscc) {
     throw "Inno Setup 6 or 7 was not found. Install it from https://jrsoftware.org/isdl.php"
 }
 
-& $iscc "/DAppVersion=$Version" "/DAppNumericVersion=$NumericVersion" "/DAppSourceDir=$packageDir" "/DOutputDir=$distDir" $installerScript
+$compilerArguments = @("/DAppVersion=$Version", "/DAppNumericVersion=$NumericVersion", "/DAppSourceDir=$packageDir", "/DOutputDir=$distDir")
+$runtimeFiles = @{
+    GccRuntimeHash = 'libgcc_s_seh-1.dll'
+    CppRuntimeHash = 'libstdc++-6.dll'
+    PthreadRuntimeHash = 'libwinpthread-1.dll'
+}
+foreach ($runtime in $runtimeFiles.GetEnumerator()) {
+    $path = Join-Path $packageDir $runtime.Value
+    if (Test-Path -LiteralPath $path -PathType Leaf) {
+        $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
+        $compilerArguments += "/D$($runtime.Key)=$hash"
+    }
+}
+& $iscc @compilerArguments $installerScript
 if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE"
 }
