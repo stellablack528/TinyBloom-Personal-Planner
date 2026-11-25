@@ -29,6 +29,8 @@ public:
     bool focusEndSound() const;
     QString focusEndSoundStyle() const;
     bool closeToTray() const;
+    QString restoreShortcut() const;
+    bool setRestoreShortcut(const QString &shortcut);
     bool closeToTrayHintShown() const;
     void markCloseToTrayHintShown();
     int defaultTaskDuration() const;
@@ -59,6 +61,7 @@ signals:
     void focusEndSoundChanged();
     void focusEndSoundStyleChanged();
     void closeToTrayChanged();
+    void restoreShortcutChanged();
     void defaultTaskDurationChanged();
     void focusDurationMinutesChanged();
     void errorOccurred(const QString &message);
@@ -72,6 +75,7 @@ private:
     bool m_focusEndSound = true;
     QString m_focusEndSoundStyle = QStringLiteral("wind");
     bool m_closeToTray = false;
+    QString m_restoreShortcut;
     int m_defaultTaskDuration = 25;
     int m_focusDurationMinutes = DefaultFocusMinutes;
 };

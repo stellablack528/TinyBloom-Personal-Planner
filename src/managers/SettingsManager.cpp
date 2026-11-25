@@ -19,6 +19,7 @@ void SettingsManager::load()
     const bool previousFocusEndSound = m_focusEndSound;
     const QString previousFocusEndSoundStyle = m_focusEndSoundStyle;
     const bool previousCloseToTray = m_closeToTray;
+    const QString previousRestoreShortcut = m_restoreShortcut;
     const int previousDuration = m_defaultTaskDuration;
     const int previousFocusDuration = m_focusDurationMinutes;
     const QString storedTheme = m_database->setting(QStringLiteral("theme"), QStringLiteral("mint"));
@@ -31,6 +32,7 @@ void SettingsManager::load()
     const QString storedSoundStyle = m_database->setting(QStringLiteral("focusEndSoundStyle"));
     m_focusEndSoundStyle = isFocusEndSoundStyle(storedSoundStyle) ? storedSoundStyle : QStringLiteral("wind");
     m_closeToTray = m_database->setting(QStringLiteral("closeToTray"), QStringLiteral("false")) == QStringLiteral("true");
+    m_restoreShortcut = m_database->setting(QStringLiteral("restoreShortcut"));
     bool ok = false;
     const int duration = m_database->setting(QStringLiteral("defaultTaskDuration"), QStringLiteral("25")).toInt(&ok);
     m_defaultTaskDuration = ok ? qBound(0, duration, 10080) : 25;
@@ -43,6 +45,7 @@ void SettingsManager::load()
     if (previousFocusEndSound != m_focusEndSound) emit focusEndSoundChanged();
     if (previousFocusEndSoundStyle != m_focusEndSoundStyle) emit focusEndSoundStyleChanged();
     if (previousCloseToTray != m_closeToTray) emit closeToTrayChanged();
+    if (previousRestoreShortcut != m_restoreShortcut) emit restoreShortcutChanged();
     if (previousDuration != m_defaultTaskDuration) emit defaultTaskDurationChanged();
     if (previousFocusDuration != m_focusDurationMinutes) emit focusDurationMinutesChanged();
 }
@@ -54,6 +57,7 @@ bool SettingsManager::compatibilityRendering() const { return m_compatibilityRen
 bool SettingsManager::focusEndSound() const { return m_focusEndSound; }
 QString SettingsManager::focusEndSoundStyle() const { return m_focusEndSoundStyle; }
 bool SettingsManager::closeToTray() const { return m_closeToTray; }
+QString SettingsManager::restoreShortcut() const { return m_restoreShortcut; }
 int SettingsManager::defaultTaskDuration() const { return m_defaultTaskDuration; }
 int SettingsManager::focusDurationMinutes() const { return m_focusDurationMinutes; }
 
@@ -139,6 +143,16 @@ void SettingsManager::setCloseToTray(const bool enabled)
     }
     m_closeToTray = enabled;
     emit closeToTrayChanged();
+}
+
+bool SettingsManager::setRestoreShortcut(const QString &shortcut)
+{
+    if (m_restoreShortcut == shortcut) return true;
+    const QString stored = shortcut.isEmpty() ? QStringLiteral("") : shortcut;
+    if (!m_database->setSetting(QStringLiteral("restoreShortcut"), stored)) return false;
+    m_restoreShortcut = stored;
+    emit restoreShortcutChanged();
+    return true;
 }
 
 bool SettingsManager::setDefaultTaskDuration(const int value)

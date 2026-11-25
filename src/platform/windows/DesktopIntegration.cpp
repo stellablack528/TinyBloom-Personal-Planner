@@ -7,7 +7,9 @@
 #include <QGuiApplication>
 #include <QIcon>
 #include <QImage>
+#include <QKeySequence>
 #include <QSaveFile>
+#include <QScopedValueRollback>
 
 #include <commctrl.h>
 #include <mmsystem.h>
@@ -19,6 +21,29 @@ constexpr UINT_PTR WindowSubclassId = 1;
 constexpr UINT TrayCallbackMessage = WM_APP + 1;
 constexpr UINT OpenWindowCommand = 1;
 constexpr UINT ExitCommand = 2;
+constexpr int FirstRestoreHotkeyId = 1;
+constexpr int SecondRestoreHotkeyId = 2;
+
+bool isRestoreShortcut(QKeyCombination combination)
+{
+    const auto modifiers = combination.keyboardModifiers();
+    const auto key = combination.key();
+    const auto base = Qt::ControlModifier | Qt::ShiftModifier;
+    const bool functionKey = key >= Qt::Key_F1 && key <= Qt::Key_F11;
+    const bool letterOrDigit = (key >= Qt::Key_A && key <= Qt::Key_Z)
+        || (key >= Qt::Key_0 && key <= Qt::Key_9);
+    return (modifiers == base && functionKey)
+        || (modifiers == (base | Qt::AltModifier) && (letterOrDigit || functionKey));
+}
+
+bool registerRestoreShortcut(HWND window, int id, QKeyCombination combination)
+{
+    const auto key = combination.key();
+    const UINT virtualKey = key >= Qt::Key_F1 ? VK_F1 + (key - Qt::Key_F1) : UINT(key);
+    const UINT modifiers = MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT
+        | (combination.keyboardModifiers().testFlag(Qt::AltModifier) ? MOD_ALT : 0);
+    return RegisterHotKey(window, id, modifiers, virtualKey);
+}
 
 NOTIFYICONDATAW iconData(WId window)
 {
@@ -41,11 +66,15 @@ DesktopIntegration::DesktopIntegration(SettingsManager &settings, const QString 
 {
     m_cleanupTimer.setSingleShot(true);
     connect(&m_cleanupTimer, &QTimer::timeout, this, &DesktopIntegration::removeTrayIcon);
+    connect(&settings, &SettingsManager::restoreShortcutChanged, this, [this] {
+        if (!m_savingRestoreShortcut) applySavedRestoreShortcut();
+    });
 }
 
 DesktopIntegration::~DesktopIntegration()
 {
     m_audioImportPool.waitForDone();
+    unregisterRestoreShortcut();
     removeTrayIcon();
     if (m_windowId)
         RemoveWindowSubclass(reinterpret_cast<HWND>(m_windowId), &DesktopIntegration::windowProcedure, WindowSubclassId);
@@ -61,6 +90,7 @@ void DesktopIntegration::setWindow(QWindow *window)
     m_window = window;
     m_windowId = id;
     m_taskbarCreated = RegisterWindowMessageW(L"TaskbarCreated");
+    applySavedRestoreShortcut();
 }
 
 LRESULT CALLBACK DesktopIntegration::windowProcedure(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
@@ -68,6 +98,7 @@ LRESULT CALLBACK DesktopIntegration::windowProcedure(HWND window, UINT message, 
 {
     auto *desktop = reinterpret_cast<DesktopIntegration *>(referenceData);
     if (message == WM_NCDESTROY) {
+        desktop->unregisterRestoreShortcut();
         desktop->removeTrayIcon();
         desktop->m_windowId = 0;
         RemoveWindowSubclass(window, &DesktopIntegration::windowProcedure, subclassId);
@@ -80,6 +111,10 @@ LRESULT CALLBACK DesktopIntegration::windowProcedure(HWND window, UINT message, 
 bool DesktopIntegration::handleWindowMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (!m_window) return false;
+    if (message == WM_HOTKEY && m_restoreHotkeyId && wParam == WPARAM(m_restoreHotkeyId)) {
+        restoreWindow();
+        return true;
+    }
     if (m_taskbarCreated && message == m_taskbarCreated) {
         m_trayIconAdded = false;
         m_cleanupTimer.stop();
@@ -113,6 +148,76 @@ bool DesktopIntegration::handleWindowMessage(UINT message, WPARAM wParam, LPARAM
         return false;
     }
     return true;
+}
+
+QString DesktopIntegration::restoreShortcutText() const
+{
+    const auto sequence = QKeySequence::fromString(m_settings.restoreShortcut(), QKeySequence::PortableText);
+    return sequence.count() == 1 && isRestoreShortcut(sequence[0]) ? sequence.toString() : QString();
+}
+
+QString DesktopIntegration::shortcutCandidateText(int key, int modifiers) const
+{
+    const QKeyCombination combination(Qt::KeyboardModifiers::fromInt(modifiers), Qt::Key(key));
+    return isRestoreShortcut(combination) ? QKeySequence(combination).toString(QKeySequence::PortableText) : QString();
+}
+
+QString DesktopIntegration::saveRestoreShortcut(const QString &shortcut)
+{
+    const auto sequence = QKeySequence::fromString(shortcut.trimmed(), QKeySequence::PortableText);
+    if (sequence.count() != 1 || !isRestoreShortcut(sequence[0]))
+        return tr("Choose a supported shortcut.");
+    if (!m_windowId)
+        return tr("The shortcut is unavailable. Reopen TinyBloom and try again.");
+
+    const auto stored = sequence.toString(QKeySequence::PortableText);
+    if (m_restoreHotkeyId && stored == m_settings.restoreShortcut()) return {};
+
+    const auto window = reinterpret_cast<HWND>(m_windowId);
+    const int candidateId = m_restoreHotkeyId == FirstRestoreHotkeyId ? SecondRestoreHotkeyId : FirstRestoreHotkeyId;
+    // Register the new combination first, so a conflict leaves the old shortcut intact.
+    if (!registerRestoreShortcut(window, candidateId, sequence[0])) {
+        if (GetLastError() == ERROR_HOTKEY_ALREADY_REGISTERED)
+            return tr("This shortcut is already in use. Choose another combination.");
+        return tr("Windows couldn't register this shortcut. Choose another combination.");
+    }
+
+    const QScopedValueRollback saving(m_savingRestoreShortcut, true);
+    if (!m_settings.setRestoreShortcut(stored)) {
+        UnregisterHotKey(window, candidateId);
+        return tr("Couldn't save the shortcut. Please try again.");
+    }
+    unregisterRestoreShortcut();
+    m_restoreHotkeyId = candidateId;
+    emit restoreShortcutChanged();
+    return {};
+}
+
+QString DesktopIntegration::clearRestoreShortcut()
+{
+    const QScopedValueRollback saving(m_savingRestoreShortcut, true);
+    if (!m_settings.setRestoreShortcut(QString()))
+        return tr("Couldn't save the shortcut. Please try again.");
+    unregisterRestoreShortcut();
+    emit restoreShortcutChanged();
+    return {};
+}
+
+void DesktopIntegration::applySavedRestoreShortcut()
+{
+    unregisterRestoreShortcut();
+    const auto sequence = QKeySequence::fromString(m_settings.restoreShortcut(), QKeySequence::PortableText);
+    if (m_windowId && sequence.count() == 1 && isRestoreShortcut(sequence[0])
+        && registerRestoreShortcut(reinterpret_cast<HWND>(m_windowId), FirstRestoreHotkeyId, sequence[0]))
+        m_restoreHotkeyId = FirstRestoreHotkeyId;
+    emit restoreShortcutChanged();
+}
+
+void DesktopIntegration::unregisterRestoreShortcut()
+{
+    if (m_windowId && m_restoreHotkeyId)
+        UnregisterHotKey(reinterpret_cast<HWND>(m_windowId), m_restoreHotkeyId);
+    m_restoreHotkeyId = 0;
 }
 
 void DesktopIntegration::hideToTray()

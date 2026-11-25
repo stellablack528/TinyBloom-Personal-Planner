@@ -7,9 +7,85 @@ Item {
     id: page
     property QtObject theme
     readonly property bool compact: width < 600
+    property string shortcutError: ""
     signal updateRequested()
 
     DurationDialog { id: durationDialog; theme: page.theme }
+
+    Dialog {
+        id: shortcutDialog
+        property string error: ""
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(400, parent.width - 32)
+        modal: true; focus: true; padding: 20
+        closePolicy: Popup.CloseOnEscape
+        background: Rectangle { radius: 16; color: theme.card; border.color: theme.border }
+        onOpened: shortcutRecorder.forceActiveFocus()
+
+        function edit() {
+            shortcutRecorder.clear()
+            error = ""
+            open()
+        }
+        function save() {
+            if (shortcutRecorder.text.trim().length === 0) return
+            error = desktopIntegration.saveRestoreShortcut(shortcutRecorder.text)
+            if (error.length === 0) close()
+            else shortcutRecorder.forceActiveFocus()
+        }
+
+        contentItem: ColumnLayout {
+            spacing: 12
+            Text {
+                Layout.fillWidth: true
+                text: qsTr("Bring back TinyBloom")
+                color: theme.text; font.pixelSize: 19; font.weight: Font.Bold
+            }
+            Text {
+                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                text: qsTr("Use Ctrl+Shift with F1–F11, or Ctrl+Alt+Shift with a letter, number or F1–F11.")
+                color: theme.muted; font.pixelSize: 13
+            }
+            AppTextField {
+                id: shortcutRecorder
+                theme: page.theme
+                Layout.fillWidth: true; Layout.preferredHeight: 54
+                placeholderText: qsTr("Press or type a key combination")
+                Accessible.name: placeholderText
+                maximumLength: 40
+                onTextEdited: shortcutDialog.error = ""
+                onAccepted: shortcutDialog.save()
+                Keys.onPressed: event => {
+                    const combination = desktopIntegration.shortcutCandidateText(event.key, event.modifiers)
+                    if (!combination) return
+                    event.accepted = true
+                    shortcutRecorder.text = combination
+                    shortcutDialog.error = ""
+                }
+            }
+            Text {
+                visible: shortcutDialog.error.length > 0
+                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                text: shortcutDialog.error; color: theme.danger; font.pixelSize: 12
+            }
+            RowLayout {
+                Layout.fillWidth: true
+                AppButton {
+                    Layout.fillWidth: true; Layout.preferredWidth: 1
+                    theme: page.theme; primary: false; text: qsTr("Cancel")
+                    onClicked: shortcutDialog.close()
+                }
+                AppButton {
+                    Layout.fillWidth: true; Layout.preferredWidth: 1
+                    theme: page.theme; text: qsTr("Save")
+                    enabled: shortcutRecorder.text.trim().length > 0
+                    opacity: enabled ? 1 : 0.5
+                    onClicked: shortcutDialog.save()
+                }
+            }
+        }
+    }
 
     FileDialog {
         id: focusSoundDialog
@@ -218,6 +294,39 @@ Item {
                             Accessible.name: qsTr("Close to system tray")
                             checked: settingsManager.closeToTray
                             onToggled: settingsManager.closeToTray = checked
+                        }
+                    }
+                    RowLayout {
+                        id: shortcutRow
+                        visible: !!desktopIntegration
+                        Layout.fillWidth: true
+                        readonly property string currentShortcut: desktopIntegration ? desktopIntegration.restoreShortcutText : ""
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 2
+                            Text { text: qsTr("Bring back TinyBloom"); color: theme.text; font.pixelSize: 14 }
+                            Text {
+                                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                                text: !shortcutRow.currentShortcut ? qsTr("No global shortcut assigned")
+                                    : desktopIntegration.restoreShortcutActive ? shortcutRow.currentShortcut
+                                    : qsTr("%1 · inactive").arg(shortcutRow.currentShortcut)
+                                color: theme.muted; font.pixelSize: 12
+                            }
+                            Text {
+                                visible: page.shortcutError.length > 0
+                                Layout.fillWidth: true; wrapMode: Text.WordWrap
+                                text: page.shortcutError; color: theme.danger; font.pixelSize: 12
+                            }
+                        }
+                        AppButton {
+                            visible: !!shortcutRow.currentShortcut
+                            theme: page.theme; primary: false; implicitHeight: 34
+                            text: qsTr("Disable")
+                            onClicked: page.shortcutError = desktopIntegration.clearRestoreShortcut()
+                        }
+                        AppButton {
+                            theme: page.theme; primary: false; implicitHeight: 34
+                            text: shortcutRow.currentShortcut ? qsTr("Change") : qsTr("Record")
+                            onClicked: { page.shortcutError = ""; shortcutDialog.edit() }
                         }
                     }
                     RowLayout {

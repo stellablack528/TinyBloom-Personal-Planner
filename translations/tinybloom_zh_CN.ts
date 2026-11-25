@@ -1193,6 +1193,11 @@
 </context>
 <context>
     <name>DesktopIntegration</name>
+    <message><source>Choose a supported shortcut.</source><translation>这个组合键不在支持范围内，请按录入框上方的格式重试。</translation></message>
+    <message><source>The shortcut is unavailable. Reopen TinyBloom and try again.</source><translation>快捷键暂不可用，请重开 TinyBloom 后再试。</translation></message>
+    <message><source>This shortcut is already in use. Choose another combination.</source><translation>这个快捷键已被占用，请换一组键。</translation></message>
+    <message><source>Windows couldn't register this shortcut. Choose another combination.</source><translation>Windows 无法注册这个快捷键，请换一组键。</translation></message>
+    <message><source>Couldn't save the shortcut. Please try again.</source><translation>快捷键未能保存，请重试。</translation></message>
     <message><source>Choose a local WAV or MP3 file under 32 MB.</source><translation>请选择不超过 32 MB 的本地 WAV 或 MP3 文件。</translation></message>
     <message><source>Couldn't read that audio. Try a WAV or MP3 with sound in the first five seconds.</source><translation>无法读取这段音频。请选择前 5 秒内有声音的 WAV 或 MP3 文件。</translation></message>
     <message><source>Couldn't save the custom focus sound.</source><translation>无法保存自定义提示音。</translation></message>
@@ -1236,6 +1241,16 @@
 </context>
 <context>
     <name>SettingsPage</name>
+    <message><source>Bring back TinyBloom</source><translation>唤回 TinyBloom</translation></message>
+    <message><source>Use Ctrl+Shift with F1–F11, or Ctrl+Alt+Shift with a letter, number or F1–F11.</source><translation>用 Ctrl+Shift 加 F1–F11，或 Ctrl+Alt+Shift 加字母、数字或 F1–F11。</translation></message>
+    <message><source>Press or type a key combination</source><translation>按下或输入组合键</translation></message>
+    <message><source>No global shortcut assigned</source><translation>尚未绑定全局快捷键</translation></message>
+    <message><source>%1 · inactive</source><translation>%1（未生效）</translation></message>
+    <message><source>Disable</source><translation>禁用</translation></message>
+    <message><source>Change</source><translation>更改</translation></message>
+    <message><source>Record</source><translation>录入</translation></message>
+    <message><source>Cancel</source><translation>取消</translation></message>
+    <message><source>Save</source><translation>保存</translation></message>
     <message><source>Default task estimate</source><translation>默认任务预估时长</translation></message>
     <message><source>Estimate for new tasks</source><translation>仅用于新建任务</translation></message>
     <message><source>%1 min</source><translation>%1 分钟</translation></message>

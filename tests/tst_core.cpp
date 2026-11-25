@@ -112,6 +112,7 @@ void CoreTests::settingsPersistence()
     QVERIFY(settings.focusEndSound());
     QCOMPARE(settings.focusEndSoundStyle(), QStringLiteral("wind"));
     QVERIFY(!settings.closeToTray());
+    QVERIFY(settings.restoreShortcut().isEmpty());
     QVERIFY(!settings.closeToTrayHintShown());
     settings.setTheme(QStringLiteral("midnight"));
     settings.setLanguage(QStringLiteral("en"));
@@ -120,6 +121,7 @@ void CoreTests::settingsPersistence()
     settings.setFocusEndSound(false);
     settings.setFocusEndSoundStyle(QStringLiteral("glass"));
     settings.setCloseToTray(true);
+    QVERIFY(settings.setRestoreShortcut(QStringLiteral("Ctrl+Shift+F8")));
     settings.markCloseToTrayHintShown();
     settings.setDefaultTaskDuration(40);
     SettingsManager reopened(m_database.get());
@@ -131,13 +133,16 @@ void CoreTests::settingsPersistence()
     QVERIFY(!reopened.focusEndSound());
     QCOMPARE(reopened.focusEndSoundStyle(), QStringLiteral("glass"));
     QVERIFY(reopened.closeToTray());
+    QCOMPARE(reopened.restoreShortcut(), QStringLiteral("Ctrl+Shift+F8"));
     QVERIFY(reopened.closeToTrayHintShown());
     QSignalSpy focusSoundChanged(&settings, &SettingsManager::focusEndSoundChanged);
     QSignalSpy soundStyleChanged(&settings, &SettingsManager::focusEndSoundStyleChanged);
     QSignalSpy closeToTrayChanged(&settings, &SettingsManager::closeToTrayChanged);
+    QSignalSpy restoreShortcutChanged(&settings, &SettingsManager::restoreShortcutChanged);
     reopened.setFocusEndSound(true);
     reopened.setFocusEndSoundStyle(QStringLiteral("custom"));
     reopened.setCloseToTray(false);
+    QVERIFY(reopened.setRestoreShortcut(QString()));
     settings.load();
     QVERIFY(settings.focusEndSound());
     QCOMPARE(focusSoundChanged.count(), 1);
@@ -152,6 +157,8 @@ void CoreTests::settingsPersistence()
     QCOMPARE(soundStyleChanged.count(), 2);
     QVERIFY(!settings.closeToTray());
     QCOMPARE(closeToTrayChanged.count(), 1);
+    QVERIFY(settings.restoreShortcut().isEmpty());
+    QCOMPARE(restoreShortcutChanged.count(), 1);
     QCOMPARE(reopened.defaultTaskDuration(), 40);
 }
 

@@ -15,6 +15,8 @@ class DesktopIntegration final : public QObject
     Q_OBJECT
     Q_PROPERTY(bool customFocusSoundAvailable READ customFocusSoundAvailable NOTIFY customFocusSoundChanged)
     Q_PROPERTY(bool customSoundImporting READ customSoundImporting NOTIFY customSoundImportingChanged)
+    Q_PROPERTY(QString restoreShortcutText READ restoreShortcutText NOTIFY restoreShortcutChanged)
+    Q_PROPERTY(bool restoreShortcutActive READ restoreShortcutActive NOTIFY restoreShortcutChanged)
 
 public:
     explicit DesktopIntegration(SettingsManager &settings, const QString &customSoundPath = {});
@@ -23,6 +25,11 @@ public:
     void setWindow(QWindow *window);
     bool customFocusSoundAvailable() const;
     bool customSoundImporting() const { return m_customSoundImporting; }
+    QString restoreShortcutText() const;
+    bool restoreShortcutActive() const { return m_restoreHotkeyId != 0; }
+    Q_INVOKABLE QString shortcutCandidateText(int key, int modifiers) const;
+    Q_INVOKABLE QString saveRestoreShortcut(const QString &shortcut);
+    Q_INVOKABLE QString clearRestoreShortcut();
     Q_INVOKABLE void importFocusSound(const QUrl &file);
     Q_INVOKABLE void playFocusEndSound();
     Q_INVOKABLE bool notifyFocusEnd(const QString &title, const QString &message);
@@ -32,6 +39,7 @@ signals:
     void soundUnavailable(const QString &message);
     void customFocusSoundChanged();
     void customSoundImportingChanged();
+    void restoreShortcutChanged();
     void exitRequested();
 
 private:
@@ -40,6 +48,8 @@ private:
     bool handleWindowMessage(UINT message, WPARAM wParam, LPARAM lParam);
     void hideToTray();
     void restoreWindow();
+    void applySavedRestoreShortcut();
+    void unregisterRestoreShortcut();
     void showTrayMenu();
     bool addTrayIcon();
     void removeTrayIcon();
@@ -52,6 +62,8 @@ private:
     QTimer m_cleanupTimer;
     WId m_windowId = 0;
     unsigned int m_taskbarCreated = 0;
+    int m_restoreHotkeyId = 0;
+    bool m_savingRestoreShortcut = false;
     Qt::WindowState m_previousWindowState = Qt::WindowNoState;
     bool m_trayIconAdded = false;
     bool m_hiddenToTray = false;
