@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(TinyBloom VERSION 0.4.0 LANGUAGES CXX)
+project(TinyBloom VERSION 0.4.1 LANGUAGES CXX)
+set(TINYBLOOM_RELEASE_VERSION "${PROJECT_VERSION}-beta.1")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,6 +36,7 @@ set(TINYBLOOM_SOURCES
 )
 
 qt_add_executable(TinyBloom src/main.cpp ${TINYBLOOM_SOURCES})
+target_compile_definitions(TinyBloom PRIVATE TINYBLOOM_RELEASE_VERSION="${TINYBLOOM_RELEASE_VERSION}")
 
 qt_add_resources(TinyBloom "tinybloom_app_assets"
     PREFIX "/"
@@ -100,8 +102,8 @@ if(ANDROID)
         QT_ANDROID_APP_NAME "TinyBloom"
         QT_ANDROID_APP_ICON "@drawable/icon"
         QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packaging/android"
-        QT_ANDROID_VERSION_CODE 40001
-        QT_ANDROID_VERSION_NAME "0.4.0-beta.1"
+        QT_ANDROID_VERSION_CODE 40101
+        QT_ANDROID_VERSION_NAME "${TINYBLOOM_RELEASE_VERSION}"
         QT_ANDROID_MIN_SDK_VERSION 28
         QT_ANDROID_TARGET_SDK_VERSION 36
     )
@@ -111,14 +113,14 @@ if(IOS)
     set_target_properties(TinyBloom PROPERTIES
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_GUI_IDENTIFIER "app.tinybloom.mobile"
-        MACOSX_BUNDLE_BUNDLE_VERSION "40001"
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.4.0"
+        MACOSX_BUNDLE_BUNDLE_VERSION "40101"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
     )
 endif()
 
 if(WIN32)
-    set(TINYBLOOM_DESKTOP_VERSION "0.4.0-beta.1" CACHE STRING "Windows application version")
-    set(TINYBLOOM_DESKTOP_FILE_VERSION "0,4,0,1" CACHE STRING "Windows numeric file version")
+    set(TINYBLOOM_DESKTOP_VERSION "${TINYBLOOM_RELEASE_VERSION}" CACHE STRING "Windows application version")
+    set(TINYBLOOM_DESKTOP_FILE_VERSION "0,4,1,10" CACHE STRING "Windows numeric file version")
     configure_file(resources/DesktopVersion.h.in generated/DesktopVersion.h @ONLY)
     target_include_directories(TinyBloom PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
     set_property(SOURCE resources/tinybloom.rc APPEND PROPERTY OBJECT_DEPENDS

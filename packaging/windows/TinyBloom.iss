@@ -2,11 +2,11 @@
 #define AppExeName "TinyBloom.exe"
 
 #ifndef AppVersion
-  #define AppVersion "0.4.0-beta.1"
+  #define AppVersion "0.4.1-beta.1"
 #endif
 
 #ifndef AppNumericVersion
-  #define AppNumericVersion "0.4.0.1"
+  #define AppNumericVersion "0.4.1.10"
 #endif
 
 #ifndef AppSourceDir

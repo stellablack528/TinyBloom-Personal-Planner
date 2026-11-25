@@ -1,6 +1,6 @@
 param(
     [string]$InputApk = "build-android-arm64-release/android-build/build/outputs/apk/release/android-build-release-unsigned.apk",
-    [string]$OutputApk = "dist/TinyBloom-Mobile-v0.4.0-beta.1-Android-arm64.apk",
+    [string]$OutputApk = "dist/TinyBloom-Mobile-v0.4.1-beta.1-Android-arm64.apk",
     [string]$SigningProperties = ".signing/keystore.properties",
     [string]$BuildToolsDirectory = "E:/Android/Sdk/build-tools/36.0.0"
 )

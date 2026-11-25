@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_WIN)
     const QString applicationVersion = QStringLiteral(TINYBLOOM_DESKTOP_VERSION);
 #else
-    const QString applicationVersion = QStringLiteral("0.4.0-beta.1");
+    const QString applicationVersion = QStringLiteral(TINYBLOOM_RELEASE_VERSION);
 #endif
     const bool mobilePreview = qEnvironmentVariableIntValue("TINYBLOOM_MOBILE_PREVIEW") == 1;
 #if defined(Q_OS_ANDROID)

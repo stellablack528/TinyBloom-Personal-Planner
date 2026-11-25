@@ -14,7 +14,7 @@ TinyBloom 会记录每天的专注时长，并通过日历颜色深浅展示投�
 
 ![TinyBloom 桌面端月度专注日历](docs/screenshots/focus-month-desktop.png)
 
-> 截图使用隔离的演示数据，不包含开发者或用户的真实记录。月度汇总界面目前位于 `main` 分支，将随下一测试版发布。
+> 截图使用隔离的演示数据。月度专注汇总已包含在 v0.4.1 Beta 1 中。
 
 <p align="center">
   <img src="docs/screenshots/focus-month-mobile.png" width="360" alt="TinyBloom Android 移动端月度专注日历">
@@ -39,7 +39,7 @@ TinyBloom 会记录每天的专注时长，并通过日历颜色深浅展示投�
 
 ## 最新测试版下载
 
-当前 Android 移动端与 Windows 桌面端统一为 **v0.4.0 Beta 1**。本版新增每日专注统计、历史日历、专注反馈和应用内更新公告，并继续提供长期任务目标地图、花园自习室与本地数据备份。
+当前 Android 移动端与 Windows 桌面端统一为 **v0.4.1 Beta 1**。双端都更新了月度专注汇总、可调专注时长和花园昼夜背景。Windows 版另加入后台专注提醒、托盘、全局唤回快捷键，以及自定义提示音。
 
 > 这是 Pre-release，适合愿意帮助测试和反馈问题的用户。升级前建议先在“设置 → 数据”中导出一份 JSON 备份。
 
@@ -58,17 +58,17 @@ TinyBloom 会记录每天的专注时长，并通过日历颜色深浅展示投�
 
 普通用户不需要下载源码：直接点击下面的 APK，下载完成后打开文件并按手机提示安装即可。
 
-- 📱 [下载 Android v0.4.0 Beta 1 APK](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.0-beta.1/TinyBloom-Mobile-v0.4.0-beta.1-Android-arm64.apk)
-- 🔐 [下载 SHA-256 校验文件](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.0-beta.1/TinyBloom-v0.4.0-beta.1-SHA256SUMS.txt)
+- 📱 [下载 Android v0.4.1 Beta 1 APK](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.1-beta.1/TinyBloom-Mobile-v0.4.1-beta.1-Android-arm64.apk)
+- 🔐 [下载 SHA-256 校验文件](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.1-beta.1/TinyBloom-v0.4.1-beta.1-SHA256SUMS.txt)
 
 适用于 **Android 9 及以上的 ARM64 手机**，并针对 OriginOS 6 与 Android 16 KiB 内存页要求进行构建检查。系统可能提示“未知来源应用”，请只从本项目 GitHub Release 下载。v0.3.1 及以后的版本使用同一长期发布证书，可以直接覆盖升级；更早的 v0.3.0 测试包需要先备份数据并卸载。
 
 ### 🖥️ Windows 桌面端（试运行）
 
-- 👉 [推荐：下载 v0.4.0 Beta 1 安装程序](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.0-beta.1/TinyBloom-Desktop-v0.4.0-beta.1-Windows-x64-Setup.exe)
-- 📦 [下载 v0.4.0 Beta 1 便携版 ZIP](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.0-beta.1/TinyBloom-Desktop-v0.4.0-beta.1-windows-x64.zip)
-- 🔐 [下载 SHA-256 校验文件](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.0-beta.1/TinyBloom-v0.4.0-beta.1-SHA256SUMS.txt)
-- 🇨🇳 [Gitee Releases 镜像页](https://gitee.com/stella-green/TinyBloom/releases)
+- 👉 [推荐：下载 v0.4.1 Beta 1 安装程序](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.1-beta.1/TinyBloom-Desktop-v0.4.1-beta.1-Windows-x64-Setup.exe)
+- 📦 [下载 v0.4.1 Beta 1 便携版 ZIP](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.1-beta.1/TinyBloom-Desktop-v0.4.1-beta.1-windows-x64.zip)
+- 🔐 [下载 SHA-256 校验文件](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/download/v0.4.1-beta.1/TinyBloom-v0.4.1-beta.1-SHA256SUMS.txt)
+- 🇨🇳 [Gitee 历史版本](https://gitee.com/stella-green/TinyBloom/releases)
 
 安装版可以创建开始菜单和桌面快捷方式，并支持从 Windows 设置中卸载。便携版必须完整解压后再运行 `TinyBloom.exe`，不能只单独复制 EXE。
 
@@ -80,7 +80,7 @@ TinyBloom 会记录每天的专注时长，并通过日历颜色深浅展示投�
 
 ## 📱 移动端第一版（试运行）
 
-移动端与桌面端共享同一套 C++ 业务逻辑、SQLite 数据结构和 `schemaVersion: 3` JSON 备份格式。当前移动端版本为 `0.4.0-beta.1`。目前已经完成：
+移动端与桌面端共享同一套 C++ 业务逻辑、SQLite 数据结构和 `schemaVersion: 3` JSON 备份格式。当前移动端版本为 `0.4.1-beta.1`。目前已经完成：
 
 - Today、任务、大任务、花园自习室和设置五个手机端页面
 - 适合触控和窄屏的底部导航、纵向目标地图与响应式弹窗
@@ -89,7 +89,7 @@ TinyBloom 会记录每天的专注时长，并通过日历颜色深浅展示投�
 - Android / iOS 构建元数据和桌面端手机尺寸预览模式
 - 应用内检查 GitHub Release、更新公告与当前平台直接下载入口
 
-Android ARM64 测试 APK 已在 Gitee Release 提供下载。在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1`，还可以用 `390 × 844` 的窗口预览移动端界面。自行构建 Android 安装包需要 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包仍需要在 macOS 与 Xcode 环境中构建。
+最新 Android ARM64 测试 APK 在 [GitHub Releases](https://github.com/stellablack528/TinyBloom-Personal-Planner/releases/tag/v0.4.1-beta.1) 提供下载。在桌面开发环境中设置 `TINYBLOOM_MOBILE_PREVIEW=1`，还可以用 `390 × 844` 的窗口预览移动端界面。自行构建 Android 安装包需要 Qt Android kit、Android SDK/NDK 和 JDK；iOS 安装包仍需要在 macOS 与 Xcode 环境中构建。
 
 ## 📖 项目简介
 
@@ -172,11 +172,11 @@ TinyBloom Desktop 支持：
 - 每个任务和小步骤只发放一次 XP，反复取消和勾选不会重复获得奖励
 - 两个独立花位，可选择小粉花、向日葵、郁金香和玫瑰
 - 花园自习室带轻动画和专注计时器，默认 25 分钟
-- 下一测试版中，可在自习室或设置中把专注时长调为 5–120 分钟。花园背景按设备本地时间切换昼夜。
+- 可在自习室或设置中把专注时长调为 5–120 分钟。花园背景按设备本地时间切换昼夜。
 
 ### Windows 桌面新功能
 
-以下功能已在 `main` 分支实现，将随下一桌面测试版发布。已安装的用户可在新版发布后[从应用内检查更新](#已经安装了-tinybloom)。
+以下功能已包含在 Windows v0.4.1 Beta 1 中。已安装的用户可以[从应用内检查更新](#已经安装了-tinybloom)。
 
 - **专注结束提醒**。窗口在前台时显示应用内提示，切到别的应用、最小化或收进托盘时可收到 Windows 通知。声音可以单独关闭。设置中可试听风铃和玻璃轻响，或导入本地 WAV / MP3 的前 5 秒作为提示音。 [内置声音来源](resources/sounds/CREDITS.txt)
 - **关闭时收起到托盘**。在「设置 → 偏好设置」开启后，点右上角 `×` 会把窗口收进时钟旁的通知区域，专注计时继续。右键点击小叶子，可选「打开 TinyBloom」恢复窗口，或选「退出 TinyBloom」结束程序并保存已累计的专注时长。
