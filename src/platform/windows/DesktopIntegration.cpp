@@ -396,7 +396,6 @@ void DesktopIntegration::playFocusEndSound()
 
 bool DesktopIntegration::notifyFocusEnd(const QString &title, const QString &message)
 {
-    if (m_settings.focusEndSound()) playFocusEndSound();
     if (!m_window || (m_window->isVisible() && m_window->isActive() && m_window->visibility() != QWindow::Minimized))
         return false;
 

@@ -101,6 +101,12 @@ int main(int argc, char *argv[])
         ? QFileInfo(database.databasePath()).dir().filePath(QStringLiteral("focus-custom.wav")) : QString();
     DesktopIntegration windowsDesktop(settingsManager, customSoundPath);
     QObject *desktopIntegration = mobilePreview ? nullptr : &windowsDesktop;
+    if (desktopIntegration) {
+        QObject::connect(&focusManager, &FocusManager::sessionCompleted, &windowsDesktop,
+            [&settingsManager, &windowsDesktop] {
+                if (settingsManager.focusEndSound()) windowsDesktop.playFocusEndSound();
+            });
+    }
     QObject::connect(&windowsDesktop, &DesktopIntegration::exitRequested, &app, [&app, &focusManager] {
         focusManager.pause();
         app.quit();
